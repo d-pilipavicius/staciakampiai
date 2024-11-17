@@ -28,9 +28,9 @@ public class Order {
     @JoinColumn(name = "business_id", nullable = false)
     private Business business;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @Column(nullable = true)
-    private List<Reservation> reservations;
+    @OneToOne
+    @JoinColumn(name="reservation_id", nullable = true)
+    private Reservation reservations;
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
