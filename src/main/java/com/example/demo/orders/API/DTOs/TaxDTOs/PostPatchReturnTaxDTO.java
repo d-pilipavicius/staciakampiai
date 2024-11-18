@@ -1,6 +1,6 @@
-package com.example.demo.orders.API.DTOs.TaxDTOs;
+package com.example.demo.orders.api.DTOs.TaxDTOs;
 
-import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
+import com.example.demo.orders.api.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
 import lombok.Getter;
 import lombok.Setter;
 

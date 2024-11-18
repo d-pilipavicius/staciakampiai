@@ -1,4 +1,4 @@
-package com.example.demo.orders.API.DTOs.TaxDTOs;
+package com.example.demo.orders.api.DTOs.TaxDTOs;
 
 import lombok.Getter;
 import lombok.Setter;

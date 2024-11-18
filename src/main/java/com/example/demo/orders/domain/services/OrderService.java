@@ -14,8 +14,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import com.example.demo.orders.API.DTOs.OrderDTOs.GetOrderDTO;
 
-import static java.util.stream.Nodes.collect;
+// todo: needs rethinking probably
 
 @Service
 public class OrderService {
@@ -28,7 +29,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public void createOrder(OrderDTO orderDTO){
+    public void createOrder(GetOrderDTO orderDTO){
         orderRepository.save(
                 Mapper.mapToModel(
                         orderDTO,
@@ -37,7 +38,7 @@ public class OrderService {
         );
     }
 
-    public Optional<OrderDTO> getOrderById(UUID id){
+    public Optional<GetOrderDTO> getOrderById(UUID id){
         Optional<Order> order = orderRepository.findById(id);
         if(order.isPresent()){
             return Optional.of(Mapper.mapToDTO(
@@ -50,7 +51,7 @@ public class OrderService {
         }
     }
 
-    public List<OrderDTO> getAllOrders(){
+    public List<GetOrderDTO> getAllOrders(){
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
                 .map(OrderMapper.TO_DTO::map)

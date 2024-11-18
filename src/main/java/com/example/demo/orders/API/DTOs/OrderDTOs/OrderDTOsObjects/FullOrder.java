@@ -31,6 +31,4 @@ public class FullOrder {
     private List<AppliedDiscount> discounts;
     private List<ServiceChargeInOrder> serviceCharges;
     private UUID businessId;
-
-
 }
