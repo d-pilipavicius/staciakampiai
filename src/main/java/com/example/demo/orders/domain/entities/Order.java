@@ -29,7 +29,7 @@ public class Order {
     private Business business;
 
     @OneToOne
-    @JoinColumn(name="reservation_id", nullable = true)
+    @JoinColumn(name = "reservation_id", nullable = true)
     private Reservation reservations;
 
     @ManyToOne
