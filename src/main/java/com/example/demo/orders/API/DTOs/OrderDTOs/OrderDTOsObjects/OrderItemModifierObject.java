@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderItemModifier {
+public class OrderItemModifierObject {
     private UUID id;
     private String title;
     private BigDecimal price;

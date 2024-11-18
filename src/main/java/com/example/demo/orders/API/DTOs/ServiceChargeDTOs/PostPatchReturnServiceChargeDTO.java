@@ -1,6 +1,6 @@
 package com.example.demo.orders.API.DTOs.ServiceChargeDTOs;
 
-import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.ServiceChargeObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,5 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostPatchReturnServiceChargeDTO {
-    private FullServiceCharge serviceCharge;
+    private ServiceChargeObject serviceCharge;
 }

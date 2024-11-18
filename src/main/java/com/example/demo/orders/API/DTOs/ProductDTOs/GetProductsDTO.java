@@ -1,7 +1,7 @@
 package com.example.demo.orders.API.DTOs.ProductDTOs;
 
 import com.example.demo.orders.API.DTOs.BaseDTOs.GetBaseDTO;
-import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects.FullProduct;
+import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects.ProductObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetProductsDTO extends GetBaseDTO {
-    private List<FullProduct> items;
+    private List<ProductObject> items;
     private UUID businessId;
 }

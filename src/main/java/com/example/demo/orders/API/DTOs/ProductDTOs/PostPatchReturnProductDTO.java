@@ -1,6 +1,6 @@
 package com.example.demo.orders.API.DTOs.ProductDTOs;
 
-import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects.FullProduct;
+import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects.ProductObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,5 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostPatchReturnProductDTO {
-    private FullProduct product;
+    private ProductObject product;
 }

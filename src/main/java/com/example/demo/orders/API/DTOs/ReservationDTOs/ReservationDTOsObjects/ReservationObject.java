@@ -6,17 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FullReservation {
+public class ReservationObject {
     private UUID id;
-    private Customer customer;
+    private CustomerObject customer;
     private UUID createdByEmployeeId;
     private Timestamp createdAt;
     private Timestamp reservationStartAt;

@@ -12,11 +12,11 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FullProduct {
+public class ProductObject {
     private UUID id;
     private String title;
     private int quantityInStock;
-    private Price price;
-    private List<FullCompatibleModifier> compatibleModifiers;
+    private Money price;
+    private List<ProductModifierObject> compatibleModifiers;
     private UUID businessId;
 }

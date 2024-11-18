@@ -1,7 +1,7 @@
 package com.example.demo.orders.API.DTOs.ProductDTOs.ModifierDTOs;
 
 import com.example.demo.orders.API.DTOs.BaseDTOs.GetBaseDTO;
-import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects.FullCompatibleModifier;
+import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects.ProductModifierObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetModifiersDTO extends GetBaseDTO {
-    private List<FullCompatibleModifier> items;
+    private List<ProductModifierObject> items;
 }

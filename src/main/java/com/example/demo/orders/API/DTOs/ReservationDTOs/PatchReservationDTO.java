@@ -1,6 +1,6 @@
 package com.example.demo.orders.API.DTOs.ReservationDTOs;
 
-import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.Customer;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.CustomerObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +16,5 @@ import java.util.Optional;
 public class PatchReservationDTO {
     private Optional<Timestamp> reservationStartAt;
     private Optional<Timestamp> reservationEndAt;
-    private Optional<Customer> customer;
+    private Optional<CustomerObject> customer;
 }

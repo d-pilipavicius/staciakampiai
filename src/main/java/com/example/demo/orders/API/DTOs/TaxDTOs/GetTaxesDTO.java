@@ -1,7 +1,7 @@
 package com.example.demo.orders.API.DTOs.TaxDTOs;
 
 import com.example.demo.orders.API.DTOs.BaseDTOs.GetBaseDTO;
-import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
+import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.TaxObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetTaxesDTO extends GetBaseDTO {
-    private List<FullTax> items;
+    private List<TaxObject> items;
 }

@@ -1,18 +1,17 @@
 package com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects;
 
-import com.example.demo.orders.domain.entities.enums.Currency;
+import com.example.demo.orders.API.DTOs.ProductDTOs.ModifierDTOs.PostModifierDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Price {
-    private BigDecimal amount;
-    private Currency currency;
+public class ProductModifierObject extends PostModifierDTO {
+    private UUID id;
 }

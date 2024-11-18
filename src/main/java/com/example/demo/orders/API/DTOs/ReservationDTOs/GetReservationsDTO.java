@@ -1,7 +1,7 @@
 package com.example.demo.orders.API.DTOs.ReservationDTOs;
 
 import com.example.demo.orders.API.DTOs.BaseDTOs.GetBaseDTO;
-import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.FullReservation;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.ReservationObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetReservationsDTO extends GetBaseDTO {
-    private List<FullReservation> items;
+    private List<ReservationObject> items;
 }

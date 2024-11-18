@@ -1,7 +1,7 @@
 package com.example.demo.orders.API.DTOs.DiscountDTO;
 
 import com.example.demo.orders.API.DTOs.BaseDTOs.GetBaseDTO;
-import com.example.demo.orders.API.DTOs.DiscountDTO.DiscountDTOsObjects.FullDiscount;
+import com.example.demo.orders.API.DTOs.DiscountDTO.DiscountDTOsObjects.DiscountObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetDiscountsDTO extends GetBaseDTO {
-    private List<FullDiscount> items;
+    private List<DiscountObject> items;
 }

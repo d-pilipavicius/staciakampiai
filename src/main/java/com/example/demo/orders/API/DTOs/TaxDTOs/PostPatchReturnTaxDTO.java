@@ -1,6 +1,6 @@
 package com.example.demo.orders.API.DTOs.TaxDTOs;
 
-import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
+import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.TaxObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,5 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostPatchReturnTaxDTO {
-    private FullTax tax;
+    private TaxObject tax;
 }
