@@ -6,15 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetTaxesDTO {
-    private int totalItems;
-    private int totalPages;
-    private int currentPage;
-    private List<TaxDTO> items;
+/**
+ * A response tax DTO for Patch and Post requests
+ */
+public class ResponseTaxDTO {
+    private TaxDTO tax;
 }

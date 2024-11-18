@@ -6,17 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetProductsDTO {
-    private int totalItems;
-    private int totalPages;
-    private int currentPage;
-    private List<ProductDTO> items;
-    private UUID businessId;
+/**
+ * A response product DTO for Patch and Post requests
+ */
+public class ResponseProductDTO {
+    private ProductDTO product;
 }

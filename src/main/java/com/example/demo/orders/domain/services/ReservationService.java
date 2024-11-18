@@ -5,9 +5,8 @@ import com.example.demo.helper.mapper.ReservationMapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.orders.API.DTOs.ReservationDTOs.GetReservationsDTO;
 import com.example.demo.orders.API.DTOs.ReservationDTOs.PatchReservationDTO;
-import com.example.demo.orders.API.DTOs.ReservationDTOs.PostPatchReturnReservationDTO;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ResponseReservationDTO;
 import com.example.demo.orders.API.DTOs.ReservationDTOs.PostReservationDTO;
-import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.ReservationObject;
 import com.example.demo.orders.domain.entities.Reservation;
 import com.example.demo.orders.repository.ReservationRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -69,7 +68,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public PostPatchReturnReservationDTO updateReservation(PatchReservationDTO patchReservationDTO, UUID id) {
+    public ResponseReservationDTO updateReservation(PatchReservationDTO patchReservationDTO, UUID id) {
         Optional<Reservation> reservation = reservationRepository.findById(id);
 
         if (reservation.isEmpty()) {
@@ -87,7 +86,7 @@ public class ReservationService {
                 )
         );
 
-        PostPatchReturnReservationDTO updatedReservation = new PostPatchReturnReservationDTO();
+        ResponseReservationDTO updatedReservation = new ResponseReservationDTO();
         updatedReservation.setReservation(Mapper.mapToDTO(
                 reservationRepository.save(reservation.get()),
                 ReservationMapper.TO_DTO

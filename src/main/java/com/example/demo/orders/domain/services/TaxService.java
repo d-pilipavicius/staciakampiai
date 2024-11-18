@@ -4,9 +4,9 @@ import com.example.demo.helper.mapper.TaxMapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.orders.API.DTOs.TaxDTOs.GetTaxesDTO;
 import com.example.demo.orders.API.DTOs.TaxDTOs.PatchTaxDTO;
-import com.example.demo.orders.API.DTOs.TaxDTOs.PostPatchReturnTaxDTO;
+import com.example.demo.orders.API.DTOs.TaxDTOs.ResponseTaxDTO;
 import com.example.demo.orders.API.DTOs.TaxDTOs.PostTaxDTO;
-import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
+import com.example.demo.orders.API.DTOs.TaxDTOs.TaxHelperDTOs.FullTax;
 import com.example.demo.orders.domain.entities.Tax;
 import com.example.demo.orders.repository.TaxRepository;
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class TaxService {
     }
 
     @Transactional
-    public PostPatchReturnTaxDTO updateTax(PatchTaxDTO patchTaxDTO, UUID id){
+    public ResponseTaxDTO updateTax(PatchTaxDTO patchTaxDTO, UUID id){
         Optional<Tax> tax = taxRepository.findById(id);
 
         if(tax.isEmpty()){
@@ -79,7 +79,7 @@ public class TaxService {
         patchTaxDTO.getTitle().ifPresent(tax.get()::setTitle);
         patchTaxDTO.getRatePercentage().ifPresent(tax.get()::setRatePercentage);
 
-        PostPatchReturnTaxDTO newTaxDTO = new PostPatchReturnTaxDTO();
+        ResponseTaxDTO newTaxDTO = new ResponseTaxDTO();
         newTaxDTO.setTax(Mapper.mapToDTO(
                 taxRepository.save(tax.get()),
                 TaxMapper.TO_DTO

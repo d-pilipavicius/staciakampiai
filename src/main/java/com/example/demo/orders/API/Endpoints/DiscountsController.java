@@ -4,17 +4,14 @@ import com.example.demo.helper.validator.ValidationForDifferentHTTPCodes;
 import com.example.demo.orders.API.DTOs.DiscountDTO.GetDiscountsDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.PatchDiscountDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.PostDiscountDTO;
-import com.example.demo.orders.API.DTOs.DiscountDTO.PostPatchReturnDiscountDTO;
-import com.example.demo.orders.domain.services.DiscountService;
+import com.example.demo.orders.API.DTOs.DiscountDTO.ResponseDiscountDTO;
 import com.example.demo.orders.services.DiscountApplicationService;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -37,7 +34,7 @@ public class DiscountsController {
              throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        PostPatchReturnDiscountDTO createdDiscount = discountService.createAndReturnDiscount();
+        ResponseDiscountDTO createdDiscount = discountService.createAndReturnDiscount();
 
         ValidationForDifferentHTTPCodes.checkFor404(createdDiscount);
 
@@ -64,7 +61,7 @@ public class DiscountsController {
                                                   @RequestBody PatchDiscountDTO patchDiscountDTO){
         /*do validation for thing*/
 
-        PostPatchReturnDiscountDTO updatedDiscount = discountService.updateAndReturnDiscount(employeeId, patchDiscountDTO);
+        ResponseDiscountDTO updatedDiscount = discountService.updateAndReturnDiscount(employeeId, patchDiscountDTO);
 
         ValidationForDifferentHTTPCodes.checkFor404(updatedDiscount);
 

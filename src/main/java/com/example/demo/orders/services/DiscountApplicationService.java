@@ -2,14 +2,14 @@ package com.example.demo.orders.services;
 
 import com.example.demo.orders.API.DTOs.DiscountDTO.GetDiscountsDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.PatchDiscountDTO;
-import com.example.demo.orders.API.DTOs.DiscountDTO.PostPatchReturnDiscountDTO;
+import com.example.demo.orders.API.DTOs.DiscountDTO.ResponseDiscountDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
 public class DiscountApplicationService {
-    public PostPatchReturnDiscountDTO createAndReturnDiscount(){
+    public ResponseDiscountDTO createAndReturnDiscount(){
         return null;
     }
 
@@ -17,7 +17,7 @@ public class DiscountApplicationService {
         return new GetDiscountsDTO();
     }
 
-    public PostPatchReturnDiscountDTO updateAndReturnDiscount(UUID discountId, PatchDiscountDTO discount){return new PostPatchReturnDiscountDTO();}
+    public ResponseDiscountDTO updateAndReturnDiscount(UUID discountId, PatchDiscountDTO discount){return new ResponseDiscountDTO();}
 
     public boolean deleteDiscountById(UUID disocuntId){return true;}
 }

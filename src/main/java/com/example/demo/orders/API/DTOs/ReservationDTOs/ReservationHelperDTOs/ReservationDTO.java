@@ -1,25 +1,23 @@
-package com.example.demo.orders.API.DTOs.ReservationDTOs;
+package com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationHelperDTOs;
 
-
-import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationHelperDTOs.CustomerDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostReservationDTO {
+public class ReservationDTO {
+    private UUID id;
     private CustomerDTO customer;
+    private UUID createdByEmployeeId;
+    private Timestamp createdAt;
     private Timestamp reservationStartAt;
     private Timestamp reservationEndAt;
-    private Optional<List<UUID>> serviceChargeIds;
     private UUID businessId;
 }

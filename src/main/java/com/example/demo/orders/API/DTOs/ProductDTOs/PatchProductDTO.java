@@ -1,6 +1,6 @@
 package com.example.demo.orders.API.DTOs.ProductDTOs;
 
-import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects.Money;
+import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierHelperDTOs.MoneyDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,6 @@ import java.util.UUID;
 public class PatchProductDTO {
     private Optional<String> title;
     private Optional<Integer> quantityInStock;
-    private Optional<Money> price;
+    private Optional<MoneyDTO> price;
     private Optional<List<UUID>> compatibleModifierIds;
 }
