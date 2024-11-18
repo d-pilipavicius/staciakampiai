@@ -6,6 +6,7 @@ import com.example.demo.orders.API.DTOs.DiscountDTO.PatchDiscountDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.PostDiscountDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.PostPatchReturnDiscountDTO;
 import com.example.demo.orders.domain.services.DiscountService;
+import com.example.demo.orders.services.DiscountApplicationService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/discounts")
 public class DiscountsController {
-    private DiscountService discountService;
+    private DiscountApplicationService discountService;
 
     @Autowired
-    public DiscountsController(DiscountService discountService){
+    public DiscountsController(DiscountApplicationService discountService){
         this.discountService = discountService;
     }
     @PostMapping
@@ -61,11 +62,6 @@ public class DiscountsController {
     @PatchMapping("/{discountId}")
     public  ResponseEntity<Object> updateDiscount(@PathVariable UUID discountId, @RequestParam UUID  employeeId,
                                                   @RequestBody PatchDiscountDTO patchDiscountDTO){
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
-        if(badResponse != null){
-            return badResponse;
-        }
-
         /*do validation for thing*/
 
         PostPatchReturnDiscountDTO updatedDiscount = discountService.updateAndReturnDiscount(employeeId, patchDiscountDTO);

@@ -16,7 +16,7 @@ public final class ValidationForDifferentHTTPCodes {
     }
 
     public static ResponseEntity<Object> checkFor403(UUID id){
-        /* check somehow if authorized*/
+        /* check somehow authorized, i.e. if the id is of owner/SuperAdmin or just employee*/
         boolean isAuthorized = true;
         if(!isAuthorized){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(

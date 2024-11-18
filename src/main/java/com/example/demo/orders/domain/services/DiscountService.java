@@ -8,18 +8,5 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-@Service
 public class DiscountService {
-
-    public PostPatchReturnDiscountDTO createAndReturnDiscount(){
-        return null;
-    }
-
-    public GetDiscountsDTO returnAllDiscountsByBusinessId(UUID businessId){
-        return new GetDiscountsDTO();
-    }
-
-    public PostPatchReturnDiscountDTO updateAndReturnDiscount(UUID discountId, PatchDiscountDTO discount){return new PostPatchReturnDiscountDTO();}
-
-    public boolean deleteDiscountById(UUID disocuntId){return true;}
 }
