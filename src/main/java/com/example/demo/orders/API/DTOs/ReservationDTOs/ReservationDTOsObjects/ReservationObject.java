@@ -1,6 +1,8 @@
 package com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
@@ -8,9 +10,11 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class FullReservation {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ReservationObject {
     private UUID id;
-    private CustomerDTO customerDTO;
+    private CustomerObject customer;
     private UUID createdByEmployeeId;
     private Timestamp createdAt;
     private Timestamp reservationStartAt;

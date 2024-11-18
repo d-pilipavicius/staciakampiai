@@ -1,6 +1,8 @@
 package com.example.demo.orders.API.DTOs.OrderDTOs.OrderDTOsObjects;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -10,7 +12,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class FullOrderItem {
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderItemObject {
     private UUID id;
     private UUID productId;
     private String title;
@@ -22,7 +26,7 @@ public class FullOrderItem {
     private BigDecimal taxTotal;
     private BigDecimal finalPrice;
     private Currency currency;
-    private List<OrderItemModifier> modifiers;
+    private List<OrderItemModifierObject> modifiers;
     private List<TaxLine> taxLines;
 
 }

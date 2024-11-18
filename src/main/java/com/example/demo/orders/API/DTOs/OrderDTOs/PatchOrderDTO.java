@@ -2,7 +2,9 @@ package com.example.demo.orders.API.DTOs.OrderDTOs;
 
 import com.example.demo.orders.API.DTOs.OrderDTOs.OrderDTOsObjects.SelectedProduct;
 import com.example.demo.orders.API.DTOs.OrderDTOs.OrderDTOsObjects.SelectedDiscount;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PatchOrderDTO {
     private Optional<List<SelectedProduct>> items;
     private Optional<List<SelectedDiscount>> discounts;

@@ -10,6 +10,7 @@ public class OrderMapper {
      * Maps an OrderDTO to an Order entity.
      */
     public static final StaticMapper<GetOrderDTO, Order> TO_MODEL = dto -> {
+
         Order order = new Order();
         // ...
         return order;
@@ -23,4 +24,5 @@ public class OrderMapper {
         // ...
         return orderDTO;
     };
+
 }
