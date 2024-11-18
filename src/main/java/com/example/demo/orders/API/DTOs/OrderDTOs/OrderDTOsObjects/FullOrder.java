@@ -2,7 +2,9 @@ package com.example.demo.orders.API.DTOs.OrderDTOs.OrderDTOsObjects;
 
 import com.example.demo.orders.domain.entities.enums.Currency;
 import com.example.demo.orders.domain.entities.enums.OrderStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -13,6 +15,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class FullOrder {
     private UUID id;
     private UUID employeeId;
@@ -29,8 +33,6 @@ public class FullOrder {
     private Currency currency;
     private List<FullOrderItem> items;
     private List<AppliedDiscount> discounts;
-    private List<ServiceChargeInOrder> serviceCharges;
+    private List<AppliedServiceCharge> serviceCharges;
     private UUID businessId;
-
-
 }

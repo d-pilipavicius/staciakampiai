@@ -1,16 +1,18 @@
 package com.example.demo.orders.API.DTOs.ServiceChargeDTOs;
 
+import com.example.demo.orders.API.DTOs.BaseDTOs.GetBaseDTO;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Getter
 @Setter
-public class GetServiceChargesDTO {
-    private int totalItems;
-    private int totalPages;
-    private int currentPage;
+@NoArgsConstructor
+@AllArgsConstructor
+public class GetServiceChargesDTO extends GetBaseDTO {
     private List<FullServiceCharge> items;
 }

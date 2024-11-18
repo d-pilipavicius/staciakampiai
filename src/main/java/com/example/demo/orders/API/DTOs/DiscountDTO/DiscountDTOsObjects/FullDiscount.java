@@ -1,8 +1,11 @@
 package com.example.demo.orders.API.DTOs.DiscountDTO.DiscountDTOsObjects;
 
+import com.example.demo.orders.API.DTOs.DiscountDTO.PostDiscountDTO;
 import com.example.demo.orders.domain.entities.enums.DiscountTarget;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -14,17 +17,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class FullDiscount {
+@NoArgsConstructor
+@AllArgsConstructor
+public class FullDiscount extends PostDiscountDTO {
     private UUID id;
-    private Optional<String> code;
-    private BigDecimal value;
-    private PricingStrategy valueType;
-    private Optional<Currency> currency;
-    private Timestamp validFrom;
-    private Timestamp validUntil;
-    private DiscountTarget target;
-    private Optional<List<UUID>> entitledProductIds;
-    private UUID businessId;
     private int usageCount;
-    private Optional<Integer> usageCountLimit;
 }

@@ -1,6 +1,9 @@
 package com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects;
 
+import com.example.demo.orders.API.DTOs.TaxDTOs.PostTaxDTO;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -8,9 +11,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class FullTax {
+@NoArgsConstructor
+@AllArgsConstructor
+public class FullTax extends PostTaxDTO {
     private UUID id;
-    private String title;
-    private BigDecimal ratePercentage;
-    private UUID businessId;
 }

@@ -1,7 +1,10 @@
 package com.example.demo.orders.API.DTOs.ProductDTOs;
 
+import com.example.demo.orders.API.DTOs.BaseDTOs.GetBaseDTO;
 import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects.FullProduct;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -9,10 +12,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class GetProductsDTO {
-    private int totalItems;
-    private int totalPages;
-    private int currentPage;
+@NoArgsConstructor
+@AllArgsConstructor
+public class GetProductsDTO extends GetBaseDTO {
     private List<FullProduct> items;
     private UUID businessId;
 }
