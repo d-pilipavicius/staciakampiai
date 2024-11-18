@@ -4,6 +4,7 @@ import com.example.demo.orders.domain.entities.enums.Currency;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(
         name = "applied_service_charge",
         indexes = {

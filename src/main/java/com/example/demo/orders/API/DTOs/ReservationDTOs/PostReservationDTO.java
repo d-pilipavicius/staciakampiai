@@ -1,6 +1,6 @@
-package com.example.demo.orders.API.DTOs.ReservationDTOs;
+package com.example.demo.orders.api.DTOs.ReservationDTOs;
 
-import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.Customer;
+import com.example.demo.orders.api.DTOs.ReservationDTOs.ReservationDTOsObjects.CustomerDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class PostReservationDTO {
-    private Customer customer;
+    private CustomerDTO customerDTO;
     private Timestamp reservationStartAt;
     private Timestamp reservationEndAt;
     private Optional<List<UUID>> serviceChargeIds;

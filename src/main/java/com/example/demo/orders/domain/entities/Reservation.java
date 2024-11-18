@@ -2,7 +2,9 @@ package com.example.demo.orders.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(
         name = "reservation",
         indexes = {
@@ -25,29 +28,30 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
     @JoinColumn(name = "business_id", nullable = false)
-    private Business business;
+    private UUID businessId;
 
     @OneToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = true)
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+    @Column(name = "employee_id", nullable = true)
+    private UUID employeeId;
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     @Column(nullable = true)
     private List<ReservationNotification> reservationNotifications;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     @Column(nullable = true)
     private List<AppliedServiceCharge> appliedServiceCharges;
+
+    @Column(nullable = false)
+    private Timestamp createdAt;
 
     @Column(nullable = false)
     private Timestamp reservationStartAt;
