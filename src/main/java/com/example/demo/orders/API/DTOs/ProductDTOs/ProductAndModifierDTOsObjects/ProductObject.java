@@ -1,6 +1,8 @@
 package com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierDTOsObjects;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -8,11 +10,13 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class FullProduct {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProductObject {
     private UUID id;
     private String title;
     private int quantityInStock;
-    private Price price;
-    private List<FullCompatibleModifier> compatibleModifiers;
+    private Money price;
+    private List<ProductModifierObject> compatibleModifiers;
     private UUID businessId;
 }

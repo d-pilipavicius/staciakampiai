@@ -2,7 +2,9 @@ package com.example.demo.orders.API.DTOs.OrderDTOs.OrderDTOsObjects;
 
 import com.example.demo.orders.domain.entities.enums.DiscountType;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -12,14 +14,11 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class AppliedDiscount {
+@NoArgsConstructor
+@AllArgsConstructor
+public class AppliedDiscount extends SelectedDiscount{
     private UUID id;
     private UUID appliedByEmployeeId;
-    private DiscountType type;
-    private Optional<String> code;
-    private PricingStrategy valueType;
-    private BigDecimal value;
     private BigDecimal savings;
-    private Currency currency;
 
 }

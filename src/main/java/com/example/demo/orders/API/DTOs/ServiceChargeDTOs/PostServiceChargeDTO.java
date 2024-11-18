@@ -1,8 +1,10 @@
-package com.example.demo.orders.api.DTOs.ServiceChargeDTOs;
+package com.example.demo.orders.API.DTOs.ServiceChargeDTOs;
 
 import com.example.demo.orders.domain.entities.enums.Currency;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -11,6 +13,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostServiceChargeDTO {
     private String title;
     private PricingStrategy valueType;
