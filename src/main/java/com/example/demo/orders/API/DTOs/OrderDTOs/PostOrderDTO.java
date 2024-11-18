@@ -1,7 +1,7 @@
 package com.example.demo.orders.API.DTOs.OrderDTOs;
 
-import com.example.demo.orders.API.DTOs.OrderDTOs.OrderDTOsObjects.SelectedDiscount;
-import com.example.demo.orders.API.DTOs.OrderDTOs.OrderDTOsObjects.SelectedProduct;
+import com.example.demo.orders.API.DTOs.OrderDTOs.OrderHelperDTOs.SelectedDiscountDTO;
+import com.example.demo.orders.API.DTOs.OrderDTOs.OrderHelperDTOs.SelectedProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +17,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PostOrderDTO {
     private Optional<UUID> reservationId;
-    private List<SelectedProduct> items;
-    private List<SelectedDiscount> discounts;
+    private List<SelectedProductDTO> items;
+    private List<SelectedDiscountDTO> discounts;
     private List<UUID> serviceChargeIds;
     private UUID businessId;
 }

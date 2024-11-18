@@ -1,6 +1,5 @@
-package com.example.demo.orders.API.DTOs.ProductDTOs.ModifierDTOs;
+package com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierHelperDTOs;
 
-import com.example.demo.orders.API.DTOs.ProductDTOs.ProductAndModifierHelperDTOs.MoneyDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,8 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostModifierDTO {
+public class ProductModifierDTO {
+    private UUID id;
     private String title;
     private int quantityInStock;
     private MoneyDTO price;

@@ -4,7 +4,7 @@ import com.example.demo.helper.mapper.ServiceChargeMapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.GetServiceChargesDTO;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PatchServiceChargeDTO;
-import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostPatchReturnServiceChargeDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ResponseServiceChargeDTO;
 import com.example.demo.orders.domain.entities.ServiceCharge;
 import com.example.demo.orders.repository.ServiceChargeRepository;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
-import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeHelperDTOs.FullServiceCharge;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -67,7 +67,7 @@ public class ServiceChargeService {
     }
 
     @Transactional
-    public PostPatchReturnServiceChargeDTO updateServiceCharge(PatchServiceChargeDTO patchServiceChargeDTO, UUID id){
+    public ResponseServiceChargeDTO updateServiceCharge(PatchServiceChargeDTO patchServiceChargeDTO, UUID id){
         Optional<ServiceCharge> serviceCharge = serviceChargeRepository.findById(id);
 
         if(serviceCharge.isEmpty()){
@@ -80,7 +80,7 @@ public class ServiceChargeService {
         patchServiceChargeDTO.getValueType().ifPresent(serviceCharge.get()::setValueType);
         patchServiceChargeDTO.getCurrency().ifPresent(serviceCharge.get()::setCurrency);
 
-        PostPatchReturnServiceChargeDTO newServiceChargeDTO = new PostPatchReturnServiceChargeDTO();
+        ResponseServiceChargeDTO newServiceChargeDTO = new ResponseServiceChargeDTO();
         newServiceChargeDTO.setServiceCharge(Mapper.mapToDTO(
                 serviceChargeRepository.save(serviceCharge.get()),
                 ServiceChargeMapper.TO_DTO
