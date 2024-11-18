@@ -1,4 +1,4 @@
-package com.example.demo.orders.API.DTOs.ServiceChargeDTOs;
+package com.example.demo.orders.api.DTOs.ServiceChargeDTOs;
 
 import com.example.demo.orders.domain.entities.enums.Currency;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;

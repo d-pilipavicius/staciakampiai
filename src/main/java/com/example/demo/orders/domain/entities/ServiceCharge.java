@@ -4,6 +4,7 @@ import com.example.demo.orders.domain.entities.enums.Currency;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(
         name = "service_charge",
         indexes = {
@@ -23,9 +25,8 @@ public class ServiceCharge {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "business_id")
-    private Business business;
+    @JoinColumn(name = "business_id", nullable = false)
+    private UUID businessId;
 
     @Column(nullable = false)
     private String title;
