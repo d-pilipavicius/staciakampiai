@@ -1,8 +1,8 @@
 package com.example.demo.helper.mapper;
 
 import com.example.demo.helper.mapper.base.StaticMapper;
-import com.example.demo.orders.api.DTOs.TaxDTOs.PostTaxDTO;
-import com.example.demo.orders.api.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
+import com.example.demo.orders.API.DTOs.TaxDTOs.PostTaxDTO;
+import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
 import com.example.demo.orders.domain.entities.Tax;
 
 public class TaxMapper {

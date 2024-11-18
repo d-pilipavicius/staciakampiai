@@ -1,6 +1,6 @@
-package com.example.demo.orders.api.DTOs.ReservationDTOs;
+package com.example.demo.orders.API.DTOs.ReservationDTOs;
 
-import com.example.demo.orders.api.DTOs.ReservationDTOs.ReservationDTOsObjects.CustomerDTO;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.CustomerDTO;
 import lombok.Getter;
 import lombok.Setter;
 

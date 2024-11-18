@@ -2,17 +2,17 @@ package com.example.demo.orders.domain.services;
 
 import com.example.demo.helper.mapper.ServiceChargeMapper;
 import com.example.demo.helper.mapper.base.Mapper;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.GetServiceChargesDTO;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.PatchServiceChargeDTO;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.PostPatchReturnServiceChargeDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.GetServiceChargesDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PatchServiceChargeDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostPatchReturnServiceChargeDTO;
 import com.example.demo.orders.domain.entities.ServiceCharge;
 import com.example.demo.orders.repository.ServiceChargeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

@@ -2,8 +2,8 @@ package com.example.demo.helper.mapper;
 
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.helper.mapper.base.StaticMapper;
-import com.example.demo.orders.api.DTOs.ReservationDTOs.PostReservationDTO;
-import com.example.demo.orders.api.DTOs.ReservationDTOs.ReservationDTOsObjects.FullReservation;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.PostReservationDTO;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.FullReservation;
 import com.example.demo.orders.domain.entities.Reservation;
 
 public class ReservationMapper {

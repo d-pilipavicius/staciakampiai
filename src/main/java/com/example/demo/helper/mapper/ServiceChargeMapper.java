@@ -1,9 +1,9 @@
 package com.example.demo.helper.mapper;
 
 import com.example.demo.helper.mapper.base.StaticMapper;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
 import com.example.demo.orders.domain.entities.ServiceCharge;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
 
 import java.util.Optional;
 

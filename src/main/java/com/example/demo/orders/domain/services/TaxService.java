@@ -2,11 +2,11 @@ package com.example.demo.orders.domain.services;
 
 import com.example.demo.helper.mapper.TaxMapper;
 import com.example.demo.helper.mapper.base.Mapper;
-import com.example.demo.orders.api.DTOs.TaxDTOs.GetTaxesDTO;
-import com.example.demo.orders.api.DTOs.TaxDTOs.PatchTaxDTO;
-import com.example.demo.orders.api.DTOs.TaxDTOs.PostPatchReturnTaxDTO;
-import com.example.demo.orders.api.DTOs.TaxDTOs.PostTaxDTO;
-import com.example.demo.orders.api.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
+import com.example.demo.orders.API.DTOs.TaxDTOs.GetTaxesDTO;
+import com.example.demo.orders.API.DTOs.TaxDTOs.PatchTaxDTO;
+import com.example.demo.orders.API.DTOs.TaxDTOs.PostPatchReturnTaxDTO;
+import com.example.demo.orders.API.DTOs.TaxDTOs.PostTaxDTO;
+import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
 import com.example.demo.orders.domain.entities.Tax;
 import com.example.demo.orders.repository.TaxRepository;
 import org.slf4j.Logger;
