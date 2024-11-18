@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class OrderItem {
+public class FullOrderItem {
     private UUID id;
     private UUID productId;
     private String title;

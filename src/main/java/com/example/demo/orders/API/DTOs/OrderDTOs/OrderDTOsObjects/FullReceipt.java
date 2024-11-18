@@ -1,25 +1,20 @@
 package com.example.demo.orders.API.DTOs.OrderDTOs.OrderDTOsObjects;
 
+import com.example.demo.orders.domain.entities.AppliedServiceCharge;
 import com.example.demo.orders.domain.entities.enums.Currency;
-import com.example.demo.orders.domain.entities.enums.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
 @Setter
-public class FullOrder {
-    private UUID id;
-    private UUID employeeId;
-    private Optional<UUID> reservationId;
-    private OrderStatus status;
+public class FullReceipt {
+    private UUID orderId;
     private Timestamp createdAt;
-    private Optional<Timestamp> closedAt;
     private BigDecimal originalPrice;
     private BigDecimal discountsTotal;
     private BigDecimal subtotalPrice;
@@ -29,8 +24,5 @@ public class FullOrder {
     private Currency currency;
     private List<FullOrderItem> items;
     private List<AppliedDiscount> discounts;
-    private List<ServiceChargeInOrder> serviceCharges;
-    private UUID businessId;
-
-
+    private List<AppliedServiceCharge> serviceCharges;
 }
