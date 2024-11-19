@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
-import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeHelperDTOs.FullServiceCharge;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeHelperDTOs.ServiceChargeDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 public class ServiceChargeService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceChargeService.class);
+    /*private static final Logger logger = LoggerFactory.getLogger(ServiceChargeService.class);
 
     private final ServiceChargeRepository serviceChargeRepository;
 
@@ -91,5 +91,5 @@ public class ServiceChargeService {
 
     public void deleteServiceCharge(UUID id){
         serviceChargeRepository.deleteById(id);
-    }
+    }*/
 }

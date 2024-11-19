@@ -43,7 +43,7 @@ public class AppliedDiscount {
 
     @ManyToOne
     @JoinColumn(name = "charged_by_employee_id", nullable = false)
-    private Employee employee;
+    private EmployeeMock employee;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

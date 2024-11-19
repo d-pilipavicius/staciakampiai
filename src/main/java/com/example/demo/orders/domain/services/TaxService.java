@@ -6,7 +6,7 @@ import com.example.demo.orders.API.DTOs.TaxDTOs.GetTaxesDTO;
 import com.example.demo.orders.API.DTOs.TaxDTOs.PatchTaxDTO;
 import com.example.demo.orders.API.DTOs.TaxDTOs.ResponseTaxDTO;
 import com.example.demo.orders.API.DTOs.TaxDTOs.PostTaxDTO;
-import com.example.demo.orders.API.DTOs.TaxDTOs.TaxHelperDTOs.FullTax;
+import com.example.demo.orders.API.DTOs.TaxDTOs.TaxHelperDTOs.TaxDTO;
 import com.example.demo.orders.domain.entities.Tax;
 import com.example.demo.orders.repository.TaxRepository;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class TaxService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaxService.class);
+   /* private static final Logger logger = LoggerFactory.getLogger(TaxService.class);
 
     private final TaxRepository taxRepository;
 
@@ -90,5 +90,5 @@ public class TaxService {
 
     public void deleteTax(UUID id){
         taxRepository.deleteById(id);
-    }
+    }*/
 }

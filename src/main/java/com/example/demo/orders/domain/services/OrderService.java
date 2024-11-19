@@ -28,7 +28,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public void createOrder(GetOrderDTO orderDTO){
+   /* public void createOrder(GetOrderDTO orderDTO){
         orderRepository.save(
                 Mapper.mapToModel(
                         orderDTO,
@@ -63,5 +63,5 @@ public class OrderService {
 
     public void updateOrder(Order order){
         orderRepository.save(order);
-    }
+    }*/
 }

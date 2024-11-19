@@ -2,13 +2,13 @@ package com.example.demo.helper.mapper;
 
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.helper.mapper.base.StaticMapper;
-import com.example.demo.orders.api.DTOs.ReservationDTOs.PostReservationDTO;
-import com.example.demo.orders.api.DTOs.ReservationDTOs.ReservationDTOsObjects.FullReservation;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.PostReservationDTO;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationHelperDTOs.ReservationDTO;
 import com.example.demo.orders.domain.entities.Reservation;
 
 public class ReservationMapper {
 
-    public static final StaticMapper<PostReservationDTO, Reservation> TO_MODEL = dto -> {
+   /* public static final StaticMapper<PostReservationDTO, Reservation> TO_MODEL = dto -> {
         Reservation reservation = new Reservation();
         reservation.setReservationStartAt(dto.getReservationStartAt());
         reservation.setReservationEndAt(dto.getReservationEndAt());
@@ -39,6 +39,6 @@ public class ReservationMapper {
         reservationDTO.setCreatedAt(entity.getCreatedAt());
         reservationDTO.setBusinessId(entity.getBusinessId());
         return reservationDTO;
-    };
+    };*/
 
 }

@@ -1,11 +1,11 @@
 package com.example.demo.orders.domain.entities;
 
+import com.example.demo.orders.domain.entities.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.UUID;
 
 @Entity

@@ -33,7 +33,7 @@ public class ReservationService {
 
     // TODO: change how the DTO is being mapped, reservation shouldn't receive a list of serviceChargeIds, appliedCharges should be created separately?
     // TODO: galima movint i application service ir is ten kniest sita ir applied services atskirai
-    public void createReservation(PostReservationDTO postReservationDTO){
+   /* public void createReservation(PostReservationDTO postReservationDTO){
         reservationRepository.save(
                 Mapper.mapToModel(
                         postReservationDTO,
@@ -97,5 +97,5 @@ public class ReservationService {
 
     public void deleteReservation(UUID id) {
         reservationRepository.deleteById(id);
-    }
+    }*/
 }

@@ -1,6 +1,6 @@
 package com.example.demo.orders.API.Endpoints;
 
-import com.example.demo.helper.validator.ValidationForDifferentHTTPCodes;
+import com.example.demo.helper.validator.ValidatorForHTTPStatus;
 import com.example.demo.orders.API.DTOs.DiscountDTO.GetDiscountsDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.PatchDiscountDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.PostDiscountDTO;
@@ -25,10 +25,7 @@ public class DiscountsController {
     }
     @PostMapping
     public ResponseEntity<Object> createDiscount (@RequestParam UUID employeeId, @RequestBody PostDiscountDTO postDiscountDTO){
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
-        if(badResponse != null){
-            return badResponse;
-        }
+        ValidatorForHTTPStatus.checkFor403(employeeId);
 
         if(postDiscountDTO.getValidFrom().compareTo(postDiscountDTO.getValidUntil()) > 0){
              throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -36,7 +33,7 @@ public class DiscountsController {
 
         ResponseDiscountDTO createdDiscount = discountService.createAndReturnDiscount();
 
-        ValidationForDifferentHTTPCodes.checkFor404(createdDiscount);
+        ValidatorForHTTPStatus.checkFor404(createdDiscount);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscount);
     }
@@ -44,14 +41,11 @@ public class DiscountsController {
     @GetMapping
     public ResponseEntity<Object> getDiscounts (@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam UUID businessId,
                                                 @RequestParam UUID employeeId){
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
-        if(badResponse != null){
-            return badResponse;
-        }
+        /*Not adding authorization validation because seems like you wouldn't need it?????*/
 
         GetDiscountsDTO discounts = discountService.returnAllDiscountsByBusinessId(businessId);
 
-        ValidationForDifferentHTTPCodes.checkFor404(discounts);
+        ValidatorForHTTPStatus.checkFor404(discounts);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(discounts);
     }
@@ -59,25 +53,24 @@ public class DiscountsController {
     @PatchMapping("/{discountId}")
     public  ResponseEntity<Object> updateDiscount(@PathVariable UUID discountId, @RequestParam UUID  employeeId,
                                                   @RequestBody PatchDiscountDTO patchDiscountDTO){
+        ValidatorForHTTPStatus.checkFor403(employeeId);
+
         /*do validation for thing*/
 
         ResponseDiscountDTO updatedDiscount = discountService.updateAndReturnDiscount(employeeId, patchDiscountDTO);
 
-        ValidationForDifferentHTTPCodes.checkFor404(updatedDiscount);
+        ValidatorForHTTPStatus.checkFor404(updatedDiscount);
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedDiscount);
     }
 
     @DeleteMapping("/{discountId}")
     public ResponseEntity<Object> deleteDiscount(@PathVariable UUID discountId, @RequestParam UUID employeeId){
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
-        if(badResponse != null){
-            return badResponse;
-        }
+        ValidatorForHTTPStatus.checkFor403(employeeId);
 
         boolean wasDeletionSuccesful = discountService.deleteDiscountById(discountId);
 
-        ValidationForDifferentHTTPCodes.checkFor404(wasDeletionSuccesful); //cringe, right now need to get null from wasDeletionSuccessful
+        ValidatorForHTTPStatus.checkFor404(wasDeletionSuccesful); //cringe, right now need to get null from wasDeletionSuccessful
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -29,7 +29,7 @@ public class Discount {
 
     @ManyToOne
     @JoinColumn(name = "business_id", nullable = false)
-    private Business business;
+    private BusinessMock business;
 
     @ManyToMany
     @JoinTable(

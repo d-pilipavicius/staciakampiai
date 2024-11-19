@@ -26,7 +26,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "business_id", nullable = false)
-    //private Business business;
+    private BusinessMock business;
 
     @OneToOne
     @JoinColumn(name = "reservation_id", nullable = true)
@@ -34,7 +34,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
-   // private Employee employee;
+    private EmployeeMock employee;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @Column(nullable = true)

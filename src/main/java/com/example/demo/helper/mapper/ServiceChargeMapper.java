@@ -1,15 +1,15 @@
 package com.example.demo.helper.mapper;
 
 import com.example.demo.helper.mapper.base.StaticMapper;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
 import com.example.demo.orders.domain.entities.ServiceCharge;
-import com.example.demo.orders.api.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeHelperDTOs.ServiceChargeDTO;
 
 import java.util.Optional;
 
 public class ServiceChargeMapper {
 
-    public static final StaticMapper<PostServiceChargeDTO, ServiceCharge> TO_MODEL = dto -> {
+    /*public static final StaticMapper<PostServiceChargeDTO, ServiceCharge> TO_MODEL = dto -> {
         ServiceCharge serviceCharge = new ServiceCharge();
         serviceCharge.setTitle(dto.getTitle());
         serviceCharge.setBusinessId(dto.getBusinessId());
@@ -28,5 +28,5 @@ public class ServiceChargeMapper {
         serviceChargeDTO.setValueType(entity.getValueType());
         serviceChargeDTO.setCurrency(Optional.ofNullable(entity.getCurrency()));
         return serviceChargeDTO;
-    };
+    };*/
 }

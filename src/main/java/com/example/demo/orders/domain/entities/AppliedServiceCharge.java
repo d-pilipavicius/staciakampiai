@@ -29,7 +29,7 @@ public class AppliedServiceCharge {
 
     @ManyToOne
     @JoinColumn(name = "charged_by_employee_id", nullable = false)
-    private Employee employee;
+    private EmployeeMock employee;
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = true)

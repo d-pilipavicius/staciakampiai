@@ -25,7 +25,7 @@ public class ProductModifier {
 
     @ManyToOne
     @JoinColumn(name = "business_id", nullable = false)
-    private Business business;
+    private BusinessMock business;
 
     @ManyToMany(mappedBy = "productModifiers")
     private List<Product> products;

@@ -10,7 +10,7 @@ import java.util.UUID;
 @Service
 public class DiscountApplicationService {
     public ResponseDiscountDTO createAndReturnDiscount(){
-        return null;
+        return new ResponseDiscountDTO();
     }
 
     public GetDiscountsDTO returnAllDiscountsByBusinessId(UUID businessId){
