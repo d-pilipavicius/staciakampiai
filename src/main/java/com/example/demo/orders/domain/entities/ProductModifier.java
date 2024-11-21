@@ -3,6 +3,7 @@ package com.example.demo.orders.domain.entities;
 import com.example.demo.orders.domain.entities.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(
         name = "product_modifier",
         indexes = {
@@ -23,9 +25,8 @@ public class ProductModifier {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "business_id", nullable = false)
-    private Business business;
+    @Column(name = "business_id", nullable = false)
+    private UUID businessId;
 
     @ManyToMany(mappedBy = "productModifiers")
     private List<Product> products;

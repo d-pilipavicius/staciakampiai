@@ -5,10 +5,14 @@ import com.example.demo.helper.mapper.ReservationMapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.orders.API.DTOs.ReservationDTOs.GetReservationsDTO;
 import com.example.demo.orders.API.DTOs.ReservationDTOs.PatchReservationDTO;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationHelperDTOs.ReservationDTO;
 import com.example.demo.orders.API.DTOs.ReservationDTOs.ResponseReservationDTO;
 import com.example.demo.orders.API.DTOs.ReservationDTOs.PostReservationDTO;
+import com.example.demo.orders.domain.entities.AppliedServiceCharge;
 import com.example.demo.orders.domain.entities.Reservation;
+import com.example.demo.orders.repository.AppliedServiceChargeRepository;
 import com.example.demo.orders.repository.ReservationRepository;
+import com.example.demo.orders.repository.ServiceChargeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,24 +30,47 @@ public class ReservationService {
     private static final Logger logger = LoggerFactory.getLogger(ReservationService.class);
 
     private final ReservationRepository reservationRepository;
+    private final AppliedServiceChargeRepository appliedServiceChargeRepository;
 
-    public ReservationService(ReservationRepository reservationRepository) {
+    public ReservationService(
+            ReservationRepository reservationRepository,
+            AppliedServiceChargeRepository appliedServiceChargeRepository
+    ) {
         this.reservationRepository = reservationRepository;
+        this.appliedServiceChargeRepository = appliedServiceChargeRepository;
     }
 
     // TODO: change how the DTO is being mapped, reservation shouldn't receive a list of serviceChargeIds, appliedCharges should be created separately?
     // TODO: galima movint i application service ir is ten kniest sita ir applied services atskirai
-    public void createReservation(PostReservationDTO postReservationDTO){
-        reservationRepository.save(
-                Mapper.mapToModel(
-                        postReservationDTO,
-                        ReservationMapper.TO_MODEL
-                )
+    @Transactional
+    public ReservationDTO createReservation(PostReservationDTO postReservationDTO){
+        Reservation reservation = Mapper.mapToModel(
+                postReservationDTO,
+                ReservationMapper.TO_MODEL
+        );
+
+        if(postReservationDTO.getServiceChargeIds().isPresent()){
+            List<AppliedServiceCharge> appliedServiceCharges = appliedServiceChargeRepository
+                    .findAllById(
+                            postReservationDTO.getServiceChargeIds().get()
+                    );
+
+            if(appliedServiceCharges.size() != postReservationDTO.getServiceChargeIds().get().size()){
+                throw new IllegalArgumentException("Some of the service charges are not found");
+            }
+
+            appliedServiceCharges.forEach(sc -> sc.setReservation(reservation));
+            reservation.setAppliedServiceCharges(appliedServiceCharges);
+        }
+
+        return Mapper.mapToDTO(
+                reservationRepository.save(reservation),
+                ReservationMapper.TO_DTO
         );
     }
 
     public GetReservationsDTO getReservations() {
-        List<FullReservation> reservations = reservationRepository.findAll().stream()
+        List<ReservationDTO> reservations = reservationRepository.findAll().stream()
                 .map(ReservationMapper.TO_DTO::map)
                 .toList();
 
@@ -54,17 +81,16 @@ public class ReservationService {
     }
 
     public GetReservationsDTO getReservations(int page, int size) {
-        List<FullReservation> reservations = reservationRepository.findAll(PageRequest.of(page, size)).stream()
+        List<ReservationDTO> reservations = reservationRepository.findAll(PageRequest.of(page, size)).stream()
                 .map(ReservationMapper.TO_DTO::map)
                 .toList();
 
-        GetReservationsDTO getReservationsDTO = new GetReservationsDTO();
-        getReservationsDTO.setItems(reservations);
-        getReservationsDTO.setCurrentPage(page);
-        getReservationsDTO.setTotalItems(reservations.size());
-        getReservationsDTO.setTotalPages(size);
-
-        return getReservationsDTO;
+        return new GetReservationsDTO(
+                reservations.size(),
+                size,
+                page,
+                reservations
+        );
     }
 
     @Transactional
@@ -72,7 +98,7 @@ public class ReservationService {
         Optional<Reservation> reservation = reservationRepository.findById(id);
 
         if (reservation.isEmpty()) {
-            throw new EntityNotFoundException("Reservation not found");
+            throw new IllegalArgumentException("Reservation not found");
         }
 
         patchReservationDTO.getReservationStartAt().ifPresent(reservation.get()::setReservationStartAt);

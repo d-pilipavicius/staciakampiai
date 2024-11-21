@@ -1,5 +1,6 @@
 package com.example.demo.orders.API.DTOs.DiscountDTO;
 
+import com.example.demo.orders.domain.entities.enums.Currency;
 import com.example.demo.orders.domain.entities.enums.DiscountTarget;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

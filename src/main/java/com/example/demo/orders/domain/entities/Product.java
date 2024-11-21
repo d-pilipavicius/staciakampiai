@@ -3,6 +3,7 @@ package com.example.demo.orders.domain.entities;
 import com.example.demo.orders.domain.entities.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Table(
         name = "product",
         indexes = {
@@ -23,12 +25,13 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "business_id", nullable = false)
-    private Business business;
+    @Column(name = "business_id", nullable = false)
+    private UUID businessId;
 
-    @ManyToMany(mappedBy = "products")
-    private List<Discount> discounts;
+    @ElementCollection
+    @CollectionTable(name = "discount_entitled_product", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "discount_id")
+    private List<UUID> discountIds;
 
     @ManyToMany
     @JoinTable(
@@ -40,7 +43,7 @@ public class Product {
 
     @ManyToMany
     @JoinTable(
-            name = "product_compatible_modifier",
+            name = "product_modifier_entitled_product",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "product_modifier_id")
     )
@@ -61,7 +64,7 @@ public class Product {
     private Currency currency;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private byte[] rowVersion;

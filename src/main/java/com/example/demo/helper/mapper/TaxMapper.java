@@ -2,7 +2,7 @@ package com.example.demo.helper.mapper;
 
 import com.example.demo.helper.mapper.base.StaticMapper;
 import com.example.demo.orders.API.DTOs.TaxDTOs.PostTaxDTO;
-import com.example.demo.orders.API.DTOs.TaxDTOs.TaxDTOsObjects.FullTax;
+import com.example.demo.orders.API.DTOs.TaxDTOs.TaxHelperDTOs.TaxDTO;
 import com.example.demo.orders.domain.entities.Tax;
 
 public class TaxMapper {
@@ -15,8 +15,8 @@ public class TaxMapper {
         return tax;
     };
 
-    public static final StaticMapper<Tax, FullTax> TO_DTO = entity -> {
-        FullTax taxDTO = new FullTax();
+    public static final StaticMapper<Tax, TaxDTO> TO_DTO = entity -> {
+        TaxDTO taxDTO = new TaxDTO();
         taxDTO.setTitle(entity.getTitle());
         taxDTO.setRatePercentage(entity.getRatePercentage());
         taxDTO.setBusinessId(entity.getBusinessId());

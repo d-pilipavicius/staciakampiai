@@ -6,7 +6,7 @@ import com.example.demo.orders.API.DTOs.TaxDTOs.GetTaxesDTO;
 import com.example.demo.orders.API.DTOs.TaxDTOs.PatchTaxDTO;
 import com.example.demo.orders.API.DTOs.TaxDTOs.ResponseTaxDTO;
 import com.example.demo.orders.API.DTOs.TaxDTOs.PostTaxDTO;
-import com.example.demo.orders.API.DTOs.TaxDTOs.TaxHelperDTOs.FullTax;
+import com.example.demo.orders.API.DTOs.TaxDTOs.TaxHelperDTOs.TaxDTO;
 import com.example.demo.orders.domain.entities.Tax;
 import com.example.demo.orders.repository.TaxRepository;
 import org.slf4j.Logger;
@@ -31,17 +31,20 @@ public class TaxService {
         this.taxRepository = taxRepository;
     }
 
-    public void createTax(PostTaxDTO postTaxDTO){
-        taxRepository.save(
-                Mapper.mapToModel(
-                        postTaxDTO,
-                        TaxMapper.TO_MODEL
-                )
+    public TaxDTO createTax(PostTaxDTO postTaxDTO){
+        return Mapper.mapToDTO(
+                taxRepository.save(
+                        Mapper.mapToModel(
+                                postTaxDTO,
+                                TaxMapper.TO_MODEL
+                        )
+                ),
+                TaxMapper.TO_DTO
         );
     }
 
     public GetTaxesDTO getAllTaxes(){
-        List<FullTax> taxes = taxRepository.findAll().stream()
+        List<TaxDTO> taxes = taxRepository.findAll().stream()
                 .map(TaxMapper.TO_DTO::map)
                 .collect(Collectors.toList());
 
@@ -53,18 +56,16 @@ public class TaxService {
     }
 
     public GetTaxesDTO getAllTaxes(int page, int size){
-        List<FullTax> taxes = taxRepository.findAll(PageRequest.of(page, size)).stream()
+        List<TaxDTO> taxes = taxRepository.findAll(PageRequest.of(page, size)).stream()
                 .map(TaxMapper.TO_DTO::map)
                 .collect(Collectors.toList());
 
-        // TODO: add constructor to GetTaxesDTO
-        GetTaxesDTO getTaxesDTO = new GetTaxesDTO();
-        getTaxesDTO.setItems(taxes);
-        getTaxesDTO.setCurrentPage(page);
-        getTaxesDTO.setTotalItems(taxes.size());
-        getTaxesDTO.setTotalPages(size);
-
-        return getTaxesDTO;
+        return new GetTaxesDTO(
+                taxes.size(),
+                size,
+                page,
+                taxes
+        );
     }
 
     @Transactional

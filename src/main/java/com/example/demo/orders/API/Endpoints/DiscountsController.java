@@ -34,7 +34,7 @@ public class DiscountsController {
              throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        ResponseDiscountDTO createdDiscount = discountService.createAndReturnDiscount();
+        ResponseDiscountDTO createdDiscount = discountService.createDiscount();
 
         ValidationForDifferentHTTPCodes.checkFor404(createdDiscount);
 

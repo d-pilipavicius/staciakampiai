@@ -5,6 +5,7 @@ import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.GetServiceChargesDTO;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PatchServiceChargeDTO;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ResponseServiceChargeDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeHelperDTOs.ServiceChargeDTO;
 import com.example.demo.orders.domain.entities.ServiceCharge;
 import com.example.demo.orders.repository.ServiceChargeRepository;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
-import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeHelperDTOs.FullServiceCharge;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -30,17 +30,20 @@ public class ServiceChargeService {
         this.serviceChargeRepository = serviceChargeRepository;
     }
 
-    public void createServiceCharge(PostServiceChargeDTO postServiceChargeDTO){
-        serviceChargeRepository.save(
-                Mapper.mapToModel(
-                        postServiceChargeDTO,
-                        ServiceChargeMapper.TO_MODEL
-                )
+    public ServiceChargeDTO createServiceCharge(PostServiceChargeDTO postServiceChargeDTO){
+        return Mapper.mapToDTO(
+                serviceChargeRepository.save(
+                        Mapper.mapToModel(
+                                postServiceChargeDTO,
+                                ServiceChargeMapper.TO_MODEL
+                        )
+                ),
+                ServiceChargeMapper.TO_DTO
         );
     }
 
     public GetServiceChargesDTO getServiceCharges(){
-        List<FullServiceCharge> serviceCharges = serviceChargeRepository.findAll().stream()
+        List<ServiceChargeDTO> serviceCharges = serviceChargeRepository.findAll().stream()
                 .map(ServiceChargeMapper.TO_DTO::map)
                 .toList();
 
@@ -52,18 +55,16 @@ public class ServiceChargeService {
     }
 
     public GetServiceChargesDTO getServiceCharges(int page, int size){
-        List<FullServiceCharge> serviceCharges = serviceChargeRepository.findAll(PageRequest.of(page, size)).stream()
+        List<ServiceChargeDTO> serviceCharges = serviceChargeRepository.findAll(PageRequest.of(page, size)).stream()
                 .map(ServiceChargeMapper.TO_DTO::map)
                 .toList();
 
-        // TODO: add constructor to GetServiceChargesDTO
-        GetServiceChargesDTO getServiceChargesDTO = new GetServiceChargesDTO();
-        getServiceChargesDTO.setItems(serviceCharges);
-        getServiceChargesDTO.setCurrentPage(page);
-        getServiceChargesDTO.setTotalItems(serviceCharges.size());
-        getServiceChargesDTO.setTotalPages(size);
-
-        return getServiceChargesDTO;
+        return new GetServiceChargesDTO(
+                serviceCharges.size(),
+                size,
+                page,
+                serviceCharges
+        );
     }
 
     @Transactional

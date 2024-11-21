@@ -1,6 +1,7 @@
 package com.example.demo.helper.mapper;
 
 import com.example.demo.helper.mapper.base.StaticMapper;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationHelperDTOs.CustomerDTO;
 import com.example.demo.orders.domain.entities.Customer;
 
 public class CustomerMapper {

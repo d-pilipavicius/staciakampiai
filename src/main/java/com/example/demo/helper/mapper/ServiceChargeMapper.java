@@ -2,8 +2,8 @@ package com.example.demo.helper.mapper;
 
 import com.example.demo.helper.mapper.base.StaticMapper;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PostServiceChargeDTO;
+import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeHelperDTOs.ServiceChargeDTO;
 import com.example.demo.orders.domain.entities.ServiceCharge;
-import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeDTOsObjects.FullServiceCharge;
 
 import java.util.Optional;
 
@@ -19,8 +19,8 @@ public class ServiceChargeMapper {
         return serviceCharge;
     };
 
-    public static final StaticMapper<ServiceCharge, FullServiceCharge> TO_DTO = entity -> {
-        FullServiceCharge serviceChargeDTO = new FullServiceCharge();
+    public static final StaticMapper<ServiceCharge, ServiceChargeDTO> TO_DTO = entity -> {
+        ServiceChargeDTO serviceChargeDTO = new ServiceChargeDTO();
         serviceChargeDTO.setId(entity.getId());
         serviceChargeDTO.setTitle(entity.getTitle());
         serviceChargeDTO.setBusinessId(entity.getBusinessId());

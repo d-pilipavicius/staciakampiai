@@ -1,5 +1,6 @@
 package com.example.demo.orders.API.DTOs.DiscountDTO;
 
+import com.example.demo.orders.domain.entities.enums.Currency;
 import com.example.demo.orders.domain.entities.enums.DiscountTarget;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
 import lombok.AllArgsConstructor;

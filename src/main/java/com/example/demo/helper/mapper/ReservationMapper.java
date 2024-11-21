@@ -3,8 +3,10 @@ package com.example.demo.helper.mapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.helper.mapper.base.StaticMapper;
 import com.example.demo.orders.API.DTOs.ReservationDTOs.PostReservationDTO;
-import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationDTOsObjects.FullReservation;
+import com.example.demo.orders.API.DTOs.ReservationDTOs.ReservationHelperDTOs.ReservationDTO;
 import com.example.demo.orders.domain.entities.Reservation;
+
+import java.sql.Timestamp;
 
 public class ReservationMapper {
 
@@ -15,19 +17,22 @@ public class ReservationMapper {
         reservation.setBusinessId(dto.getBusinessId());
         reservation.setCustomer(
             Mapper.mapToModel(
-                dto.getCustomerDTO(),
+                dto.getCustomer(),
                 CustomerMapper.TO_MODEL
             )
         );
-        // TODO: employeeId is missing and createdAt is missing
+        reservation.setCreatedAt(
+                new Timestamp(System.currentTimeMillis())
+        );
+        // TODO: employeeId is missing and createdAt is missing -> should be set in the service
         // TODO: wtf is serviceChargeIds? they should be created after reservation is created
         return reservation;
     };
 
-    public static final StaticMapper<Reservation, FullReservation> TO_DTO = entity -> {
-        FullReservation reservationDTO = new FullReservation();
+    public static final StaticMapper<Reservation, ReservationDTO> TO_DTO = entity -> {
+        ReservationDTO reservationDTO = new ReservationDTO();
         reservationDTO.setId(entity.getId());
-        reservationDTO.setCustomerDTO(
+        reservationDTO.setCustomer(
             Mapper.mapToDTO(
                 entity.getCustomer(),
                 CustomerMapper.TO_DTO

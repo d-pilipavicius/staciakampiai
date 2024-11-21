@@ -5,6 +5,7 @@ import com.example.demo.orders.domain.entities.enums.DiscountTarget;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
 @Table(
         name = "discount",
@@ -27,21 +29,13 @@ public class Discount {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "business_id", nullable = false)
-    private Business business;
+    @Column(name = "business_id", nullable = false)
+    private UUID businessId;
 
-    @ManyToMany
-    @JoinTable(
-            name = "discount_entitled_product",
-            joinColumns = @JoinColumn(name = "discount_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products;
-
-    @OneToMany
-    @JoinColumn(name = "applied_discount_id", nullable = true)
-    private List<AppliedDiscount> appliedDiscounts;
+    @ElementCollection
+    @CollectionTable(name = "discount_entitled_product", joinColumns = @JoinColumn(name = "discount_id"))
+    @Column(name = "product_id")
+    private List<UUID> productIds;
 
     @Column(nullable = true)
     private String code;
