@@ -17,4 +17,9 @@ public class GetTaxesDTO {
     private int totalPages;
     private int currentPage;
     private List<TaxDTO> items;
+
+    public GetTaxesDTO(List<TaxDTO> taxes, int totalItems) {
+        this.items = taxes;
+        this.totalItems = totalItems;
+    }
 }

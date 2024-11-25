@@ -52,13 +52,7 @@ public class ProductService {
 
     @Transactional
     public ProductDTO createProduct(PostProductDTO postProductDTO){
-        List<ProductModifier> productModifiers = productModifierRepository
-                .findAllById(
-                        postProductDTO.getCompatibleModifierIds()
-                );
-
-        // Validation?
-        if(productModifiers.size() != postProductDTO.getCompatibleModifierIds().size()){
+        if(!productValidator.modifiersExist(postProductDTO.getCompatibleModifierIds())){
             throw new IllegalArgumentException("Some of the modifiers are not found");
         }
 
@@ -67,7 +61,11 @@ public class ProductService {
                 ProductMapper.TO_MODEL
         );
 
-        product.setProductModifiers(productModifiers);
+        product.setProductModifiers(
+                productModifierRepository.findAllById(
+                                postProductDTO.getCompatibleModifierIds()
+                        )
+        );
 
         return Mapper.mapToDTO(
                 productRepository.save(product),
@@ -113,13 +111,11 @@ public class ProductService {
     }
 
     public GetModifiersDTO getAllProductModifiers(){
-        List<ProductModifierDTO> productModifierDTOS = productModifierRepository.findAll().stream()
-                .map(ProductModifierMapper.TO_DTO::map)
-                .toList();
-
-        GetModifiersDTO getModifiersDTO = new GetModifiersDTO();
-        getModifiersDTO.setItems(productModifierDTOS);
-        return getModifiersDTO;
+        return new GetModifiersDTO(
+                productModifierRepository.findAll().stream()
+                        .map(ProductModifierMapper.TO_DTO::map)
+                        .toList()
+        );
     }
 
     public GetModifiersDTO getAllProductModifiers(int page, int size){
@@ -135,71 +131,79 @@ public class ProductService {
         );
     }
 
-    // TODO: do smth with rowVersion
     @Transactional
     public ResponseProductDTO updateProduct(PatchProductDTO patchProductDTO, UUID id){
-        Product product = productRepository.findById(id).orElseThrow();
-
-        patchProductDTO.getTitle().ifPresent(product::setTitle);
-        patchProductDTO.getQuantityInStock().ifPresent(product::setQuantityInStock);
-        patchProductDTO.getPrice().ifPresent(
-                moneyDTO -> {
-                    product.setAmount(moneyDTO.getAmount());
-                    product.setCurrency(moneyDTO.getCurrency());
-                }
+        Product product = productRepository.findById(id).orElseThrow(() ->
+            new IllegalArgumentException("Product not found")
         );
 
-        // Update compatible modifiers
-        if(patchProductDTO.getCompatibleModifierIds().isPresent()){
-            List<ProductModifier> productModifiers = productModifierRepository
-                    .findAllById(
-                            patchProductDTO.getCompatibleModifierIds().get()
-                    );
+        applyProductUpdates(patchProductDTO, product);
 
-            // Validation?
-            if(productModifiers.size() != patchProductDTO.getCompatibleModifierIds().get().size()){
-                throw new IllegalArgumentException("Some of the modifiers are not found");
-            }
-
-            product.setProductModifiers(productModifiers);
-        }
-
-        ResponseProductDTO responseProductDTO = new ResponseProductDTO();
-        responseProductDTO.setProduct(Mapper.mapToDTO(
-                productRepository.save(product),
-                ProductMapper.TO_DTO
-        ));
-
-        return responseProductDTO;
+        return new ResponseProductDTO(
+                Mapper.mapToDTO(
+                        productRepository.save(product),
+                        ProductMapper.TO_DTO
+                )
+        );
     }
 
     @Transactional
     public ResponseModifierDTO updateProductModifier(PatchModifierDTO patchModifierDTO, UUID id){
-        ProductModifier productModifier = productModifierRepository.findById(id).orElseThrow();
-
-        patchModifierDTO.getTitle().ifPresent(productModifier::setTitle);
-        patchModifierDTO.getQuantityInStock().ifPresent(productModifier::setQuantityInStock);
-        patchModifierDTO.getPrice().ifPresent(
-                moneyDTO -> {
-                    productModifier.setPrice(moneyDTO.getAmount());
-                    productModifier.setCurrency(moneyDTO.getCurrency());
-                }
+        ProductModifier productModifier = productModifierRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("Product modifier not found")
         );
 
-        ResponseModifierDTO responseModifierDTO = new ResponseModifierDTO();
-        responseModifierDTO.setProductModifier(Mapper.mapToDTO(
-                productModifierRepository.save(productModifier),
-                ProductModifierMapper.TO_DTO
-        ));
+        applyModifierUpdates(patchModifierDTO, productModifier);
 
-        return responseModifierDTO;
+        return new ResponseModifierDTO(
+                Mapper.mapToDTO(
+                        productModifierRepository.save(productModifier),
+                        ProductModifierMapper.TO_DTO
+                )
+        );
     }
 
+    @Transactional
     public void deleteProduct(UUID id){
         productRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteProductModifier(UUID id){
         productModifierRepository.deleteById(id);
     }
+
+    private List<ProductModifier> getModifiersByIds(List<UUID> modifierIds) {
+        return productModifierRepository.findAllById(modifierIds);
+    }
+
+    private void applyProductUpdates(PatchProductDTO patchProductDTO, Product product) {
+        patchProductDTO.getTitle().ifPresent(product::setTitle);
+        patchProductDTO.getQuantityInStock().ifPresent(product::setQuantityInStock);
+        patchProductDTO.getPrice().ifPresent(moneyDTO -> {
+            product.setAmount(moneyDTO.getAmount());
+            product.setCurrency(moneyDTO.getCurrency());
+        });
+
+        patchProductDTO.getCompatibleModifierIds().ifPresent(this::validateModifiers);
+        patchProductDTO.getCompatibleModifierIds()
+                .map(this::getModifiersByIds)
+                .ifPresent(product::setProductModifiers);
+    }
+
+    private void applyModifierUpdates(PatchModifierDTO patchModifierDTO, ProductModifier modifier) {
+        patchModifierDTO.getTitle().ifPresent(modifier::setTitle);
+        patchModifierDTO.getQuantityInStock().ifPresent(modifier::setQuantityInStock);
+        patchModifierDTO.getPrice().ifPresent(moneyDTO -> {
+            modifier.setPrice(moneyDTO.getAmount());
+            modifier.setCurrency(moneyDTO.getCurrency());
+        });
+    }
+
+    private void validateModifiers(List<UUID> modifierIds) {
+        if(!productValidator.modifiersExist(modifierIds)){
+            throw new IllegalArgumentException("Some of the modifiers are not found");
+        }
+    }
+
 }

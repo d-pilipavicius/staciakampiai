@@ -50,10 +50,7 @@ public class DiscountService {
                 .map(DiscountMapper.TO_DTO::map)
                 .toList();
 
-        // TODO: add constructor to GetDiscountsDTO
-        GetDiscountsDTO getDiscountsDTO = new GetDiscountsDTO();
-        getDiscountsDTO.setItems(discounts);
-        return getDiscountsDTO;
+        return new GetDiscountsDTO(discounts);
     }
 
     public GetDiscountsDTO getAllDiscounts(int page, int size){

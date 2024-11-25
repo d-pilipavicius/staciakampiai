@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,6 +30,7 @@ public class TaxService {
         this.taxRepository = taxRepository;
     }
 
+    @Transactional
     public TaxDTO createTax(PostTaxDTO postTaxDTO){
         return Mapper.mapToDTO(
                 taxRepository.save(
@@ -48,11 +48,7 @@ public class TaxService {
                 .map(TaxMapper.TO_DTO::map)
                 .collect(Collectors.toList());
 
-        // TODO: add constructor to GetTaxesDTO
-        GetTaxesDTO getTaxesDTO = new GetTaxesDTO();
-        getTaxesDTO.setItems(taxes);
-
-        return getTaxesDTO;
+        return new GetTaxesDTO(taxes, taxes.size());
     }
 
     public GetTaxesDTO getAllTaxes(int page, int size){
@@ -70,26 +66,27 @@ public class TaxService {
 
     @Transactional
     public ResponseTaxDTO updateTax(PatchTaxDTO patchTaxDTO, UUID id){
-        Optional<Tax> tax = taxRepository.findById(id);
+        Tax tax = taxRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Tax with id " + id + " not found"));
 
-        if(tax.isEmpty()){
-            logger.error("Tax with id {} not found", id);
-            return null;
-        }
+        applyTaxUpdates(patchTaxDTO, tax);
 
-        patchTaxDTO.getTitle().ifPresent(tax.get()::setTitle);
-        patchTaxDTO.getRatePercentage().ifPresent(tax.get()::setRatePercentage);
-
-        ResponseTaxDTO newTaxDTO = new ResponseTaxDTO();
-        newTaxDTO.setTax(Mapper.mapToDTO(
-                taxRepository.save(tax.get()),
+        return new ResponseTaxDTO(Mapper.mapToDTO(
+                taxRepository.save(tax),
                 TaxMapper.TO_DTO
         ));
-
-        return newTaxDTO;
     }
 
     public void deleteTax(UUID id){
+        if (!taxRepository.existsById(id)) {
+            logger.error("Tax with id {} not found", id);
+            throw new IllegalArgumentException("Tax with id " + id + " not found");
+        }
         taxRepository.deleteById(id);
+    }
+
+    private void applyTaxUpdates(PatchTaxDTO patchTaxDTO, Tax tax) {
+        patchTaxDTO.getTitle().ifPresent(tax::setTitle);
+        patchTaxDTO.getRatePercentage().ifPresent(tax::setRatePercentage);
     }
 }

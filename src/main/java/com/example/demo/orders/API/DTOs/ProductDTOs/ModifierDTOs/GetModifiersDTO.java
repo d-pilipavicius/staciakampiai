@@ -17,4 +17,8 @@ public class GetModifiersDTO {
     private int totalPages;
     private int currentPage;
     private List<ProductModifierDTO> items;
+
+    public GetModifiersDTO(List<ProductModifierDTO> items){
+        this.items = items;
+    }
 }

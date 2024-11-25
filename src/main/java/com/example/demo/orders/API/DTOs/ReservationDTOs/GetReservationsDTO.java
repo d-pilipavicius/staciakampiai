@@ -17,4 +17,9 @@ public class GetReservationsDTO {
     private int totalPages;
     private int currentPage;
     private List<ReservationDTO> items;
+
+    public GetReservationsDTO(List<ReservationDTO> items, int totalItems) {
+        this.items = items;
+        this.totalItems = totalItems;
+    }
 }

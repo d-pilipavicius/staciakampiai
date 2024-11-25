@@ -36,6 +36,7 @@ public class ServiceChargeService {
         this.appliedServiceChargeRepository = appliedServiceChargeRepository;
     }
 
+    @Transactional
     public ServiceChargeDTO createServiceCharge(PostServiceChargeDTO postServiceChargeDTO){
         return Mapper.mapToDTO(
                 serviceChargeRepository.save(
@@ -53,11 +54,7 @@ public class ServiceChargeService {
                 .map(ServiceChargeMapper.TO_DTO::map)
                 .toList();
 
-        // TODO: add constructor to GetServiceChargesDTO
-        GetServiceChargesDTO getServiceChargesDTO = new GetServiceChargesDTO();
-        getServiceChargesDTO.setItems(serviceCharges);
-
-        return getServiceChargesDTO;
+        return new GetServiceChargesDTO(serviceCharges, serviceCharges.size());
     }
 
     public GetServiceChargesDTO getServiceCharges(int page, int size){
@@ -74,29 +71,28 @@ public class ServiceChargeService {
     }
 
     @Transactional
-    public ResponseServiceChargeDTO updateServiceCharge(PatchServiceChargeDTO patchServiceChargeDTO, UUID id){
-        Optional<ServiceCharge> serviceCharge = serviceChargeRepository.findById(id);
+    public ResponseServiceChargeDTO updateServiceCharge(PatchServiceChargeDTO patchServiceChargeDTO, UUID id) {
+        ServiceCharge serviceCharge = serviceChargeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("ServiceCharge with id " + id + " not found"));
 
-        if(serviceCharge.isEmpty()){
-            logger.error("ServiceCharge with id {} not found", id);
-            return null;
-        }
+        applyServiceChargeUpdates(patchServiceChargeDTO, serviceCharge);
 
-        patchServiceChargeDTO.getTitle().ifPresent(serviceCharge.get()::setTitle);
-        patchServiceChargeDTO.getValue().ifPresent(serviceCharge.get()::setValue);
-        patchServiceChargeDTO.getValueType().ifPresent(serviceCharge.get()::setValueType);
-        patchServiceChargeDTO.getCurrency().ifPresent(serviceCharge.get()::setCurrency);
-
-        ResponseServiceChargeDTO newServiceChargeDTO = new ResponseServiceChargeDTO();
-        newServiceChargeDTO.setServiceCharge(Mapper.mapToDTO(
-                serviceChargeRepository.save(serviceCharge.get()),
-                ServiceChargeMapper.TO_DTO
-        ));
-
-        return newServiceChargeDTO;
+        ServiceCharge updatedServiceCharge = serviceChargeRepository.save(serviceCharge);
+        return new ResponseServiceChargeDTO(Mapper.mapToDTO(updatedServiceCharge, ServiceChargeMapper.TO_DTO));
     }
 
-    public void deleteServiceCharge(UUID id){
+    public void deleteServiceCharge(UUID id) {
+        if (!serviceChargeRepository.existsById(id)) {
+            logger.error("ServiceCharge with id {} not found", id);
+            throw new IllegalArgumentException("ServiceCharge with id " + id + " not found");
+        }
         serviceChargeRepository.deleteById(id);
+    }
+
+    private void applyServiceChargeUpdates(PatchServiceChargeDTO patchServiceChargeDTO, ServiceCharge serviceCharge) {
+        patchServiceChargeDTO.getTitle().ifPresent(serviceCharge::setTitle);
+        patchServiceChargeDTO.getValue().ifPresent(serviceCharge::setValue);
+        patchServiceChargeDTO.getValueType().ifPresent(serviceCharge::setValueType);
+        patchServiceChargeDTO.getCurrency().ifPresent(serviceCharge::setCurrency);
     }
 }

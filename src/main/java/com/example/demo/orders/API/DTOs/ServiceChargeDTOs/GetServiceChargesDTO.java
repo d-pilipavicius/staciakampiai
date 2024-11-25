@@ -17,4 +17,9 @@ public class GetServiceChargesDTO {
     private int totalPages;
     private int currentPage;
     private List<ServiceChargeDTO> items;
+
+    public GetServiceChargesDTO(List<ServiceChargeDTO> serviceCharges, int size) {
+        this.items = serviceCharges;
+        this.totalItems = size;
+    }
 }
