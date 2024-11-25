@@ -2,7 +2,7 @@ package com.example.demo.BusinessSystem.Entities;
 
 import java.util.UUID;
 
-import com.example.demo.BusinessSystem.Entities.Enums.RoleType;
+import com.example.demo.BusinessSystem.Enums.RoleType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
