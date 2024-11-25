@@ -28,7 +28,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,7 +38,7 @@ public class User {
   private String fullName;
 
   @OneToOne
-  @JoinColumn(name = "business_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "business_id", referencedColumnName = "id", nullable = true)
   private Business business;
 
   @Enumerated(EnumType.STRING)

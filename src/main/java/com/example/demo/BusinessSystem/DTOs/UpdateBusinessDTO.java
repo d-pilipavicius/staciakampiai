@@ -12,9 +12,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class UpdateBusinessDTO {
-
-  @NotNull
-  private UUID businessId; 
   
   private String name;
   
