@@ -17,4 +17,8 @@ public class GetDiscountsDTO {
     private int totalPages;
     private int currentPage;
     private List<DiscountDTO> items;
+
+    public GetDiscountsDTO(List<DiscountDTO> items) {
+        this.items = items;
+    }
 }

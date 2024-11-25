@@ -36,21 +36,41 @@ public class DiscountApplicationService {
 
     @Transactional
     public DiscountDTO createDiscount(PostDiscountDTO postDiscountDTO){
-        if(postDiscountDTO.getEntitledProductIds().isPresent()){
-            List<UUID> productIds = postDiscountDTO.getEntitledProductIds().get();
-            if(!productService.validateProductIds(productIds)){
-                throw new IllegalArgumentException("Product ids are not valid");
+        postDiscountDTO.getEntitledProductIds().ifPresent(productIds -> {
+            if (!productService.validateProductIds(productIds)) {
+                throw new IllegalArgumentException("Invalid product IDs provided");
             }
-        }
+        });
 
         return discountService.createDiscount(postDiscountDTO);
     }
 
-    public GetDiscountsDTO returnAllDiscountsByBusinessId(UUID businessId){
-        return new GetDiscountsDTO();
+    public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId){
+        return discountService.getDiscountsByBusinessId(businessId);
     }
 
-    public ResponseDiscountDTO updateAndReturnDiscount(UUID discountId, PatchDiscountDTO discount){return new ResponseDiscountDTO();}
+    public GetDiscountsDTO getAllDiscounts() {
+        return discountService.getAllDiscounts();
+    }
 
-    public boolean deleteDiscountById(UUID disocuntId){return true;}
+    public GetDiscountsDTO getAllDiscounts(int page, int size) {
+        return discountService.getAllDiscounts(page, size);
+    }
+
+    @Transactional
+    public ResponseDiscountDTO updateDiscount(UUID discountId, PatchDiscountDTO patchDiscountDTO) {
+        patchDiscountDTO.getEntitledProductIds().ifPresent(productIds -> {
+            if (!productService.validateProductIds(productIds)) {
+                throw new IllegalArgumentException("Invalid product IDs provided");
+            }
+        });
+
+        return discountService.updateDiscount(patchDiscountDTO, discountId);
+    }
+
+    @Transactional
+    public boolean deleteDiscount(UUID discountId) {
+        discountService.deleteDiscount(discountId);
+        return true;
+    }
 }

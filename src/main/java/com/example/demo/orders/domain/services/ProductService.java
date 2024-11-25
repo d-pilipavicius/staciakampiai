@@ -3,6 +3,7 @@ package com.example.demo.orders.domain.services;
 import com.example.demo.helper.mapper.ProductMapper;
 import com.example.demo.helper.mapper.ProductModifierMapper;
 import com.example.demo.helper.mapper.base.Mapper;
+import com.example.demo.helper.validator.ProductValidator;
 import com.example.demo.orders.API.DTOs.ProductDTOs.GetProductsDTO;
 import com.example.demo.orders.API.DTOs.ProductDTOs.ModifierDTOs.GetModifiersDTO;
 import com.example.demo.orders.API.DTOs.ProductDTOs.ModifierDTOs.PatchModifierDTO;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -34,13 +34,20 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductModifierRepository productModifierRepository;
+    private final ProductValidator productValidator;
 
     public ProductService(
             ProductRepository productRepository,
-            ProductModifierRepository productModifierRepository
+            ProductModifierRepository productModifierRepository,
+            ProductValidator productValidator
     ) {
         this.productRepository = productRepository;
         this.productModifierRepository = productModifierRepository;
+        this.productValidator = productValidator;
+    }
+
+    public boolean validateProductIds(List<UUID> productIds) {
+        return productValidator.productsExist(productIds);
     }
 
     @Transactional

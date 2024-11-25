@@ -49,7 +49,7 @@ public class DiscountsController {
             return badResponse;
         }
 
-        GetDiscountsDTO discounts = discountService.returnAllDiscountsByBusinessId(businessId);
+        GetDiscountsDTO discounts = discountService.getDiscountsByBusinessId(businessId);
 
         ValidationForDifferentHTTPCodes.checkFor404(discounts);
 

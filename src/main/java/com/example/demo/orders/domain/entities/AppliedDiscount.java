@@ -5,6 +5,7 @@ import com.example.demo.orders.domain.entities.enums.DiscountType;
 import com.example.demo.orders.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(
         name = "applied_discount",
         indexes = {

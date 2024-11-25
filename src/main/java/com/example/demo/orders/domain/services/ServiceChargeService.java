@@ -7,6 +7,7 @@ import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.PatchServiceChargeDTO;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ResponseServiceChargeDTO;
 import com.example.demo.orders.API.DTOs.ServiceChargeDTOs.ServiceChargeHelperDTOs.ServiceChargeDTO;
 import com.example.demo.orders.domain.entities.ServiceCharge;
+import com.example.demo.orders.repository.AppliedServiceChargeRepository;
 import com.example.demo.orders.repository.ServiceChargeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +26,14 @@ public class ServiceChargeService {
     private static final Logger logger = LoggerFactory.getLogger(ServiceChargeService.class);
 
     private final ServiceChargeRepository serviceChargeRepository;
+    private final AppliedServiceChargeRepository appliedServiceChargeRepository;
 
-    public ServiceChargeService(ServiceChargeRepository serviceChargeRepository) {
+    public ServiceChargeService(
+            ServiceChargeRepository serviceChargeRepository,
+            AppliedServiceChargeRepository appliedServiceChargeRepository
+    ) {
         this.serviceChargeRepository = serviceChargeRepository;
+        this.appliedServiceChargeRepository = appliedServiceChargeRepository;
     }
 
     public ServiceChargeDTO createServiceCharge(PostServiceChargeDTO postServiceChargeDTO){

@@ -3,6 +3,7 @@ package com.example.demo.orders.domain.entities;
 import com.example.demo.orders.domain.entities.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Table(
         name = "orders",
         indexes = {
@@ -24,29 +26,14 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "business_id", nullable = false)
-    //private Business business;
+    @Column(name = "business_id", nullable = false)
+    private UUID businessId;
 
-    @OneToOne
-    @JoinColumn(name = "reservation_id", nullable = true)
-    private Reservation reservations;
+    @Column(name = "reservation_id", nullable = true)
+    private UUID reservationId;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id", nullable = false)
-   // private Employee employee;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @Column(nullable = true)
-    private List<OrderItem> orderItems;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @Column(nullable = true)
-    private List<AppliedDiscount> appliedDiscounts;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @Column(nullable = true)
-    private List<AppliedServiceCharge> appliedServiceCharges;
+    @Column(name = "employee_id", nullable = false)
+    private UUID employeeId;
 
     @Column(nullable = false)
     private Timestamp createdAt;

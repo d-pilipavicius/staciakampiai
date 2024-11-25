@@ -8,6 +8,7 @@ import com.example.demo.orders.API.DTOs.DiscountDTO.PatchDiscountDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.PostDiscountDTO;
 import com.example.demo.orders.API.DTOs.DiscountDTO.ResponseDiscountDTO;
 import com.example.demo.orders.domain.entities.Discount;
+import com.example.demo.orders.repository.AppliedDiscountRepository;
 import com.example.demo.orders.repository.DiscountRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,9 +26,11 @@ public class DiscountService {
     private static final Logger logger = LoggerFactory.getLogger(DiscountService.class);
 
     private final DiscountRepository discountRepository;
+    private final AppliedDiscountRepository appliedDiscountRepository;
 
-    public DiscountService(DiscountRepository discountRepository) {
+    public DiscountService(DiscountRepository discountRepository, AppliedDiscountRepository appliedDiscountRepository) {
         this.discountRepository = discountRepository;
+        this.appliedDiscountRepository = appliedDiscountRepository;
     }
 
     public DiscountDTO createDiscount(PostDiscountDTO postDiscountDTO){
@@ -66,33 +69,38 @@ public class DiscountService {
         );
     }
 
-    @Transactional
-    public ResponseDiscountDTO updateDiscount(PatchDiscountDTO patchDiscountDTO, UUID id){
-        Optional<Discount> discount = discountRepository.findById(id);
+    public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId) {
+        List<DiscountDTO> discounts = discountRepository.findAllById(Collections.singleton(businessId)).stream()
+                .map(DiscountMapper.TO_DTO::map)
+                .toList();
 
-        if(discount.isEmpty()){
-            throw new IllegalArgumentException("Discount not found");
-        }
-
-        // TODO: abstract this to a new method or smth mb?
-        patchDiscountDTO.getCode().ifPresent(discount.get()::setCode);
-        patchDiscountDTO.getEntitledProductIds().ifPresent(discount.get()::setProductIds);
-        patchDiscountDTO.getValue().ifPresent(discount.get()::setValue);
-        patchDiscountDTO.getValueType().ifPresent(discount.get()::setValueType);
-        patchDiscountDTO.getCurrency().ifPresent(discount.get()::setCurrency);
-        patchDiscountDTO.getTarget().ifPresent(discount.get()::setTarget);
-        patchDiscountDTO.getValidFrom().ifPresent(discount.get()::setValidFrom);
-        patchDiscountDTO.getValidUntil().ifPresent(discount.get()::setValidUntil);
-
-        ResponseDiscountDTO newDiscountDTO = new ResponseDiscountDTO();
-        newDiscountDTO.setDiscount(Mapper.mapToDTO(
-                discountRepository.save(discount.get()),
-                DiscountMapper.TO_DTO
-        ));
-
-        return newDiscountDTO;
+        return new GetDiscountsDTO(discounts);
     }
 
+    @Transactional
+    public ResponseDiscountDTO updateDiscount(PatchDiscountDTO patchDiscountDTO, UUID id){
+        Discount discount = discountRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Discount not found"));
+
+        // TODO: abstract this to a new method or smth mb?
+        patchDiscountDTO.getCode().ifPresent(discount::setCode);
+        patchDiscountDTO.getEntitledProductIds().ifPresent(discount::setProductIds);
+        patchDiscountDTO.getValue().ifPresent(discount::setValue);
+        patchDiscountDTO.getValueType().ifPresent(discount::setValueType);
+        patchDiscountDTO.getCurrency().ifPresent(discount::setCurrency);
+        patchDiscountDTO.getTarget().ifPresent(discount::setTarget);
+        patchDiscountDTO.getValidFrom().ifPresent(discount::setValidFrom);
+        patchDiscountDTO.getValidUntil().ifPresent(discount::setValidUntil);
+
+        return new ResponseDiscountDTO(
+                Mapper.mapToDTO(
+                        discountRepository.save(discount),
+                        DiscountMapper.TO_DTO
+                )
+        );
+    }
+
+    @Transactional
     public void deleteDiscount(UUID id){
         discountRepository.deleteById(id);
     }

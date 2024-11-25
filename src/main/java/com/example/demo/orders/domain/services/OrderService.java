@@ -1,19 +1,20 @@
 package com.example.demo.orders.domain.services;
 
-import com.example.demo.helper.mapper.OrderMapper;
+import com.example.demo.helper.mapper.orderMappers.OrderMapper;
 import com.example.demo.helper.mapper.base.Mapper;
+import com.example.demo.orders.API.DTOs.OrderDTOs.GetOrdersDTO;
+import com.example.demo.orders.API.DTOs.OrderDTOs.OrderHelperDTOs.OrderDTO;
+import com.example.demo.orders.API.DTOs.OrderDTOs.PatchOrderDTO;
+import com.example.demo.orders.API.DTOs.OrderDTOs.PostOrderDTO;
+import com.example.demo.orders.API.DTOs.OrderDTOs.ResponseOrderDTO;
 import com.example.demo.orders.domain.entities.Order;
 import com.example.demo.orders.repository.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 // todo: needs rethinking probably
 
@@ -28,40 +29,37 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public void createOrder(GetOrderDTO orderDTO){
-        orderRepository.save(
-                Mapper.mapToModel(
-                        orderDTO,
-                        OrderMapper.TO_MODEL
-                )
+    public OrderDTO createOrder(PostOrderDTO postOrderDTO){
+        return Mapper.mapToDTO(
+                orderRepository.save(
+                        Mapper.mapToModel(
+                                postOrderDTO,
+                                OrderMapper.TO_MODEL
+                        )
+                ),
+                OrderMapper.TO_DTO
         );
     }
 
-    public Optional<GetOrderDTO> getOrderById(UUID id){
+    public OrderDTO getOrderById(UUID id){
         Optional<Order> order = orderRepository.findById(id);
-        if(order.isPresent()){
-            return Optional.of(Mapper.mapToDTO(
-                    order.get(),
-                    OrderMapper.TO_DTO
-            ));
-        }else{
-            logger.error("Order with id {} not found", id);
-            return Optional.empty();
-        }
+        return order.map(value -> Mapper.mapToDTO(value, OrderMapper.TO_DTO)).orElse(null);
     }
 
-    public List<GetOrderDTO> getAllOrders(){
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-                .map(OrderMapper.TO_DTO::map)
-                .collect(Collectors.toList());
+    public GetOrdersDTO getAllOrders(){
+
     }
 
-    public Page<Order> getAllOrders(int page, int size){
-        return orderRepository.findAll(PageRequest.of(page, size));
+    // todo: Page<Order>?
+    public GetOrdersDTO getAllOrders(int page, int size){
+
     }
 
-    public void updateOrder(Order order){
+    public ResponseOrderDTO updateOrder(PatchOrderDTO patchOrderDTO){
         orderRepository.save(order);
+    }
+
+    public void deleteOrder(UUID id){
+        orderRepository.deleteById(id);
     }
 }
