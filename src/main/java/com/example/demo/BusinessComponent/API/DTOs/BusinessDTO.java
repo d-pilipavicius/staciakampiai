@@ -1,4 +1,4 @@
-package com.example.demo.BusinessSystem.DTOs;
+package com.example.demo.BusinessComponent.API.DTOs;
 
 import java.util.UUID;
 
@@ -11,7 +11,9 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class CreateBusinessDTO {
+public class BusinessDTO {
+  @NotNull
+  private UUID id;
   @NotNull
   private String name;
   @NotNull

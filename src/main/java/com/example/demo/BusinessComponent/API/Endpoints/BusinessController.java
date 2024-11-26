@@ -1,4 +1,4 @@
-package com.example.demo.BusinessSystem.Controllers;
+package com.example.demo.BusinessComponent.API.Endpoints;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.BusinessSystem.DTOs.BusinessDTO;
-import com.example.demo.BusinessSystem.DTOs.CreateBusinessDTO;
-import com.example.demo.BusinessSystem.Entities.Business;
-import com.example.demo.BusinessSystem.Mappers.Interfaces.IBusinessMapper;
-import com.example.demo.BusinessSystem.Services.Interfaces.IBusinessService;
+import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
+import com.example.demo.BusinessComponent.API.DTOs.CreateBusinessDTO;
+import com.example.demo.BusinessComponent.ApplicationServices.BusinessApplicationService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,13 +18,11 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/v1/business")
 @AllArgsConstructor
 public class BusinessController {
-  private IBusinessService service;
-  private IBusinessMapper mapper;
+  private final BusinessApplicationService service;
 
   @PostMapping
   public ResponseEntity<BusinessDTO> createBusiness(@Valid @RequestBody CreateBusinessDTO createBusinessDTO) {
-    Business business = service.createBusiness(createBusinessDTO);
-    BusinessDTO businessDTO = mapper.businessToBusinessDTO(business);
+    BusinessDTO businessDTO = service.createBusiness(createBusinessDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(businessDTO);
   }
 }

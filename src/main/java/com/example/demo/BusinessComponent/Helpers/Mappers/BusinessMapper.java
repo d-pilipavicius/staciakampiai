@@ -1,12 +1,12 @@
-package com.example.demo.BusinessSystem.Mappers;
+package com.example.demo.BusinessComponent.Helpers.Mappers;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.BusinessSystem.DTOs.BusinessDTO;
-import com.example.demo.BusinessSystem.DTOs.CreateBusinessDTO;
-import com.example.demo.BusinessSystem.Entities.Business;
-import com.example.demo.BusinessSystem.Entities.User;
-import com.example.demo.BusinessSystem.Mappers.Interfaces.IBusinessMapper;
+import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
+import com.example.demo.BusinessComponent.API.DTOs.CreateBusinessDTO;
+import com.example.demo.BusinessComponent.Domain.Entities.Business;
+import com.example.demo.BusinessComponent.Domain.Entities.User;
+import com.example.demo.BusinessComponent.Helpers.Mappers.Interfaces.IBusinessMapper;
 
 @Component
 public class BusinessMapper implements IBusinessMapper {
