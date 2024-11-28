@@ -4,6 +4,7 @@ import com.example.demo.discountComponent.domain.entities.AppliedDiscount;
 import com.example.demo.discountComponent.domain.entities.Discount;
 import com.example.demo.discountComponent.domain.services.DiscountService;
 import com.example.demo.helper.mapper.base.Mapper;
+import com.example.demo.orderComponent.api.dtos.GetOrdersDTO;
 import com.example.demo.orderComponent.api.dtos.OrderHelperDTOs.SelectedDiscountDTO;
 import com.example.demo.orderComponent.domain.entities.OrderItemModifier;
 import com.example.demo.orderComponent.helper.mapper.OrderMapper;
@@ -59,7 +60,7 @@ public class OrderApplicationService {
      * @param orderDTO The order to create a receipt for.
      * @return The receipt for the specified order.
      */
-    public GetReceiptDTO getOrderReceipt(GetOrderDTO orderDTO) {
+    public GetReceiptDTO getOrderReceipt(GetOrdersDTO orderDTO) {
         Order order;
         order = Mapper.mapToModel(orderDTO, OrderMapper.TO_MODEL);
         // TODO: mb take UUID as an argument and get the order from the repository?

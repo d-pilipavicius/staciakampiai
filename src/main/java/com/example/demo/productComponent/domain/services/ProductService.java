@@ -181,7 +181,7 @@ public class ProductService {
         patchProductDTO.getTitle().ifPresent(product::setTitle);
         patchProductDTO.getQuantityInStock().ifPresent(product::setQuantityInStock);
         patchProductDTO.getPrice().ifPresent(moneyDTO -> {
-            product.setAmount(moneyDTO.getAmount());
+            product.setPrice(moneyDTO.getAmount());
             product.setCurrency(moneyDTO.getCurrency());
         });
 
