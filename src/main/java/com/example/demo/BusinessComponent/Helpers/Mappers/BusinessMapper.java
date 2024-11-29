@@ -6,13 +6,11 @@ import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
 import com.example.demo.BusinessComponent.API.DTOs.CreateBusinessDTO;
 import com.example.demo.BusinessComponent.Domain.Entities.Business;
 import com.example.demo.BusinessComponent.Domain.Entities.User;
-import com.example.demo.BusinessComponent.Helpers.Mappers.Interfaces.IBusinessMapper;
 
 @Component
-public class BusinessMapper implements IBusinessMapper {
+public class BusinessMapper {
 
-  @Override
-  public BusinessDTO businessToBusinessDTO(Business business) {
+  public BusinessDTO toBusinessDTO(Business business) {
     return BusinessDTO
       .builder()
       .id(business.getId())
@@ -24,8 +22,7 @@ public class BusinessMapper implements IBusinessMapper {
       .build();
   }
 
-  @Override
-  public Business createBusinessDTOToBusiness(CreateBusinessDTO createBusinessDTO) {
+  public Business toBusiness(CreateBusinessDTO createBusinessDTO) {
     return Business
       .builder()
       .name(createBusinessDTO.getName())

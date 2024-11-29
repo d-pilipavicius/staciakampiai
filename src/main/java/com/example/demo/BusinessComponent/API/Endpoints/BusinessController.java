@@ -18,11 +18,11 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/v1/business")
 @AllArgsConstructor
 public class BusinessController {
-  private final BusinessApplicationService service;
+  private final BusinessApplicationService businessApplicationService;
 
   @PostMapping
   public ResponseEntity<BusinessDTO> createBusiness(@Valid @RequestBody CreateBusinessDTO createBusinessDTO) {
-    BusinessDTO businessDTO = service.createBusiness(createBusinessDTO);
+    BusinessDTO businessDTO = businessApplicationService.createBusiness(createBusinessDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(businessDTO);
   }
 }
