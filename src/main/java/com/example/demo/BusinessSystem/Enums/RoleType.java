@@ -1,4 +1,4 @@
-package com.example.demo.BusinessSystem.Entities.Enums;
+package com.example.demo.BusinessSystem.Enums;
 
 public enum RoleType {
   Employee,
