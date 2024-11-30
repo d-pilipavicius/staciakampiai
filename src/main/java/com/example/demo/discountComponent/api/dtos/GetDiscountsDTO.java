@@ -1,10 +1,8 @@
 package com.example.demo.discountComponent.api.dtos;
 
 import com.example.demo.discountComponent.api.dtos.DiscountHelperDTOs.DiscountDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,13 +10,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class GetDiscountsDTO {
+    @NotNull
     private int totalItems;
+    @NotNull
     private int totalPages;
+    @NotNull
     private int currentPage;
+    @NotNull
     private List<DiscountDTO> items;
-
-    public GetDiscountsDTO(List<DiscountDTO> items) {
-        this.items = items;
-    }
 }

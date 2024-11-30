@@ -1,10 +1,12 @@
 package com.example.demo.discountComponent.domain.entities;
 
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.DiscountTarget;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
+
+import com.example.demo.discountComponent.domain.entities.enums.Currency;
+import com.example.demo.discountComponent.domain.entities.enums.DiscountTarget;
+import com.example.demo.discountComponent.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,13 +18,14 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @Data
+@Builder
 @NoArgsConstructor
 @Table(
-        name = "discount",
+        name = "discount"/*,
         indexes = {
                 @Index(name = "idx_discount_business_id", columnList = "business_id"),
                 @Index(name = "idx_discount_applied_discount_id", columnList = "applied_discount_id"),
-        }
+        }*/
 )
 public class Discount {
     @Id
@@ -41,7 +44,7 @@ public class Discount {
     private String code;
 
     @Column(nullable = false, precision = 5, scale = 2)
-    private BigDecimal value;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -56,10 +59,10 @@ public class Discount {
     private DiscountTarget target;
 
     @Column(nullable = false)
-    private Timestamp ValidFrom;
+    private Timestamp validFrom;
 
     @Column(nullable = false)
-    private Timestamp ValidUntil;
+    private Timestamp validUntil;
 
     @Column(nullable = true)
     private int usageCountLimit;

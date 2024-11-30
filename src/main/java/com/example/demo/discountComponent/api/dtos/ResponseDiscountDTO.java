@@ -2,13 +2,12 @@ package com.example.demo.discountComponent.api.dtos;
 
 
 import com.example.demo.discountComponent.api.dtos.DiscountHelperDTOs.DiscountDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -16,5 +15,6 @@ import lombok.Setter;
  * A response discount DTO for Patch and Post requests
  */
 public class ResponseDiscountDTO {
+    @NotNull
     private DiscountDTO discount;
 }

@@ -1,12 +1,11 @@
 package com.example.demo.discountComponent.api.dtos;
 
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.DiscountTarget;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import com.example.demo.discountComponent.domain.entities.enums.Currency;
+import com.example.demo.discountComponent.domain.entities.enums.DiscountTarget;
+import com.example.demo.discountComponent.domain.entities.enums.PricingStrategy;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -16,15 +15,22 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PostDiscountDTO {
-    private Optional<String> code;
-    private BigDecimal value;
+    private String code;
+    @NotNull
+    private BigDecimal amount;
+    @NotNull
     private PricingStrategy valueType;
-    private Optional<Currency> currency;
+    private Currency currency;
+    @NotNull
     private Timestamp validFrom;
+    @NotNull
     private Timestamp validUntil;
+    @NotNull
     private DiscountTarget target;
-    private Optional<List<UUID>> entitledProductIds;
+    private List<UUID> entitledProductIds;
+    @NotNull
     private UUID businessId;
-    private Optional<Integer> usageCountLimit;
+    private int usageCountLimit;
 }

@@ -1,12 +1,13 @@
 package com.example.demo.discountComponent.domain.entities;
 
-import com.example.demo.orderComponent.domain.entities.Order;
-import com.example.demo.orderComponent.domain.entities.OrderItem;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.DiscountType;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
+import com.example.demo.discountComponent.domain.entities.enums.Currency;
+import com.example.demo.discountComponent.domain.entities.enums.DiscountType;
+import com.example.demo.discountComponent.domain.entities.enums.PricingStrategy;
+//import com.example.demo.orderComponent.domain.entities.Order;
+//import com.example.demo.orderComponent.domain.entities.OrderItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,17 +16,18 @@ import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Data
 @Table(
-        name = "applied_discount",
+        name = "applied_discount"/*,
         indexes = {
                 // TODO: Use composite indexes if applicable
                 @Index(name = "idx_applied_discounts_order_id", columnList = "order_id"),
                 @Index(name = "idx_applied_discounts_order_item_id", columnList = "order_item_id"),
                 @Index(name = "idx_applied_discounts_discount_id", columnList = "discount_id"),
                 @Index(name = "idx_applied_discounts_charged_by_employee_id", columnList = "charged_by_employee_id"),
-        }
+        }*/
 )
 public class AppliedDiscount {
     @Id
@@ -49,7 +51,7 @@ public class AppliedDiscount {
     private DiscountType type;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal value;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
