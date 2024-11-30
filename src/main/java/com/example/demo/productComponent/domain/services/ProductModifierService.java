@@ -8,9 +8,11 @@ import com.example.demo.productComponent.api.dtos.ModifierDTOs.ResponseModifierD
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 import com.example.demo.productComponent.domain.entities.ProductModifier;
 import com.example.demo.productComponent.helper.mapper.ProductModifierMapper;
+import com.example.demo.productComponent.helper.validator.ProductModifierValidator;
 import com.example.demo.productComponent.repository.ProductCompatibleModifierRepository;
 import com.example.demo.productComponent.repository.ProductModifierRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +26,12 @@ public class ProductModifierService {
 
     private final ProductModifierRepository productModifierRepository;
     private final ProductCompatibleModifierRepository productCompatibleModifierRepository;
+    private final ProductModifierValidator productModifierValidator;
 
     @Transactional
     public ProductModifierDTO createModifier(PostModifierDTO postModifierDTO) {
+        // Validate the DTO
+        productModifierValidator.validatePostModifierDTO(postModifierDTO);
         // map the DTO to the model
         ProductModifier modifier = Mapper.mapToModel(postModifierDTO, ProductModifierMapper.TO_MODEL);
         // save the modifier
@@ -62,20 +67,23 @@ public class ProductModifierService {
 
     public GetModifiersDTO getModifiersByBusinessId(int page, int size, UUID businessId) {
         // Fetch modifiers and map to DTOs
-        List<ProductModifierDTO> productModifierDTOS = productModifierRepository.findAllByBusinessId(PageRequest.of(page, size), businessId).stream()
-                .map(ProductModifierMapper.TO_DTO::map)
-                .toList();
+        Page<ProductModifierDTO> productModifierDTOS = productModifierRepository.findAllByBusinessId(PageRequest.of(page, size), businessId)
+                .map(ProductModifierMapper.TO_DTO::map);
 
         return GetModifiersDTO.builder()
-                .items(productModifierDTOS)
-                .totalItems(productModifierDTOS.size())
+                .items(productModifierDTOS.getContent())
+                .totalItems((int)productModifierDTOS.getTotalElements())
                 .currentPage(page)
-                .totalPages(size)
+                .totalPages(productModifierDTOS.getTotalPages())
                 .build();
     }
 
     @Transactional
     public ResponseModifierDTO updateModifier(PatchModifierDTO patchModifierDTO, UUID id){
+
+        // Validate the DTO
+        productModifierValidator.validatePatchModifierDTO(patchModifierDTO);
+
         // Fetch the product modifier
         ProductModifier productModifier = productModifierRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product modifier not found"));

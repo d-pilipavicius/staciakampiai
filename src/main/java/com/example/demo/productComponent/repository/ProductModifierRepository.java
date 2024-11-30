@@ -1,7 +1,8 @@
 package com.example.demo.productComponent.repository;
 
 import com.example.demo.productComponent.domain.entities.ProductModifier;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,5 @@ public interface ProductModifierRepository extends JpaRepository<ProductModifier
 
     long countByIdIn(List<UUID> modifierIds);
 
-    List<ProductModifier> findAllByBusinessId(PageRequest pageRequest, UUID businessId);
+    Page<ProductModifier> findAllByBusinessId(Pageable pageable, UUID businessId);
 }

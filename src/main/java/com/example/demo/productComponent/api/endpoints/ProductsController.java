@@ -15,6 +15,8 @@ import com.example.demo.productComponent.applicationServices.ProductApplicationS
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -27,11 +29,20 @@ public class ProductsController {
     private final ProductApplicationService productApplicationService;
 
     @PostMapping
-    public ResponseEntity<Object> createProduct(@RequestParam UUID employeeId, @RequestBody PostProductDTO postProductDTO) {
-        ResponseEntity<Object> response = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
+    public ResponseEntity<Object> createProduct(
+            @RequestParam UUID employeeId,
+            @Validated @RequestBody PostProductDTO postProductDTO,
+            BindingResult bindingResult
+    ) {
+
+        // Check for 400
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
 
         ProductDTO productDTO = productApplicationService.createProduct(postProductDTO);
 
+        // Check for 404
         ValidationForDifferentHTTPCodes.checkFor404(productDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
@@ -45,8 +56,6 @@ public class ProductsController {
             @RequestParam UUID employeeId
     ){
 
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
-
         GetProductsDTO products = productApplicationService.getProductsByBusinessId(pageNumber, pageSize, businessId);
 
         ValidationForDifferentHTTPCodes.checkFor404(products);
@@ -57,11 +66,14 @@ public class ProductsController {
     @PatchMapping("/{productId}")
     public  ResponseEntity<Object> updateProduct(
             @PathVariable UUID productId,
-            @RequestParam UUID  employeeId,
-            @RequestBody PatchProductDTO patchDiscountDTO
+            @RequestParam UUID employeeId,
+            @Validated @RequestBody PatchProductDTO patchDiscountDTO,
+            BindingResult bindingResult
     ){
 
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
 
         ResponseProductDTO updatedProduct = productApplicationService.updateProduct(patchDiscountDTO, productId);
 
@@ -71,10 +83,10 @@ public class ProductsController {
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Object> deleteProduct(@PathVariable UUID productId, @RequestParam UUID employeeId){
-
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
-
+    public ResponseEntity<Object> deleteProduct(
+            @PathVariable UUID productId,
+            @RequestParam UUID employeeId
+    ){
         productApplicationService.deleteProduct(productId);
 
         return ResponseEntity.noContent().build();
@@ -85,8 +97,6 @@ public class ProductsController {
             @RequestParam UUID employeeId,
             @RequestBody PostModifierDTO postModifierDTO
     ) {
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
-
         ProductModifierDTO createdModifier = productApplicationService.createModifier(postModifierDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdModifier);
@@ -108,13 +118,16 @@ public class ProductsController {
     }
 
     @PatchMapping("/modifiers/{modifierId}")
-    public ResponseEntity<ResponseModifierDTO> updateProductModifier(
+    public ResponseEntity<Object> updateProductModifier(
             @PathVariable UUID modifierId,
             @RequestParam UUID employeeId,
-            @RequestBody PatchModifierDTO patchModifierDTO
+            @Validated @RequestBody PatchModifierDTO patchModifierDTO,
+            BindingResult bindingResult
     ) {
 
-        ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
 
         ResponseModifierDTO updatedModifier = productApplicationService.updateProductModifier(patchModifierDTO, modifierId);
 

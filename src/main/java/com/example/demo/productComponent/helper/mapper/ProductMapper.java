@@ -4,7 +4,6 @@ import com.example.demo.helper.mapper.base.StaticMapper;
 import com.example.demo.productComponent.api.dtos.PostProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.MoneyDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductDTO;
-import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 import com.example.demo.productComponent.domain.entities.Product;
 
 public class ProductMapper {

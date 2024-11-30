@@ -1,15 +1,13 @@
 package com.example.demo.productComponent.api.dtos.ModifierDTOs;
 
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.MoneyDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostModifierDTO {

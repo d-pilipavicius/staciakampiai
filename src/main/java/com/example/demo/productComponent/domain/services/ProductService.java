@@ -1,6 +1,5 @@
 package com.example.demo.productComponent.domain.services;
 
-import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 import com.example.demo.productComponent.domain.entities.ProductCompatibleModifier;
 import com.example.demo.productComponent.helper.mapper.ProductMapper;
 import com.example.demo.helper.mapper.base.Mapper;
@@ -17,6 +16,7 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +36,9 @@ public class ProductService {
 
     @Transactional
     public ProductDTO createProduct(PostProductDTO postProductDTO){
+        // Validate the post product DTO
+        productValidator.validatePostProductDTO(postProductDTO);
+
         // Make sure that all the product modifiers exist
         validateModifiers(postProductDTO.getCompatibleModifierIds());
 
@@ -67,21 +70,22 @@ public class ProductService {
 
     public GetProductsDTO getProductsByBusinessId(int page, int size, UUID businessId){
         // Get all the products by business id, map them to DTOs
-        List<ProductDTO> productDTOS = productRepository.findAllByBusinessId(businessId, PageRequest.of(page, size)).stream()
-                .map(ProductMapper.TO_DTO::map)
-                .toList();
+        Page<ProductDTO> productDTOS = productRepository.findAllByBusinessId(businessId, PageRequest.of(page, size))
+                .map(ProductMapper.TO_DTO::map);
 
         return GetProductsDTO.builder()
-                .items(productDTOS)
+                .items(productDTOS.getContent())
                 .businessId(businessId)
-                .totalItems(productDTOS.size())
+                .totalItems(productDTOS.getTotalPages())
                 .currentPage(page)
-                .totalPages(size)
+                .totalPages((int)productDTOS.getTotalElements())
                 .build();
     }
 
     @Transactional
     public ResponseProductDTO updateProduct(PatchProductDTO patchProductDTO, UUID productId){
+        productValidator.validatePatchProductDTO(patchProductDTO);
+
         // Fetch the product
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
@@ -111,6 +115,10 @@ public class ProductService {
             product.setPrice(moneyDTO.getAmount());
             product.setCurrency(moneyDTO.getCurrency());
         });
+
+        if (patchProductDTO.getCompatibleModifierIds().isEmpty()) {
+            return;
+        }
 
         patchProductDTO.getCompatibleModifierIds().ifPresent(modifierIds -> {
             // Find current product modifiers

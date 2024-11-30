@@ -104,6 +104,7 @@ public class ProductApplicationService {
         productModifierService.deleteModifier(modifierId);
     }
 
+    // Helper methods for other components
     public boolean validateProductIds(List<UUID> productIds) {
         return productService.validateProductIds(productIds);
     }

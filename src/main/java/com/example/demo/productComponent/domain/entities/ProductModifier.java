@@ -42,6 +42,7 @@ public class ProductModifier {
     @Column(nullable = false)
     private int quantityInStock;
 
+    @Version
     @Column(nullable = false)
-    private byte[] rowVersion;
+    private byte[] rowVersion = new byte[0];
 }
