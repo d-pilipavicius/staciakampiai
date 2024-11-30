@@ -19,5 +19,4 @@ public class PostProductDTO {
     private MoneyDTO price;
     private List<UUID> compatibleModifierIds;
     private UUID businessId;
-
 }

@@ -1,21 +1,20 @@
 package com.example.demo.productComponent.domain.entities;
 
-import com.example.demo.orderComponent.domain.entities.OrderItem;
-import com.example.demo.taxComponent.domain.entities.Tax;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
+import com.example.demo.helper.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @Table(
         name = "product",
         indexes = {
@@ -30,31 +29,6 @@ public class Product {
     @Column(name = "business_id", nullable = false)
     private UUID businessId;
 
-    @ElementCollection
-    @CollectionTable(name = "discount_entitled_product", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "discount_id")
-    private List<UUID> discountIds;
-
-    @ManyToMany
-    @JoinTable(
-            name = "product_tax",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "tax_id")
-    )
-    private List<Tax> taxes;
-
-    @ManyToMany
-    @JoinTable(
-            name = "product_modifier_entitled_product",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_modifier_id")
-    )
-    private List<ProductModifier> productModifiers;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @Column(nullable = true)
-    private List<OrderItem> orderItems;
-
     @Column(nullable = false)
     private String title;
 
@@ -68,6 +42,7 @@ public class Product {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Version
     @Column(nullable = false)
     private byte[] rowVersion;
 }

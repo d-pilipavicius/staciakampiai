@@ -8,22 +8,24 @@ import com.example.demo.productComponent.domain.entities.ProductModifier;
 
 public class ProductModifierMapper {
 
-    public static final StaticMapper<PostModifierDTO, ProductModifier> TO_MODEL = dto -> {
-        ProductModifier productModifier = new ProductModifier();
-        productModifier.setTitle(dto.getTitle());
-        productModifier.setQuantityInStock(dto.getQuantityInStock());
-        productModifier.setPrice(dto.getPrice().getAmount());
-        productModifier.setCurrency(dto.getPrice().getCurrency());
-        return productModifier;
-    };
+    public static final StaticMapper<PostModifierDTO, ProductModifier> TO_MODEL = dto -> ProductModifier.builder()
+            .title(dto.getTitle())
+            .quantityInStock(dto.getQuantityInStock())
+            .price(dto.getPrice().getAmount())
+            .currency(dto.getPrice().getCurrency())
+            .businessId(dto.getBusinessId())
+            .build();
 
-    public static final StaticMapper<ProductModifier, ProductModifierDTO> TO_DTO = entity -> {
-        ProductModifierDTO productModifierDTO = new ProductModifierDTO();
-        productModifierDTO.setId(entity.getId());
-        productModifierDTO.setTitle(entity.getTitle());
-        productModifierDTO.setQuantityInStock(entity.getQuantityInStock());
-        productModifierDTO.setPrice(new MoneyDTO(entity.getPrice(), entity.getCurrency()));
-        productModifierDTO.setBusinessId(entity.getBusinessId());
-        return productModifierDTO;
-    };
+    public static final StaticMapper<ProductModifier, ProductModifierDTO> TO_DTO = entity -> ProductModifierDTO.builder()
+            .id(entity.getId())
+            .title(entity.getTitle())
+            .quantityInStock(entity.getQuantityInStock())
+            .price(
+                    MoneyDTO.builder()
+                            .amount(entity.getPrice())
+                            .currency(entity.getCurrency())
+                            .build()
+            )
+            .businessId(entity.getBusinessId())
+            .build();
 }

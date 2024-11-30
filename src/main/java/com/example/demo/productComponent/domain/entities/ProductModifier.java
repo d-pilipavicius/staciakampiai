@@ -1,19 +1,20 @@
 package com.example.demo.productComponent.domain.entities;
 
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
+import com.example.demo.helper.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Table(
         name = "product_modifier",
         indexes = {
@@ -27,9 +28,6 @@ public class ProductModifier {
 
     @Column(name = "business_id", nullable = false)
     private UUID businessId;
-
-    @ManyToMany(mappedBy = "productModifiers")
-    private List<Product> products;
 
     @Column(nullable = false)
     private String title;

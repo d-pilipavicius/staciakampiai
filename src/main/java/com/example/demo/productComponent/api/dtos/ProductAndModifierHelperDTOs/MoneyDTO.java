@@ -1,13 +1,11 @@
 package com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs;
 
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.demo.helper.enums.Currency;
+import lombok.*;
 
 import java.math.BigDecimal;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
