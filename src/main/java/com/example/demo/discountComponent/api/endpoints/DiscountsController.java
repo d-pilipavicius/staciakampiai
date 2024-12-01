@@ -38,13 +38,19 @@ public class DiscountsController {
     @PatchMapping("/{discountId}")
     public  ResponseEntity<Object> updateDiscount(@PathVariable UUID discountId, @RequestParam UUID  employeeId,
                                                   @Valid @RequestBody PatchDiscountDTO patchDiscountDTO){
+        if(patchDiscountDTO.getCode() == null){
+            System.out.println("lalalalalala!!!");
+        }
+        if(patchDiscountDTO.getCurrency() == null){
+            System.out.println("gafasfa");
+        }
         ResponseDiscountDTO updatedDiscount = discountAppService.updateDiscount(discountId, employeeId, patchDiscountDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedDiscount);
     }
 
     @DeleteMapping("/{discountId}")
     public ResponseEntity<Object> deleteDiscount(@PathVariable UUID discountId, @RequestParam UUID employeeId){
-         discountAppService.deleteDiscountbyId(discountId, employeeId);
+         discountAppService.deleteDiscountById(discountId, employeeId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

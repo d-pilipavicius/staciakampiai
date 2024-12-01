@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,5 +37,5 @@ public class DiscountDTO {
     @NotNull
     private UUID businessId;
     @NotNull
-    private int usageCountLimit;
+    private Integer usageCountLimit;
 }

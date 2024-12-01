@@ -65,5 +65,5 @@ public class Discount {
     private Timestamp validUntil;
 
     @Column(nullable = true)
-    private int usageCountLimit;
+    private Integer usageCountLimit;
 }

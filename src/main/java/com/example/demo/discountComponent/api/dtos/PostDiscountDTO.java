@@ -12,7 +12,6 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -32,5 +31,5 @@ public class PostDiscountDTO {
     private List<UUID> entitledProductIds;
     @NotNull
     private UUID businessId;
-    private int usageCountLimit;
+    private Integer usageCountLimit;
 }

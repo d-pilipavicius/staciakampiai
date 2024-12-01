@@ -14,12 +14,10 @@ import com.example.demo.discountComponent.repository.DiscountRepository;
 import com.example.demo.discountComponent.validator.DiscountsValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
 @Service
@@ -28,35 +26,43 @@ public class DiscountService {
     private static final Logger logger = LoggerFactory.getLogger(DiscountService.class);
     private final DiscountRepository discountRepository;
     private final AppliedDiscountRepository appliedDiscountRepository;
+    private final DiscountsValidator discountsValidator;
 
-    public DiscountService(DiscountRepository discountRepository, AppliedDiscountRepository appliedDiscountRepository) {
+    public DiscountService(DiscountRepository discountRepository, AppliedDiscountRepository appliedDiscountRepository,
+                            DiscountsValidator discountsValidator) {
         this.discountRepository = discountRepository;
         this.appliedDiscountRepository = appliedDiscountRepository;
+        this.discountsValidator = discountsValidator;
     }
 
     public ResponseDiscountDTO createDiscount(UUID employeeId, PostDiscountDTO postDiscountDTO){
-        DiscountsValidator.checkIfAuthorized(employeeId);
-        DiscountsValidator.checkDatesOverlap(postDiscountDTO.getValidFrom(), postDiscountDTO.getValidUntil());
-        DiscountsValidator.checkPricingStrategy(postDiscountDTO.getCurrency(), postDiscountDTO.getValueType());
-        DiscountsValidator.checkGiftcard(postDiscountDTO.getTarget(), postDiscountDTO.getUsageCountLimit(), postDiscountDTO.getCode());
+        discountsValidator.checkIfAuthorized(employeeId);
+        discountsValidator.checkDatesOverlap(postDiscountDTO.getValidFrom(), postDiscountDTO.getValidUntil());
+        discountsValidator.checkPricingStrategy(postDiscountDTO.getCurrency(), postDiscountDTO.getValueType());
+        discountsValidator.checkGiftcard(postDiscountDTO.getTarget(), postDiscountDTO.getUsageCountLimit(), postDiscountDTO.getCode());
 
-        return new ResponseDiscountDTO(Mapper.mapToDTO(
-                discountRepository.save(
-                        Mapper.mapToModel(
-                                postDiscountDTO,
-                                DiscountMapper.TO_MODEL
-                        )
-                ),
-                DiscountMapper.TO_DTO
-        ));
+        return ResponseDiscountDTO
+                .builder()
+                .discount(Mapper.mapToDTO(
+                        discountRepository.save(
+                                Mapper.mapToModel(
+                                        postDiscountDTO,
+                                        DiscountMapper.TO_MODEL
+                                )
+                        ),
+                        DiscountMapper.TO_DTO
+                ))
+                .build();
     }
 
     public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId, int page, int size){
         Page<DiscountDTO> discounts;
+
         discounts = discountRepository.findByBusinessId(businessId, PageRequest.of(page, size))
                 .map(DiscountMapper.TO_DTO::map);
 
-        DiscountsValidator.checkIfBusinessHadDiscounts((int) discounts.getTotalElements());
+        discountsValidator.checkIfBusinessHadDiscounts((int) discounts.getTotalElements());
+        discountsValidator.checkIfDiscountPageExceeded(page, discounts.getTotalPages());
 
         return GetDiscountsDTO
                 .builder()
@@ -68,21 +74,19 @@ public class DiscountService {
     }
 
     public ResponseDiscountDTO updateDiscount(UUID discountId, UUID employeeId, PatchDiscountDTO patchDiscountDTO){
-        DiscountsValidator.checkIfAuthorized(employeeId);
+        discountsValidator.checkIfAuthorized(employeeId);
 
-        Discount discount = discountRepository.findById(discountId).orElseGet(() -> {
-            throw new HTTPExceptionJSON(
-                    HttpStatus.NOT_FOUND,
-                    "No data was found by Id",
-                    "The provided discount Id, which was used to update an existing discount, wasn't associated with any discount in the database."
-            );
-        });
+        Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new HTTPExceptionJSON(
+                HttpStatus.NOT_FOUND,
+                "Invalid discount id",
+                "The given discount id wasn't associated with any discount inside the database for updating."
+            ));
 
         Discount updatedDiscount = createUpdatedDiscount(patchDiscountDTO, discount);
 
-        DiscountsValidator.checkDatesOverlap(updatedDiscount.getValidFrom(), updatedDiscount.getValidUntil());
-        DiscountsValidator.checkPricingStrategy(updatedDiscount.getCurrency(), updatedDiscount.getValueType());
-        DiscountsValidator.checkGiftcard(updatedDiscount.getTarget(), updatedDiscount.getUsageCountLimit(), updatedDiscount.getCode());
+        discountsValidator.checkDatesOverlap(updatedDiscount.getValidFrom(), updatedDiscount.getValidUntil());
+        discountsValidator.checkPricingStrategy(updatedDiscount.getCurrency(), updatedDiscount.getValueType());
+        discountsValidator.checkGiftcard(updatedDiscount.getTarget(), updatedDiscount.getUsageCountLimit(), updatedDiscount.getCode());
 
         return ResponseDiscountDTO
                 .builder()
@@ -93,25 +97,20 @@ public class DiscountService {
                 .build();
     }
 
-    public void deleteDiscountbyId(UUID discountId, UUID employeeId){
-        DiscountsValidator.checkIfAuthorized(employeeId);
-        try{
-            discountRepository.deleteById(discountId);
-        } catch (EmptyResultDataAccessException e){
-            throw new HTTPExceptionJSON(
-                    HttpStatus.NOT_FOUND,
-                    "No data was found by Id",
-                    "The specified discount Id, was not found in the database for deletion."
-            );
-        }
+    public void deleteDiscountById(UUID discountId, UUID employeeId){
+        discountsValidator.checkIfAuthorized(employeeId);
+        discountsValidator.checkIfDiscountExists(discountId);
+        discountRepository.deleteById(discountId);
     }
 
     private Discount createUpdatedDiscount(PatchDiscountDTO updatesToDiscount, Discount original){
-        updatesToDiscount.getCode().ifPresent(original::setCode);
+        original.setCode(updatesToDiscount.getCode() == null ?
+                original.getCode() : updatesToDiscount.getCode().orElse(null));
         updatesToDiscount.getEntitledProductIds().ifPresent(original::setProductIds);
         updatesToDiscount.getAmount().ifPresent(original::setAmount);
         updatesToDiscount.getValueType().ifPresent(original::setValueType);
-        updatesToDiscount.getCurrency().ifPresent(original::setCurrency);
+        original.setCurrency(updatesToDiscount.getCurrency() == null ?
+                original.getCurrency() : updatesToDiscount.getCurrency().orElse(null));
         updatesToDiscount.getTarget().ifPresent(original::setTarget);
         updatesToDiscount.getValidFrom().ifPresent(original::setValidFrom);
         updatesToDiscount.getValidUntil().ifPresent(original::setValidUntil);

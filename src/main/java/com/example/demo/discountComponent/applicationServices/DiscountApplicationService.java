@@ -1,6 +1,5 @@
 package com.example.demo.discountComponent.applicationServices;
 
-import com.example.demo.discountComponent.api.dtos.DiscountHelperDTOs.DiscountDTO;
 import com.example.demo.discountComponent.api.dtos.GetDiscountsDTO;
 import com.example.demo.discountComponent.api.dtos.PatchDiscountDTO;
 import com.example.demo.discountComponent.api.dtos.PostDiscountDTO;
@@ -11,8 +10,6 @@ import com.example.demo.discountComponent.domain.services.DiscountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.UUID;
 
 @Service
@@ -32,6 +29,7 @@ public class DiscountApplicationService {
     }
 
     public ResponseDiscountDTO createDiscount(UUID employeeId, PostDiscountDTO postDiscountDTO){
+        //Need products component, so will get implemented later on
        /* postDiscountDTO.getEntitledProductIds().ifPresent(productIds -> {
             if (!productApplicationService.validateProductIds(productIds)) {
                 throw new IllegalArgumentException("Invalid product IDs provided");
@@ -46,6 +44,7 @@ public class DiscountApplicationService {
     }
 
     public ResponseDiscountDTO updateDiscount(UUID discountId, UUID employeeId, PatchDiscountDTO patchDiscountDTO) {
+        //Need products component, so will get implemented later on
         /*patchDiscountDTO.getEntitledProductIds().ifPresent(productIds -> {
             if (!productApplicationService.validateProductIds(productIds)) {
                 throw new IllegalArgumentException("Invalid product IDs provided");
@@ -55,8 +54,8 @@ public class DiscountApplicationService {
         return discountService.updateDiscount(discountId, employeeId, patchDiscountDTO);
     }
 
-    public boolean deleteDiscountbyId(UUID discountId, UUID employeeId) {
-        discountService.deleteDiscountbyId(discountId, employeeId);
+    public boolean deleteDiscountById(UUID discountId, UUID employeeId) {
+        discountService.deleteDiscountById(discountId, employeeId);
         return true;
     }
 }
