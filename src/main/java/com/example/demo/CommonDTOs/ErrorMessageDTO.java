@@ -5,9 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PageinationDTO{
+public class ErrorMessageDTO {
 
-  private final int page;
-
-  private final int pageSize;
+  private final String errorMessage;
 }

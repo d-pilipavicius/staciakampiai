@@ -1,4 +1,4 @@
-package com.example.demo.BusinessSystem.DTOs;
+package com.example.demo.BusinessComponent.API.DTOs;
 
 import java.util.List;
 
@@ -12,9 +12,13 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class GetBusinessListDTO {
-  private Long totalItems;
-  private int totalPages;
-  private int currentPage;
+
+  private final Long totalItems;
+
+  private final int totalPages;
+
+  private final int currentPage;
+  
   @NotNull
-  private List<@Valid BusinessDTO> items;
+  private final List<@Valid BusinessDTO> items;
 }

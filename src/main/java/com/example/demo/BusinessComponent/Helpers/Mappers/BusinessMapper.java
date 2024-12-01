@@ -1,25 +1,24 @@
-package com.example.demo.BusinessSystem.Mappers;
+package com.example.demo.BusinessComponent.Helpers.Mappers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.BusinessSystem.DTOs.BusinessDTO;
-import com.example.demo.BusinessSystem.DTOs.CreateBusinessDTO;
-import com.example.demo.BusinessSystem.DTOs.GetBusinessListDTO;
-import com.example.demo.BusinessSystem.Entities.Business;
-import com.example.demo.BusinessSystem.Entities.User;
-import com.example.demo.BusinessSystem.Mappers.Interfaces.IBusinessMapper;
+import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
+import com.example.demo.BusinessComponent.API.DTOs.CreateBusinessDTO;
+import com.example.demo.BusinessComponent.API.DTOs.GetBusinessListDTO;
+import com.example.demo.BusinessComponent.Domain.Entities.Business;
+import com.example.demo.BusinessComponent.Domain.Entities.User;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 
 @Component
-public class BusinessMapper implements IBusinessMapper {
+public class BusinessMapper {
 
-  @Override
-  public BusinessDTO businessToBusinessDTO(Business business) {
+  public BusinessDTO toBusinessDTO(@NotNull @Valid Business business) {
     return BusinessDTO
       .builder()
       .id(business.getId())
@@ -31,8 +30,7 @@ public class BusinessMapper implements IBusinessMapper {
       .build();
   }
 
-  @Override
-  public Business createBusinessDTOToBusiness(CreateBusinessDTO createBusinessDTO) {
+  public Business toBusiness(@NotNull @Valid CreateBusinessDTO createBusinessDTO) {
     return Business
       .builder()
       .name(createBusinessDTO.getName())
@@ -43,15 +41,14 @@ public class BusinessMapper implements IBusinessMapper {
       .build();
   }
 
-  @Override
-  public GetBusinessListDTO businessPageToGetBusinessListDTO(Page<Business> page) { 
+  public GetBusinessListDTO toGetBusinessListDTO(@NotNull @Valid Page<Business> page) { 
     return GetBusinessListDTO
       .builder()
       .currentPage(page.getNumber())
       .totalItems(page.getTotalElements())
       .totalPages(page.getTotalPages())
       //Get retrieved Business enitites list and map it to a BusinessDTO list
-      .items(page.getContent().stream().map(this::businessToBusinessDTO).collect(Collectors.toList()))
+      .items(page.getContent().stream().map(this::toBusinessDTO).collect(Collectors.toList()))
       .build();
   }
 }
