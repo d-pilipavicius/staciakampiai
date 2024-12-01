@@ -1,6 +1,5 @@
 package com.example.demo.payments.API.DTOs;
 
-import com.example.demo.payments.domain.entities.enums.PaymentStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

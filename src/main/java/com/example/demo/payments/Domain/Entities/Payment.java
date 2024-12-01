@@ -1,4 +1,4 @@
-package com.example.demo.payments.domain.entities;
+package com.example.demo.payments.Domain.Entities;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -9,9 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.example.demo.payments.domain.entities.enums.Currency;
-import com.example.demo.payments.domain.entities.enums.PaymentMethod;
-import com.example.demo.payments.domain.entities.enums.PaymentStatus;
+import com.example.demo.payments.Domain.Entities.Enums.Currency;
+import com.example.demo.payments.Domain.Entities.Enums.PaymentMethod;
+import com.example.demo.payments.Domain.Entities.Enums.PaymentStatus;
 
 @Getter
 @Setter

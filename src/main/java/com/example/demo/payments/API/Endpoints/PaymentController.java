@@ -2,14 +2,14 @@ package com.example.demo.payments.API.Endpoints;
 
 import com.example.demo.payments.API.DTOs.*;
 import com.example.demo.payments.Helpers.Mappers;
-import com.example.demo.payments.domain.entities.Refund;
-import com.example.demo.payments.domain.entities.enums.PaymentMethod;
-import com.example.demo.payments.domain.services.PaymentService;
+import com.example.demo.payments.Domain.Entities.Refund;
+import com.example.demo.payments.Domain.Entities.Enums.PaymentMethod;
+import com.example.demo.payments.Domain.Services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.payments.domain.entities.Tip;
+import com.example.demo.payments.Domain.Entities.Tip;
 
 import java.util.Map;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.example.demo.payments.domain.services;
+package com.example.demo.payments.Domain.Services;
 
 import com.example.demo.payments.API.DTOs.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,17 +6,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.example.demo.payments.domain.entities.OrderItemPayment;
-import com.example.demo.payments.domain.entities.Payment;
-import com.example.demo.payments.domain.entities.Refund;
-import com.example.demo.payments.domain.entities.Tip;
-import com.example.demo.payments.domain.entities.enums.PaymentMethod;
-import com.example.demo.payments.domain.entities.enums.PaymentRefundStatus;
-import com.example.demo.payments.domain.entities.enums.PaymentStatus;
-import com.example.demo.payments.repository.OrderItemPaymentRepository;
-import com.example.demo.payments.repository.PaymentRepository;
-import com.example.demo.payments.repository.RefundRepository;
-import com.example.demo.payments.repository.TipRepository;
+import com.example.demo.payments.Domain.Entities.OrderItemPayment;
+import com.example.demo.payments.Domain.Entities.Payment;
+import com.example.demo.payments.Domain.Entities.Refund;
+import com.example.demo.payments.Domain.Entities.Tip;
+import com.example.demo.payments.Domain.Entities.Enums.PaymentMethod;
+import com.example.demo.payments.Domain.Entities.Enums.PaymentRefundStatus;
+import com.example.demo.payments.Domain.Entities.Enums.PaymentStatus;
+import com.example.demo.payments.Repositories.IOrderItemPaymentRepository;
+import com.example.demo.payments.Repositories.IPaymentRepository;
+import com.example.demo.payments.Repositories.IRefundRepository;
+import com.example.demo.payments.Repositories.ITipRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,13 +29,13 @@ import java.util.stream.Collectors;
 public class PaymentService {
 
     @Autowired
-    private PaymentRepository paymentRepository;
+    private IPaymentRepository IPaymentRepository;
     @Autowired
-    private RefundRepository refundRepository;
+    private IRefundRepository IRefundRepository;
     @Autowired
-    private final OrderItemPaymentRepository orderItemPaymentRepository;
+    private final IOrderItemPaymentRepository IOrderItemPaymentRepository;
     @Autowired
-    private TipRepository tipRepository;
+    private ITipRepository ITipRepository;
 
     public Object createPaymentsForOrderItems(CreatePaymentDTO request, PaymentMethod paymentMethod) {
         List<OrderItemPaymentDTO> orderItemPayments = new ArrayList<>();
@@ -55,7 +55,7 @@ public class PaymentService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        payment = paymentRepository.save(payment);
+        payment = IPaymentRepository.save(payment);
 
         for (OrderItemPaymentDTO item : request.getOrderItems()) {
             OrderItemPayment orderItemPayment = OrderItemPayment.builder()
@@ -63,7 +63,7 @@ public class PaymentService {
                     .quantity(item.getQuantity())
                     .paymentId(payment.getId())
                     .build();
-            orderItemPaymentRepository.save(orderItemPayment);
+            IOrderItemPaymentRepository.save(orderItemPayment);
         }
 
         List<OrderItemPaymentDTO> orderItems = request.getOrderItems().stream()
@@ -88,7 +88,7 @@ public class PaymentService {
     }
 
     public Refund refundPayment(UUID paymentId) {
-        Payment payment = paymentRepository.findById(paymentId)
+        Payment payment = IPaymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
         Refund refund = new Refund();
@@ -101,23 +101,23 @@ public class PaymentService {
         refund.setStatus(PaymentRefundStatus.SUCCEEDED);
         refund.setCreatedAt(LocalDateTime.now());
 
-        Refund savedRefund = refundRepository.save(refund);
+        Refund savedRefund = IRefundRepository.save(refund);
 
         payment.setStatus(PaymentStatus.REFUNDED);
-        paymentRepository.save(payment);
+        IPaymentRepository.save(payment);
 
         return savedRefund;
     }
 
     public boolean completeOrderPayment(UUID orderId) {
-        List<Payment> payments = paymentRepository.findByOrderId(orderId);
+        List<Payment> payments = IPaymentRepository.findByOrderId(orderId);
         if (payments.isEmpty()) {
             return false;
         }
 
         for (Payment payment : payments) {
             payment.setStatus(PaymentStatus.SUCCEEDED);
-            paymentRepository.save(payment);
+            IPaymentRepository.save(payment);
         }
         return true;
     }
@@ -128,16 +128,16 @@ public class PaymentService {
         tipPayment.setEmployeeId(request.getEmployeeId());
         tipPayment.setAmount(request.getAmount());
         tipPayment.setCurrency(request.getCurrency());
-        tipRepository.save(tipPayment);
+        ITipRepository.save(tipPayment);
         return tipPayment;
     }
 
-    public PaymentService(OrderItemPaymentRepository orderItemPaymentRepository) {
-        this.orderItemPaymentRepository = orderItemPaymentRepository;
+    public PaymentService(IOrderItemPaymentRepository IOrderItemPaymentRepository) {
+        this.IOrderItemPaymentRepository = IOrderItemPaymentRepository;
     }
 
     public Page<Tip> getOrderTips(UUID orderId, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return tipRepository.findByOrderId(orderId, pageable);
+        return ITipRepository.findByOrderId(orderId, pageable);
     }
 }

@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import com.example.demo.payments.domain.entities.enums.Currency;
+import com.example.demo.payments.Domain.Entities.Enums.Currency;
 
 @Getter
 @Builder

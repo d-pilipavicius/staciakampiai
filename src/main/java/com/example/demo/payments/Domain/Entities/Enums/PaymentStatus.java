@@ -1,4 +1,4 @@
-package com.example.demo.payments.domain.entities.enums;
+package com.example.demo.payments.Domain.Entities.Enums;
 
 public enum PaymentStatus {
     PENDING, SUCCEEDED, FAILED, REFUNDED, CANCELED
