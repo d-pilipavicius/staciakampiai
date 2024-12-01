@@ -3,7 +3,7 @@ package com.example.demo.taxComponent.domain.services;
 import com.example.demo.taxComponent.helper.mapper.TaxMapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.taxComponent.api.dtos.GetTaxesDTO;
-import com.example.demo.taxComponent.api.dtos.PatchTaxDTO;
+import com.example.demo.taxComponent.api.dtos.PutTaxDTO;
 import com.example.demo.taxComponent.api.dtos.ResponseTaxDTO;
 import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
 import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
@@ -65,7 +65,7 @@ public class TaxService {
     }
 
     @Transactional
-    public ResponseTaxDTO updateTax(PatchTaxDTO patchTaxDTO, UUID id){
+    public ResponseTaxDTO updateTax(PutTaxDTO patchTaxDTO, UUID id){
         Tax tax = taxRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Tax with id " + id + " not found"));
 
@@ -85,7 +85,7 @@ public class TaxService {
         taxRepository.deleteById(id);
     }
 
-    private void applyTaxUpdates(PatchTaxDTO patchTaxDTO, Tax tax) {
+    private void applyTaxUpdates(PutTaxDTO patchTaxDTO, Tax tax) {
         patchTaxDTO.getTitle().ifPresent(tax::setTitle);
         patchTaxDTO.getRatePercentage().ifPresent(tax::setRatePercentage);
     }

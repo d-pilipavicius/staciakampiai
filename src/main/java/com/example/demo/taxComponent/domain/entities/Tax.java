@@ -1,6 +1,6 @@
 package com.example.demo.taxComponent.domain.entities;
 
-import com.example.demo.productComponent.domain.entities.Product;
+//import com.example.demo.productComponent.domain.entities.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,8 +28,8 @@ public class Tax {
     @Column(name = "business_id", nullable = false)
     private UUID businessId;
 
-    @ManyToMany(mappedBy = "taxes")
-    private List<Product> products;
+   /* @ManyToMany(mappedBy = "taxes")
+    private List<Product> products; */
 
     @Column(nullable = false)
     private String title;

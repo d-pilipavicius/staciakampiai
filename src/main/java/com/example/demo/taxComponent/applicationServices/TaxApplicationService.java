@@ -1,7 +1,7 @@
 package com.example.demo.taxComponent.applicationServices;
 
 import com.example.demo.taxComponent.api.dtos.GetTaxesDTO;
-import com.example.demo.taxComponent.api.dtos.PatchTaxDTO;
+import com.example.demo.taxComponent.api.dtos.PutTaxDTO;
 import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
 import com.example.demo.taxComponent.api.dtos.ResponseTaxDTO;
 import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
@@ -38,7 +38,7 @@ public class TaxApplicationService {
     }
 
     @Transactional
-    public ResponseTaxDTO updateTax(PatchTaxDTO patchTaxDTO, UUID id) {
+    public ResponseTaxDTO updateTax(PutTaxDTO patchTaxDTO, UUID id) {
         return taxService.updateTax(patchTaxDTO, id);
     }
 

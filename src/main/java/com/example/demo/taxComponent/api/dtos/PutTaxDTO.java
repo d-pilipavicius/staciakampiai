@@ -12,7 +12,7 @@ import java.util.Optional;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatchTaxDTO {
+public class PutTaxDTO {
     private Optional<String> title;
     private Optional<BigDecimal> ratePercentage;
 }
