@@ -2,10 +2,7 @@ package com.example.demo.productComponent.domain.entities;
 
 import com.example.demo.helper.enums.Currency;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -13,7 +10,8 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @Table(
         name = "product",
@@ -23,7 +21,7 @@ import java.util.UUID;
 )
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "business_id", nullable = false)

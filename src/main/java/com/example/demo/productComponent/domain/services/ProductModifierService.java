@@ -30,12 +30,12 @@ public class ProductModifierService {
 
     @Transactional
     public ProductModifierDTO createModifier(PostModifierDTO postModifierDTO) {
-        // Validate the DTO
-        productModifierValidator.validatePostModifierDTO(postModifierDTO);
         // map the DTO to the model
         ProductModifier modifier = Mapper.mapToModel(postModifierDTO, ProductModifierMapper.TO_MODEL);
+
         // save the modifier
         ProductModifier savedModifier = productModifierRepository.save(modifier);
+
         // map the saved modifier to a DTO and return it
         return Mapper.mapToDTO(savedModifier, ProductModifierMapper.TO_DTO);
     }
@@ -44,20 +44,26 @@ public class ProductModifierService {
     public GetModifiersDTO getModifiersByProductId(UUID productId) {
         // Fetch modifier Ids
         List<UUID> modifierIds = productCompatibleModifierRepository.findModifierIdsByProductId(productId);
-        // Fetch modifiers and map to DTOs
-        List<ProductModifierDTO> productModifierDTOS = productModifierRepository.findAllById(modifierIds).stream()
-                .map(ProductModifierMapper.TO_DTO::map)
-                .toList();
+
+        // Fetch modifiers
+        List<ProductModifier> productModifiers = productModifierRepository.findAllById(modifierIds);
+
+        // Map the modifiers to DTOs
+        List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers, ProductModifierMapper.TO_DTO);
 
         // build and return the DTO
-        return GetModifiersDTO.builder().items(productModifierDTOS).build();
+        return GetModifiersDTO
+                .builder()
+                .items(productModifierDTOS)
+                .build();
     }
 
     public GetModifiersDTO getModifiersByIds(List<UUID> modifierIds) {
-        // Fetch modifiers and map to DTOs
-        List<ProductModifierDTO> productModifierDTOS = productModifierRepository.findAllById(modifierIds).stream()
-                .map(ProductModifierMapper.TO_DTO::map)
-                .toList();
+        // Fetch modifiers
+        List<ProductModifier> productModifiers = productModifierRepository.findAllById(modifierIds);
+
+        // Map the modifiers to DTOs
+        List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers, ProductModifierMapper.TO_DTO);
 
         return GetModifiersDTO.builder()
                 .items(productModifierDTOS)
@@ -66,22 +72,23 @@ public class ProductModifierService {
     }
 
     public GetModifiersDTO getModifiersByBusinessId(int page, int size, UUID businessId) {
-        // Fetch modifiers and map to DTOs
-        Page<ProductModifierDTO> productModifierDTOS = productModifierRepository.findAllByBusinessId(PageRequest.of(page, size), businessId)
-                .map(ProductModifierMapper.TO_DTO::map);
+        // Fetch modifiers
+        Page<ProductModifier> productModifiers = productModifierRepository.findAllByBusinessId(PageRequest.of(page, size), businessId);
+
+        // Map the modifiers to DTOs
+        List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers.getContent(), ProductModifierMapper.TO_DTO);
 
         return GetModifiersDTO.builder()
-                .items(productModifierDTOS.getContent())
-                .totalItems((int)productModifierDTOS.getTotalElements())
-                .currentPage(page)
-                .totalPages(productModifierDTOS.getTotalPages())
+                .items(productModifierDTOS)
+                .totalItems((int) productModifiers.getTotalElements())
+                .currentPage(productModifiers.getPageable().getPageNumber())
+                .totalPages(productModifiers.getTotalPages())
                 .build();
     }
 
     @Transactional
     public ResponseModifierDTO updateModifier(PatchModifierDTO patchModifierDTO, UUID id){
-
-        // Validate the DTO
+        // Validate the DTO, if fields are present, they should be valid
         productModifierValidator.validatePatchModifierDTO(patchModifierDTO);
 
         // Fetch the product modifier
@@ -94,9 +101,13 @@ public class ProductModifierService {
         // Save the updated product modifier
         ProductModifier updatedProductModifier = productModifierRepository.save(productModifier);
 
+        // Map the updated product modifier to DTO
+        ProductModifierDTO productModifierDTO = Mapper.mapToDTO(updatedProductModifier, ProductModifierMapper.TO_DTO);
+
         // Map the updated product modifier to DTO and return it
-        return ResponseModifierDTO.builder()
-                .productModifier(Mapper.mapToDTO(updatedProductModifier, ProductModifierMapper.TO_DTO))
+        return ResponseModifierDTO
+                .builder()
+                .productModifier(productModifierDTO)
                 .build();
     }
 

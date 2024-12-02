@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,14 +36,10 @@ public class ProductService {
 
     @Transactional
     public ProductDTO createProduct(PostProductDTO postProductDTO){
-        // Validate the post product DTO
-        productValidator.validatePostProductDTO(postProductDTO);
-
-        // Make sure that all the product modifiers exist
-        validateModifiers(postProductDTO.getCompatibleModifierIds());
-
-        // Map the DTO to the model and save it
+        // Map the DTO to the model
         Product product = Mapper.mapToModel(postProductDTO, ProductMapper.TO_MODEL);
+
+        // Save the product
         Product savedProduct = productRepository.save(product);
 
         // Add the product modifiers to the product
@@ -57,10 +52,11 @@ public class ProductService {
     }
 
     public GetProductsDTO getProductsByBusinessId(UUID businessId){
-        // Get all the products by business id, map them to DTOs
-        List<ProductDTO> productDTOS = productRepository.findAllByBusinessId(businessId).stream()
-                .map(ProductMapper.TO_DTO::map)
-                .toList();
+        // Get all the products by business id
+        List<Product> products = productRepository.findAllByBusinessId(businessId);
+
+        // Map the products to DTOs
+        List<ProductDTO> productDTOS = Mapper.mapToDTOList(products, ProductMapper.TO_DTO);
 
         return GetProductsDTO.builder()
                 .items(productDTOS)
@@ -70,21 +66,24 @@ public class ProductService {
     }
 
     public GetProductsDTO getProductsByBusinessId(int page, int size, UUID businessId){
-        // Get all the products by business id, map them to DTOs
-        Page<ProductDTO> productDTOS = productRepository.findAllByBusinessId(businessId, PageRequest.of(page, size))
-                .map(ProductMapper.TO_DTO::map);
+        // Get all the products by business id
+        Page<Product> products = productRepository.findAllByBusinessId(businessId, PageRequest.of(page, size));
+
+        // Map the products to DTOs
+        List<ProductDTO> productDTOS = Mapper.mapToDTOList(products.getContent(), ProductMapper.TO_DTO);
 
         return GetProductsDTO.builder()
-                .items(productDTOS.getContent())
+                .items(productDTOS)
                 .businessId(businessId)
-                .totalItems(productDTOS.getTotalPages())
-                .currentPage(page)
-                .totalPages((int)productDTOS.getTotalElements())
+                .totalItems((int) products.getTotalElements())
+                .currentPage(products.getPageable().getPageNumber())
+                .totalPages(products.getTotalPages())
                 .build();
     }
 
     @Transactional
     public ResponseProductDTO updateProduct(PatchProductDTO patchProductDTO, UUID productId){
+        // Validate that if the data is provided -> it should be valid
         productValidator.validatePatchProductDTO(patchProductDTO);
 
         // Fetch the product
@@ -97,8 +96,11 @@ public class ProductService {
         // Save the updated product
         Product updatedProduct = productRepository.save(product);
 
+        // Map the updated product to DTO
+        ProductDTO productDTO = Mapper.mapToDTO(updatedProduct, ProductMapper.TO_DTO);
+
         return ResponseProductDTO.builder()
-                .product(Mapper.mapToDTO(updatedProduct, ProductMapper.TO_DTO))
+                .product(productDTO)
                 .build();
     }
 

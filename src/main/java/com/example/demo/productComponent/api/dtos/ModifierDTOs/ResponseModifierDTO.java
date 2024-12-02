@@ -4,10 +4,7 @@ import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.P
 import lombok.*;
 
 @Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 /**
  * A response product modifier DTO for Patch and Post requests
  */

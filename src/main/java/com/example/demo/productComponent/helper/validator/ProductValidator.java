@@ -60,12 +60,6 @@ public class ProductValidator {
         patchProductDTO.getCompatibleModifierIds().ifPresent(this::validateModifiers);
     }
 
-    public void validatePostProductDTO(PostProductDTO postProductDTO) {
-        validateTitle(postProductDTO.getTitle());
-        validateQuantityInStock(postProductDTO.getQuantityInStock());
-        validateAmount(postProductDTO.getPrice().getAmount());
-    }
-
     private void validateTitle(String title) {
         if (title.isBlank()) {
             logger.error("Title cannot be empty");

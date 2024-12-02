@@ -21,12 +21,6 @@ public class ProductModifierValidator {
         patchModifierDTO.getPrice().ifPresent(priceDTO -> validateAmount(priceDTO.getAmount()));
     }
 
-    public void validatePostModifierDTO(PostModifierDTO postModifierDTO) {
-        validateTitle(postModifierDTO.getTitle());
-        validateQuantityInStock(postModifierDTO.getQuantityInStock());
-        validateAmount(postModifierDTO.getPrice().getAmount());
-    }
-
     private void validateTitle(String title) {
         if (title.isBlank()) {
             logger.error("Title cannot be empty");

@@ -16,7 +16,7 @@ public class ProductMapper {
             .businessId(dto.getBusinessId())
             .build();
 
-    // Does not set compatibleModifiers directly -> it is set in the services
+    // Note: does not set compatibleModifiers directly -> it is set in the services
     public static final StaticMapper<Product, ProductDTO> TO_DTO = entity -> ProductDTO.builder()
             .id(entity.getId())
             .title(entity.getTitle())

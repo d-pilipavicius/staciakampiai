@@ -1,6 +1,7 @@
 package com.example.demo.productComponent.api.dtos;
 
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.MoneyDTO;
+import jakarta.annotation.Nullable;
 import lombok.*;
 
 import java.util.List;

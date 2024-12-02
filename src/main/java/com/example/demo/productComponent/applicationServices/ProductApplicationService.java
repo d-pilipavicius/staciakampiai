@@ -35,7 +35,7 @@ public class ProductApplicationService {
         // Create a product, here the product and the specified modifiers are also linked
         ProductDTO productDTO = productService.createProduct(postProductDTO);
 
-        // Set productModifierDto in productDTO here because Product entity does not have a field for productModifier objects
+        // Set productModifierDto in productDTO here because ProductModifiers are taken from the ProductModifierService
         List<ProductModifierDTO> productModifierDTOS = productModifierService.getModifiersByProductId(productDTO.getId()).getItems();
         productDTO.setCompatibleModifiers(productModifierDTOS);
 
@@ -50,6 +50,7 @@ public class ProductApplicationService {
     public GetProductsDTO getProductsByBusinessId(UUID businessId) {
         // Get all products by business id
         GetProductsDTO productsDTO = productService.getProductsByBusinessId(businessId);
+
         // Get all product modifiers for each product
         productsDTO.getItems().forEach(productDTO -> productDTO.setCompatibleModifiers(
                 productModifierService.getModifiersByProductId(productDTO.getId()).getItems()
@@ -61,6 +62,7 @@ public class ProductApplicationService {
     public GetProductsDTO getProductsByBusinessId(int page, int size, UUID businessId) {
         // Get all products by business id
         GetProductsDTO productsDTO = productService.getProductsByBusinessId(page, size, businessId);
+
         // Get all product modifiers for each product
         productsDTO.getItems().forEach(productDTO -> productDTO.setCompatibleModifiers(
                 productModifierService.getModifiersByProductId(productDTO.getId()).getItems()

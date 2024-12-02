@@ -6,12 +6,9 @@ import lombok.*;
 import java.util.Optional;
 
 @Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class PatchModifierDTO {
-    private Optional<String> title = Optional.empty();
-    private Optional<Integer> quantityInStock = Optional.empty();
-    private Optional<MoneyDTO> price = Optional.empty();
+    private Optional<String> title;
+    private Optional<Integer> quantityInStock;
+    private Optional<MoneyDTO> price;
 }
