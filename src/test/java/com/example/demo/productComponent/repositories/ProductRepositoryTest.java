@@ -111,7 +111,7 @@ public class ProductRepositoryTest {
                 .quantityInStock(quantityInStock)
                 .currency(currency)
                 .price(price)
-                .rowVersion(new byte[]{1})
+                .rowVersion(0)
                 .build();
     }
 }

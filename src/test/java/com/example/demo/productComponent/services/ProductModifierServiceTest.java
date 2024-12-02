@@ -60,7 +60,7 @@ class ProductModifierServiceTest {
         validPostModifierDTO = PostModifierDTO.builder()
                 .title("Test Modifier")
                 .quantityInStock(100)
-                .price(new MoneyDTO(BigDecimal.valueOf(9.99), Currency.USD))
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(9.99)).currency(Currency.USD).build())
                 .businessId(businessId)
                 .build();
 
@@ -71,13 +71,15 @@ class ProductModifierServiceTest {
                 .price(BigDecimal.valueOf(9.99))
                 .currency(Currency.USD)
                 .businessId(businessId)
-                .rowVersion(new byte[]{1})
+                .rowVersion(0)
                 .build();
 
         validPatchModifierDTO = new PatchModifierDTO();
         validPatchModifierDTO.setTitle(Optional.of("Updated Modifier"));
         validPatchModifierDTO.setQuantityInStock(Optional.of(200));
-        validPatchModifierDTO.setPrice(Optional.of(new MoneyDTO(BigDecimal.valueOf(19.99), Currency.USD)));
+        validPatchModifierDTO.setPrice(Optional.of(
+                MoneyDTO.builder().amount(BigDecimal.valueOf(19.99)).currency(Currency.USD).build()
+        ));
     }
 
     @Test

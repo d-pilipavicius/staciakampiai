@@ -8,13 +8,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class PatchProductDTO {
-    private Optional<String> title = Optional.empty();
-    private Optional<Integer> quantityInStock = Optional.empty();
-    private Optional<MoneyDTO> price = Optional.empty();
-    private Optional<List<UUID>> compatibleModifierIds = Optional.empty();
+    private final Optional<String> title;
+    private final Optional<Integer> quantityInStock;
+    private final Optional<MoneyDTO> price;
+    private final Optional<List<UUID>> compatibleModifierIds;
 }

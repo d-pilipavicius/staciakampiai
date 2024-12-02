@@ -14,11 +14,14 @@ import com.example.demo.productComponent.applicationServices.ProductApplicationS
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,7 +37,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ProductsController.class)
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(controllers = ProductsController.class)
+@AutoConfigureMockMvc
 class ProductsControllerTest {
 
     @Autowired
@@ -54,14 +59,14 @@ class ProductsControllerTest {
         postProductDTO = PostProductDTO.builder()
                 .title("Test Product")
                 .quantityInStock(100)
-                .price(new MoneyDTO(BigDecimal.valueOf(29.99), Currency.USD))
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(29.99)).currency(Currency.USD).build())
                 .businessId(UUID.randomUUID())
                 .build();
 
         postModifierDTO = PostModifierDTO.builder()
                 .title("Test Modifier")
                 .quantityInStock(50)
-                .price(new MoneyDTO(BigDecimal.valueOf(5.99), Currency.USD))
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(5.99)).currency(Currency.USD).build())
                 .businessId(UUID.randomUUID())
                 .build();
     }
@@ -74,7 +79,7 @@ class ProductsControllerTest {
                 .id(UUID.randomUUID())
                 .title("Test Product")
                 .quantityInStock(100)
-                .price(new MoneyDTO(BigDecimal.valueOf(29.99), Currency.USD))
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(29.99)).currency(Currency.USD).build())
                 .businessId(postProductDTO.getBusinessId())
                 .build();
 
@@ -95,7 +100,7 @@ class ProductsControllerTest {
     @Test
     void shouldReturnBadRequestWhenInvalidProductData() throws Exception {
         // Arrange
-        PostProductDTO postProductDTO = new PostProductDTO(); // Missing required fields
+        PostProductDTO postProductDTO = PostProductDTO.builder().build(); // Missing required fields
 
         // Act & Assert
         mockMvc.perform(post("/v1/products")
@@ -117,14 +122,14 @@ class ProductsControllerTest {
                                 .id(UUID.randomUUID())
                                 .title("Product 1")
                                 .quantityInStock(50)
-                                .price(new MoneyDTO(BigDecimal.valueOf(19.99), Currency.USD))
+                                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(19.99)).currency(Currency.USD).build())
                                 .businessId(businessId)
                                 .build(),
                         ProductDTO.builder()
                                 .id(UUID.randomUUID())
                                 .title("Product 2")
                                 .quantityInStock(100)
-                                .price(new MoneyDTO(BigDecimal.valueOf(39.99), Currency.USD))
+                                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(39.99)).currency(Currency.USD).build())
                                 .businessId(businessId)
                                 .build()
                 ))
@@ -155,7 +160,7 @@ class ProductsControllerTest {
                 .id(UUID.randomUUID())
                 .title("Test Modifier")
                 .quantityInStock(50)
-                .price(new MoneyDTO(BigDecimal.valueOf(5.99), Currency.USD))
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(5.99)).currency(Currency.USD).build())
                 .businessId(postModifierDTO.getBusinessId())
                 .build();
 
@@ -184,7 +189,7 @@ class ProductsControllerTest {
                         .id(UUID.randomUUID())
                         .title("Updated Modifier")
                         .quantityInStock(100)
-                        .price(new MoneyDTO(BigDecimal.valueOf(9.99), Currency.USD))
+                        .price(MoneyDTO.builder().amount(BigDecimal.valueOf(9.99)).currency(Currency.USD).build())
                         .businessId(UUID.randomUUID())
                         .build())
                 .build();

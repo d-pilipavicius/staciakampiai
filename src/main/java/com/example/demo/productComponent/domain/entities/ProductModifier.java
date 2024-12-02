@@ -44,5 +44,5 @@ public class ProductModifier {
 
     @Version
     @Column(nullable = false)
-    private byte[] rowVersion = new byte[0];
+    private int rowVersion = 0;
 }

@@ -12,7 +12,10 @@ import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.P
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 import com.example.demo.productComponent.api.dtos.ResponseProductDTO;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,18 +29,22 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ProductsController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductsController.class);
     private final ProductApplicationService productApplicationService;
 
     @PostMapping
     public ResponseEntity<Object> createProduct(
             @RequestParam UUID employeeId,
-            @Validated @RequestBody PostProductDTO postProductDTO,
+            @Valid @RequestBody PostProductDTO postProductDTO,
             BindingResult bindingResult
     ) {
 
         // Check for 400
         if (bindingResult.hasErrors()) {
+            logger.error("Validation errors: {}", bindingResult.getAllErrors());
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }else {
+            logger.info("Product created: {} by employee: {} with price: {} and quantity: {} for business: {}compatible with modifiers: {}", postProductDTO.getTitle(), employeeId, postProductDTO, postProductDTO.getQuantityInStock(), postProductDTO.getBusinessId(), postProductDTO.getCompatibleModifierIds());
         }
 
         ProductDTO productDTO = productApplicationService.createProduct(postProductDTO);
@@ -67,7 +74,7 @@ public class ProductsController {
     public  ResponseEntity<Object> updateProduct(
             @PathVariable UUID productId,
             @RequestParam UUID employeeId,
-            @Validated @RequestBody PatchProductDTO patchDiscountDTO,
+            @Valid @RequestBody PatchProductDTO patchDiscountDTO,
             BindingResult bindingResult
     ){
 
@@ -93,10 +100,15 @@ public class ProductsController {
     }
 
     @PostMapping("/modifiers")
-    public ResponseEntity<ProductModifierDTO> createProductModifier(
+    public ResponseEntity<Object> createProductModifier(
             @RequestParam UUID employeeId,
-            @RequestBody PostModifierDTO postModifierDTO
+            @Valid @RequestBody PostModifierDTO postModifierDTO,
+            BindingResult bindingResult
     ) {
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
+
         ProductModifierDTO createdModifier = productApplicationService.createModifier(postModifierDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdModifier);

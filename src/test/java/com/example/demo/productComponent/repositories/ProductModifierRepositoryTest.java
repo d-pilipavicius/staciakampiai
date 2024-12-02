@@ -112,7 +112,7 @@ public class ProductModifierRepositoryTest {
                 .quantityInStock(quantityInStock)
                 .price(price)
                 .currency(currency)
-                .rowVersion(new byte[]{1})
+                .rowVersion(0)
                 .build();
     }
 }

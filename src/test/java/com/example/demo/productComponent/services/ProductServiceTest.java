@@ -60,7 +60,7 @@ public class ProductServiceTest {
         validPostProductDTO = PostProductDTO.builder()
                 .title("Test Product")
                 .quantityInStock(50)
-                .price(new MoneyDTO(BigDecimal.valueOf(29.99), Currency.USD))
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(29.99)).currency(Currency.USD).build())
                 .businessId(businessId)
                 .compatibleModifierIds(List.of(modifierId))
                 .build();
@@ -79,7 +79,7 @@ public class ProductServiceTest {
                 .price(BigDecimal.valueOf(29.99))
                 .currency(Currency.USD)
                 .businessId(businessId)
-                .rowVersion(new byte[]{1})
+                .rowVersion(0)
                 .build();
     }
 
@@ -191,7 +191,7 @@ public class ProductServiceTest {
         PostProductDTO invalidPostProductDTO = PostProductDTO.builder()
                 .title("") // Invalid title
                 .quantityInStock(50)
-                .price(new MoneyDTO(BigDecimal.valueOf(29.99), Currency.USD))
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(29.99)).currency(Currency.USD).build())
                 .businessId(businessId)
                 .compatibleModifierIds(List.of(modifierId))
                 .build();
