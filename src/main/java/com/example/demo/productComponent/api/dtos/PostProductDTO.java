@@ -19,8 +19,7 @@ public class PostProductDTO {
     @Min(value = 0, message = "Quantity in stock must be greater than or equal to 0")
     private final int quantityInStock;
 
-    @NotNull
-    @Positive(message = "Price must be greater than or equal to 0")
+    @NotNull(message = "Price is required")
     private final MoneyDTO price;
 
     private final List<UUID> compatibleModifierIds;
