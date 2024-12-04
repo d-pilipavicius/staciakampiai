@@ -1,10 +1,14 @@
 package com.example.demo.payments.Helpers;
 
+import com.example.demo.payments.Domain.Entities.Payment;
 import com.example.demo.payments.Domain.Entities.Refund;
 import org.springframework.data.domain.Page;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Mappers {
     public static <T> Map<String, Object> mapPageToResponse(Page<T> page) {
@@ -25,5 +29,12 @@ public class Mappers {
                 "refundStatus", refund.getStatus(),
                 "createdAt", refund.getCreatedAt()
         );
+    }
+
+    public static Map<String, Object> toPaymentStatusResponse(Payment payment) {
+        Map<String, Object> paymentStatusMap = new HashMap<>();
+        paymentStatusMap.put("paymentId", payment.getId());
+        paymentStatusMap.put("status", payment.getStatus());
+        return paymentStatusMap;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.payments.API.Endpoints;
 
 import com.example.demo.payments.API.DTOs.*;
+import com.example.demo.payments.Domain.Entities.Enums.PaymentStatus;
 import com.example.demo.payments.Helpers.Mappers;
 import com.example.demo.payments.Domain.Entities.Refund;
 import com.example.demo.payments.Domain.Entities.Enums.PaymentMethod;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.payments.Domain.Entities.Tip;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -67,5 +69,11 @@ public class PaymentController {
         } else {
             return ResponseEntity.status(400).body("Failed to close the order.");
         }
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<?> getPaymentIdAndStatus(@RequestParam UUID orderId) {
+        List<Map<String, Object>> paymentStatuses = paymentService.getPaymentStatus(orderId);
+        return ResponseEntity.ok(Map.of("Payments", paymentStatuses));
     }
 }
