@@ -38,12 +38,6 @@ public class DiscountsController {
     @PatchMapping("/{discountId}")
     public  ResponseEntity<Object> updateDiscount(@PathVariable UUID discountId, @RequestParam UUID  employeeId,
                                                   @Valid @RequestBody PatchDiscountDTO patchDiscountDTO){
-        if(patchDiscountDTO.getCode() == null){
-            System.out.println("lalalalalala!!!");
-        }
-        if(patchDiscountDTO.getCurrency() == null){
-            System.out.println("gafasfa");
-        }
         ResponseDiscountDTO updatedDiscount = discountAppService.updateDiscount(discountId, employeeId, patchDiscountDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedDiscount);
     }
