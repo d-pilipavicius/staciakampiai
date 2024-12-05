@@ -70,14 +70,14 @@ public class ProductService {
         Page<Product> products = productRepository.findAllByBusinessId(businessId, PageRequest.of(page, size));
 
         // Map the products to DTOs
-        List<ProductDTO> productDTOS = Mapper.mapToDTOList(products.getContent(), ProductMapper.TO_DTO);
+        Page<ProductDTO> productDTOS = Mapper.mapToDTOPage(products, ProductMapper.TO_DTO);
 
         return GetProductsDTO.builder()
-                .items(productDTOS)
+                .items(productDTOS.getContent())
                 .businessId(businessId)
-                .totalItems((int) products.getTotalElements())
-                .currentPage(products.getPageable().getPageNumber())
-                .totalPages(products.getTotalPages())
+                .totalItems((int) productDTOS.getTotalElements())
+                .currentPage(productDTOS.getPageable().getPageNumber())
+                .totalPages(productDTOS.getTotalPages())
                 .build();
     }
 
@@ -104,12 +104,14 @@ public class ProductService {
                 .build();
     }
 
+    // todo: add validation to check if the product/modifier exists before deleting it
     @Transactional
     public void deleteProduct(UUID productId){
         productCompatibleModifierRepository.deleteByProductId(productId);
         productRepository.deleteById(productId);
     }
 
+    //todo: also adjust the validation logic here to accept null values for the optional fields -> if value is null -> change it to null, otherwise default to Optional.empty() for non nullable fields
     @Transactional
     protected void applyProductUpdates(PatchProductDTO patchProductDTO, Product product) {
         patchProductDTO.getTitle().ifPresent(product::setTitle);

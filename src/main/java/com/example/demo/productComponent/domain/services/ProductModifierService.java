@@ -76,12 +76,12 @@ public class ProductModifierService {
         Page<ProductModifier> productModifiers = productModifierRepository.findAllByBusinessId(PageRequest.of(page, size), businessId);
 
         // Map the modifiers to DTOs
-        List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers.getContent(), ProductModifierMapper.TO_DTO);
+        Page<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOPage(productModifiers, ProductModifierMapper.TO_DTO);
 
         return GetModifiersDTO.builder()
-                .items(productModifierDTOS)
-                .totalItems((int) productModifiers.getTotalElements())
-                .currentPage(productModifiers.getPageable().getPageNumber())
+                .items(productModifierDTOS.getContent())
+                .totalItems((int) productModifierDTOS.getTotalElements())
+                .currentPage(productModifierDTOS.getPageable().getPageNumber())
                 .totalPages(productModifiers.getTotalPages())
                 .build();
     }
@@ -111,12 +111,14 @@ public class ProductModifierService {
                 .build();
     }
 
+    // todo: add validation to check if the product/modifier exists before deleting it
     @Transactional
     public void deleteModifier(UUID modifierId) {
         productCompatibleModifierRepository.deleteByModifierId(modifierId);
         productModifierRepository.deleteById(modifierId);
     }
 
+    // todo: add validation to check for null and optional.empty values
     private void applyModifierUpdates(PatchModifierDTO patchModifierDTO, ProductModifier modifier) {
         patchModifierDTO.getTitle().ifPresent(modifier::setTitle);
         patchModifierDTO.getQuantityInStock().ifPresent(modifier::setQuantityInStock);

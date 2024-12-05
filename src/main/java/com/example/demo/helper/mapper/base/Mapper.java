@@ -1,5 +1,7 @@
 package com.example.demo.helper.mapper.base;
 
+import org.springframework.data.domain.Page;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +47,10 @@ public class Mapper {
     public static <D, M> List<D> mapToDTOList(List<M> inputList, StaticMapper<M, D> mapper) {
         if (inputList == null) return Collections.emptyList();
         return inputList.stream().map(mapper::map).collect(Collectors.toList());
+    }
+
+    public static <D, M> Page<D> mapToDTOPage(Page<M> inputPage, StaticMapper<M, D> mapper) {
+        return inputPage.map(mapper::map);
     }
 
     public static <D, M> Optional<M> mapToModelOptional(D input, StaticMapper<D, M> mapper) {

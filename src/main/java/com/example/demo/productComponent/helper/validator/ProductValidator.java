@@ -52,6 +52,7 @@ public class ProductValidator {
         return productCompatibleModifierRepository.existsByProductIdAndModifierId(productId, modifierIds);
     }
 
+    // todo: change the validation to accept null values for the optional fields -> if value is null -> change it to null, otherwise default to Optional.empty() for non nullable fields
     // Validate the patch product DTO -> if fields are present, they should not be empty
     public void validatePatchProductDTO(PatchProductDTO patchProductDTO) {
         patchProductDTO.getTitle().ifPresent(this::validateTitle);

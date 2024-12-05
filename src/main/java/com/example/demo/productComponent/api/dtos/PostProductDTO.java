@@ -1,6 +1,7 @@
 package com.example.demo.productComponent.api.dtos;
 
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.MoneyDTO;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
+@JsonDeserialize(builder = PostProductDTO.PostProductDTOBuilder.class)
 public class PostProductDTO {
     @NotNull(message = "Title is required")
     private final String title;
