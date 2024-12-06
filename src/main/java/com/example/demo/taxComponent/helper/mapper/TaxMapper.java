@@ -30,7 +30,7 @@ public class TaxMapper {
         return taxDTO;
     };
 
-    // Example of more mapper methods if needed (tyngiu visur idet)
+    
     public static List<Tax> mapToModelList(List<PostTaxDTO> dtos) {
         return Mapper.mapToModelList(dtos, TO_MODEL);
     }
