@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
-import com.example.demo.BusinessComponent.Domain.Entities.Business;
+
 import com.example.demo.serviceChargeComponent.api.dtos.GetServiceChargesDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.PostServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.PutServiceChargeDTO;
