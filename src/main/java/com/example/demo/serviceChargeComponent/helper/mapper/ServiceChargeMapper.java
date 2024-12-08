@@ -13,7 +13,7 @@ public class ServiceChargeMapper {
         ServiceCharge serviceCharge = new ServiceCharge();
         serviceCharge.setTitle(dto.getTitle());
         serviceCharge.setBusinessId(dto.getBusinessId());
-        serviceCharge.setValue(dto.getValue());
+        serviceCharge.setServiceChargeValue(dto.getServiceChargeValue());
         serviceCharge.setValueType(dto.getValueType());
         dto.getCurrency().ifPresent(serviceCharge::setCurrency);
         return serviceCharge;
@@ -24,7 +24,7 @@ public class ServiceChargeMapper {
         serviceChargeDTO.setId(entity.getId());
         serviceChargeDTO.setTitle(entity.getTitle());
         serviceChargeDTO.setBusinessId(entity.getBusinessId());
-        serviceChargeDTO.setValue(entity.getValue());
+        serviceChargeDTO.setServiceChargeValue(entity.getServiceChargeValue());
         serviceChargeDTO.setValueType(entity.getValueType());
         serviceChargeDTO.setCurrency(Optional.ofNullable(entity.getCurrency()));
         return serviceChargeDTO;

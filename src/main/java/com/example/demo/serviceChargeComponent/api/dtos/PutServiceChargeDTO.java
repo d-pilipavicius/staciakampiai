@@ -14,9 +14,9 @@ import java.util.Optional;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatchServiceChargeDTO {
+public class PutServiceChargeDTO {
     private Optional<String> title;
     private Optional<PricingStrategy> valueType;
-    private Optional<BigDecimal> value;
+    private Optional<BigDecimal> serviceChargeValue;
     private Optional<Currency> currency;
 }

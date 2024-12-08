@@ -3,7 +3,7 @@ package com.example.demo.serviceChargeComponent.domain.services;
 import com.example.demo.serviceChargeComponent.helper.mapper.ServiceChargeMapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.serviceChargeComponent.api.dtos.GetServiceChargesDTO;
-import com.example.demo.serviceChargeComponent.api.dtos.PatchServiceChargeDTO;
+import com.example.demo.serviceChargeComponent.api.dtos.PutServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.ResponseServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.ServiceChargeHelperDTOs.ServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.domain.entities.ServiceCharge;
@@ -70,7 +70,7 @@ public class ServiceChargeService {
     }
 
     @Transactional
-    public ResponseServiceChargeDTO updateServiceCharge(PatchServiceChargeDTO patchServiceChargeDTO, UUID id) {
+    public ResponseServiceChargeDTO updateServiceCharge(PutServiceChargeDTO patchServiceChargeDTO, UUID id) {
         ServiceCharge serviceCharge = serviceChargeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("ServiceCharge with id " + id + " not found"));
 
@@ -88,9 +88,9 @@ public class ServiceChargeService {
         serviceChargeRepository.deleteById(id);
     }
 
-    private void applyServiceChargeUpdates(PatchServiceChargeDTO patchServiceChargeDTO, ServiceCharge serviceCharge) {
+    private void applyServiceChargeUpdates(PutServiceChargeDTO patchServiceChargeDTO, ServiceCharge serviceCharge) {
         patchServiceChargeDTO.getTitle().ifPresent(serviceCharge::setTitle);
-        patchServiceChargeDTO.getValue().ifPresent(serviceCharge::setValue);
+        patchServiceChargeDTO.getServiceChargeValue().ifPresent(serviceCharge::setServiceChargeValue);
         patchServiceChargeDTO.getValueType().ifPresent(serviceCharge::setValueType);
         patchServiceChargeDTO.getCurrency().ifPresent(serviceCharge::setCurrency);
     }

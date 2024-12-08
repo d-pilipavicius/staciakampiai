@@ -1,9 +1,9 @@
 package com.example.demo.serviceChargeComponent.domain.entities;
 
-import com.example.demo.orderComponent.domain.entities.Order;
+//import com.example.demo.orderComponent.domain.entities.Order;
 import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
 import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
-import com.example.demo.reservationComponent.domain.entities.Reservation;
+//import com.example.demo.reservationComponent.domain.entities.Reservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,9 +29,9 @@ public class AppliedServiceCharge {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
+   /* @ManyToOne
     @JoinColumn(name = "charged_by_employee_id", nullable = false)
-    private Employee employee;
+    private Employee employee; 
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = true)
@@ -39,7 +39,7 @@ public class AppliedServiceCharge {
 
     @ManyToOne
     @JoinColumn(name = "reservation_id", nullable = true)
-    private Reservation reservation;
+    private Reservation reservation; */
 
     @Column(nullable = false)
     private String title;

@@ -18,7 +18,7 @@ import java.util.UUID;
 public class PostServiceChargeDTO {
     private String title;
     private PricingStrategy valueType;
-    private BigDecimal value;
+    private BigDecimal serviceChargeValue;
     private Optional<Currency> currency;
     private UUID businessId;
 }

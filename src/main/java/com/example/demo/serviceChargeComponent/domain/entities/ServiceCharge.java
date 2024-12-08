@@ -15,10 +15,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Table(
-        name = "service_charge",
-        indexes = {
+        name = "service_charge" /* ,
+         indexes = {
             @Index(name = "idx_service_charge_business_id", columnList = "business_id")
-        }
+        } */
 )
 public class ServiceCharge {
     @Id
@@ -32,12 +32,15 @@ public class ServiceCharge {
     private String title;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal value;
+    private BigDecimal serviceChargeValue;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PricingStrategy valueType;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 3)
+    @Enumerated(EnumType.STRING)
     private Currency currency;
+
+
 }

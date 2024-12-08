@@ -1,7 +1,7 @@
 package com.example.demo.serviceChargeComponent.applicationServices;
 
 import com.example.demo.serviceChargeComponent.api.dtos.GetServiceChargesDTO;
-import com.example.demo.serviceChargeComponent.api.dtos.PatchServiceChargeDTO;
+import com.example.demo.serviceChargeComponent.api.dtos.PutServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.PostServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.ResponseServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.ServiceChargeHelperDTOs.ServiceChargeDTO;
@@ -38,7 +38,7 @@ public class ServiceChargeApplicationService {
     }
 
     @Transactional
-    public ResponseServiceChargeDTO updateServiceCharge(PatchServiceChargeDTO patchServiceChargeDTO, UUID id) {
+    public ResponseServiceChargeDTO updateServiceCharge(PutServiceChargeDTO patchServiceChargeDTO, UUID id) {
         return serviceChargeService.updateServiceCharge(patchServiceChargeDTO, id);
     }
 
