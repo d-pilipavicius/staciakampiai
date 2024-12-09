@@ -3,14 +3,12 @@ package com.example.demo.productComponent.api.endpoints;
 import com.example.demo.helper.validator.ValidationForDifferentHTTPCodes;
 import com.example.demo.productComponent.api.dtos.GetProductsDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.PatchModifierDTO;
+import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.ResponseModifierDTO;
-import com.example.demo.productComponent.api.dtos.PatchProductDTO;
+import com.example.demo.productComponent.api.dtos.PutProductDTO;
 import com.example.demo.productComponent.api.dtos.PostProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
-import com.example.demo.productComponent.api.dtos.ResponseProductDTO;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -60,13 +58,13 @@ public class ProductsController {
     }
 
     @PatchMapping("/{productId}")
-    public  ResponseEntity<Object> updateProduct(
+    public ResponseEntity<Object> updateProduct(
             @PathVariable UUID productId,
             @RequestParam UUID employeeId,
-            @Valid @RequestBody PatchProductDTO patchDiscountDTO
+            @Valid @RequestBody PutProductDTO patchDiscountDTO
     ){
 
-        ResponseProductDTO updatedProduct = productApplicationService.updateProduct(patchDiscountDTO, productId);
+        ProductDTO updatedProduct = productApplicationService.updateProduct(patchDiscountDTO, productId);
 
         ValidationForDifferentHTTPCodes.checkFor404(updatedProduct);
 
@@ -115,10 +113,10 @@ public class ProductsController {
     public ResponseEntity<Object> updateProductModifier(
             @PathVariable UUID modifierId,
             @RequestParam UUID employeeId,
-            @Validated @RequestBody PatchModifierDTO patchModifierDTO
+            @Valid @RequestBody PutModifierDTO putModifierDTO
     ) {
 
-        ResponseModifierDTO updatedModifier = productApplicationService.updateProductModifier(patchModifierDTO, modifierId);
+        ProductModifierDTO updatedModifier = productApplicationService.updateProductModifier(putModifierDTO, modifierId);
 
         ValidationForDifferentHTTPCodes.checkFor404(updatedModifier);
 

@@ -2,15 +2,11 @@ package com.example.demo.productComponent.controller;
 
 import com.example.demo.helper.enums.Currency;
 import com.example.demo.productComponent.api.dtos.GetProductsDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.PatchModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.ResponseModifierDTO;
-import com.example.demo.productComponent.api.dtos.PatchProductDTO;
+import com.example.demo.productComponent.api.dtos.PutProductDTO;
 import com.example.demo.productComponent.api.dtos.PostProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.MoneyDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductDTO;
-import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
-import com.example.demo.productComponent.api.dtos.ResponseProductDTO;
 import com.example.demo.productComponent.api.endpoints.ProductsController;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,15 +24,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -108,6 +101,7 @@ class ProductsControllerTest {
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postProductDTO)))
+                .andDo(result -> System.out.println(result.getResponse().getContentAsString()))
                 .andExpect(status().isNotFound());
 
         verify(productApplicationService, times(1)).createProduct(any(PostProductDTO.class));
@@ -173,54 +167,54 @@ class ProductsControllerTest {
     @Test
     void shouldUpdateProductSuccessfully() throws Exception {
         // Arrange
-        PatchProductDTO patchProductDTO = PatchProductDTO.builder()
-                .title(Optional.of("Updated Product"))
-                .quantityInStock(Optional.of(150))
+        PutProductDTO putProductDTO = PutProductDTO.builder()
+                .title("Updated Product")
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(39.99)).currency(Currency.USD).build())
+                .quantityInStock(150)
                 .build();
 
-        ResponseProductDTO responseProductDTO = ResponseProductDTO.builder()
-                .product(ProductDTO.builder()
+        ProductDTO responseProductDTO = ProductDTO.builder()
                         .id(UUID.randomUUID())
                         .title("Updated Product")
                         .quantityInStock(150)
                         .price(postProductDTO.getPrice())
                         .businessId(postProductDTO.getBusinessId())
-                        .build())
-                .build();
+                        .build();
 
-        when(productApplicationService.updateProduct(any(PatchProductDTO.class), any(UUID.class)))
+        when(productApplicationService.updateProduct(any(PutProductDTO.class), any(UUID.class)))
                 .thenReturn(responseProductDTO);
 
         // Act & Assert
         mockMvc.perform(patch("/v1/products/{productId}", UUID.randomUUID())
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patchProductDTO)))
+                        .content(objectMapper.writeValueAsString(putProductDTO)))
                 .andExpect(status().isOk());
 
         verify(productApplicationService, times(1))
-                .updateProduct(any(PatchProductDTO.class), any(UUID.class));
+                .updateProduct(any(PutProductDTO.class), any(UUID.class));
     }
 
     @Test
     void shouldReturnNotFoundWhenUpdatingNonexistentProduct() throws Exception {
         // Arrange
-        PatchProductDTO patchProductDTO = PatchProductDTO.builder()
-                .title(Optional.of("Nonexistent Product"))
+        PutProductDTO putProductDTO = PutProductDTO.builder()
+                .title("Nonexistent Product")
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(39.99)).currency(Currency.USD).build())
                 .build();
 
         UUID productId = UUID.randomUUID();
         doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).updateProduct(any(PatchProductDTO.class), eq(productId));
+                .when(productApplicationService).updateProduct(any(PutProductDTO.class), eq(productId));
 
         // Act & Assert
         mockMvc.perform(patch("/v1/products/{productId}", productId)
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patchProductDTO)))
+                        .content(objectMapper.writeValueAsString(putProductDTO)))
                 .andExpect(status().isNotFound());
 
-        verify(productApplicationService, times(1)).updateProduct(any(PatchProductDTO.class), eq(productId));
+        verify(productApplicationService, times(1)).updateProduct(any(PutProductDTO.class), eq(productId));
     }
 
     @Test

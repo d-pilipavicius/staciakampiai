@@ -2,14 +2,12 @@ package com.example.demo.productComponent.controller;
 
 import com.example.demo.helper.enums.Currency;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.PatchModifierDTO;
+import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.ResponseModifierDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.MoneyDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 import com.example.demo.productComponent.api.endpoints.ProductsController;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
-import com.example.demo.productComponent.domain.services.ProductModifierService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -52,7 +48,7 @@ class ProductModifiersControllerTest {
     private ObjectMapper objectMapper;
 
     private PostModifierDTO validPostModifierDTO;
-    private PatchModifierDTO validPatchModifierDTO;
+    private PutModifierDTO validPutModifierDTO;
     private UUID modifierId;
     private UUID businessId;
 
@@ -68,13 +64,11 @@ class ProductModifiersControllerTest {
                 .businessId(businessId)
                 .build();
 
-        validPatchModifierDTO = PatchModifierDTO
+        validPutModifierDTO = PutModifierDTO
                 .builder()
-                .title(Optional.of("Updated Modifier"))
-                .quantityInStock(Optional.of(200))
-                .price(Optional.of(
-                        MoneyDTO.builder().amount(BigDecimal.valueOf(19.99)).currency(Currency.USD).build()
-                ))
+                .title("Updated Modifier")
+                .quantityInStock(200)
+                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(19.99)).currency(Currency.USD).build())
                 .build();
     }
 
@@ -173,43 +167,41 @@ class ProductModifiersControllerTest {
     @Test
     void shouldUpdateModifierSuccessfully() throws Exception {
         // Arrange
-        ResponseModifierDTO responseModifierDTO = ResponseModifierDTO.builder()
-                .productModifier(ProductModifierDTO.builder()
+        ProductModifierDTO responseModifierDTO = ProductModifierDTO.builder()
                         .id(modifierId)
                         .title("Updated Modifier")
                         .quantityInStock(200)
-                        .price(validPatchModifierDTO.getPrice().get())
+                        .price(validPutModifierDTO.getPrice())
                         .businessId(businessId)
-                        .build())
-                .build();
+                        .build();
 
-        when(productApplicationService.updateProductModifier(any(PatchModifierDTO.class), eq(modifierId)))
+        when(productApplicationService.updateProductModifier(any(PutModifierDTO.class), eq(modifierId)))
                 .thenReturn(responseModifierDTO);
 
         // Act & Assert
         mockMvc.perform(patch("/v1/products/modifiers/{modifierId}", modifierId)
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validPatchModifierDTO)))
+                        .content(objectMapper.writeValueAsString(validPutModifierDTO)))
                 .andExpect(status().isOk());
 
-        verify(productApplicationService, times(1)).updateProductModifier(any(PatchModifierDTO.class), eq(modifierId));
+        verify(productApplicationService, times(1)).updateProductModifier(any(PutModifierDTO.class), eq(modifierId));
     }
 
     @Test
     void shouldReturnNotFoundWhenUpdatingNonexistentModifier() throws Exception {
         // Arrange
         doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).updateProductModifier(any(PatchModifierDTO.class), eq(modifierId));
+                .when(productApplicationService).updateProductModifier(any(PutModifierDTO.class), eq(modifierId));
 
         // Act & Assert
         mockMvc.perform(patch("/v1/products/modifiers/{modifierId}", modifierId)
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validPatchModifierDTO)))
+                        .content(objectMapper.writeValueAsString(validPutModifierDTO)))
                 .andExpect(status().isNotFound());
 
-        verify(productApplicationService, times(1)).updateProductModifier(any(PatchModifierDTO.class), eq(modifierId));
+        verify(productApplicationService, times(1)).updateProductModifier(any(PutModifierDTO.class), eq(modifierId));
     }
 
     @Test

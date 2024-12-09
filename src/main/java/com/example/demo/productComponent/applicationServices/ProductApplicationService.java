@@ -2,14 +2,12 @@ package com.example.demo.productComponent.applicationServices;
 
 import com.example.demo.productComponent.api.dtos.GetProductsDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.PatchModifierDTO;
+import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.ResponseModifierDTO;
-import com.example.demo.productComponent.api.dtos.PatchProductDTO;
+import com.example.demo.productComponent.api.dtos.PutProductDTO;
 import com.example.demo.productComponent.api.dtos.PostProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
-import com.example.demo.productComponent.api.dtos.ResponseProductDTO;
 import com.example.demo.productComponent.domain.services.ProductModifierService;
 import com.example.demo.productComponent.domain.services.ProductService;
 import lombok.AllArgsConstructor;
@@ -80,20 +78,20 @@ public class ProductApplicationService {
     }
 
     @Transactional
-    public ResponseProductDTO updateProduct(PatchProductDTO patchProductDTO, UUID productId) {
+    public ProductDTO updateProduct(PutProductDTO putProductDTO, UUID productId) {
         // Update and the product
-        ResponseProductDTO responseProductDTO = productService.updateProduct(patchProductDTO, productId);
+        ProductDTO responseProductDTO = productService.updateProduct(putProductDTO, productId);
 
         // Set productModifierDTOs in ResponseProductDTO here because Product entity does not have a direct field with productModifier objects
-        List<ProductModifierDTO> productModifierDTOS = productModifierService.getModifiersByProductId(responseProductDTO.getProduct().getId()).getItems();
-        responseProductDTO.getProduct().setCompatibleModifiers(productModifierDTOS);
+        List<ProductModifierDTO> productModifierDTOS = productModifierService.getModifiersByProductId(responseProductDTO.getId()).getItems();
+        responseProductDTO.setCompatibleModifiers(productModifierDTOS);
 
         return responseProductDTO;
     }
 
     @Transactional
-    public ResponseModifierDTO updateProductModifier(PatchModifierDTO patchModifierDTO, UUID modifierId) {
-        return productModifierService.updateModifier(patchModifierDTO, modifierId);
+    public ProductModifierDTO updateProductModifier(PutModifierDTO putModifierDTO, UUID modifierId) {
+        return productModifierService.updateModifier(putModifierDTO, modifierId);
     }
 
     @Transactional

@@ -1,10 +1,11 @@
 package com.example.demo.productComponent.domain.services;
 
+import com.example.demo.helper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.PatchModifierDTO;
+import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
-import com.example.demo.productComponent.api.dtos.ModifierDTOs.ResponseModifierDTO;
+import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 import com.example.demo.productComponent.domain.entities.ProductModifier;
 import com.example.demo.productComponent.helper.mapper.ProductModifierMapper;
@@ -14,6 +15,7 @@ import com.example.demo.productComponent.repository.ProductModifierRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,44 +89,40 @@ public class ProductModifierService {
     }
 
     @Transactional
-    public ResponseModifierDTO updateModifier(PatchModifierDTO patchModifierDTO, UUID id){
-        // Validate the DTO, if fields are present, they should be valid
-        productModifierValidator.validatePatchModifierDTO(patchModifierDTO);
-
+    public ProductModifierDTO updateModifier(PutModifierDTO putModifierDTO, UUID id){
         // Fetch the product modifier
         ProductModifier productModifier = productModifierRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product modifier not found"));
+                .orElseThrow(() -> new HTTPExceptionJSON(
+                        HttpStatus.NOT_FOUND,
+                        "Not found",
+                        "Modifier with id " + id + " not found"
+                ));
 
         // Apply updates to the product modifier
-        applyModifierUpdates(patchModifierDTO, productModifier);
+        applyModifierUpdates(putModifierDTO, productModifier);
 
         // Save the updated product modifier
         ProductModifier updatedProductModifier = productModifierRepository.save(productModifier);
 
-        // Map the updated product modifier to DTO
-        ProductModifierDTO productModifierDTO = Mapper.mapToDTO(updatedProductModifier, ProductModifierMapper.TO_DTO);
-
         // Map the updated product modifier to DTO and return it
-        return ResponseModifierDTO
-                .builder()
-                .productModifier(productModifierDTO)
-                .build();
+        return Mapper.mapToDTO(updatedProductModifier, ProductModifierMapper.TO_DTO);
     }
 
-    // todo: add validation to check if the product/modifier exists before deleting it
     @Transactional
     public void deleteModifier(UUID modifierId) {
+        // Validate that the modifier exists
+        productModifierValidator.modifierExists(modifierId);
+        // Delete the compatible modifiers
         productCompatibleModifierRepository.deleteByModifierId(modifierId);
+        // Delete the modifier
         productModifierRepository.deleteById(modifierId);
     }
 
-    // todo: add validation to check for null and optional.empty values
-    private void applyModifierUpdates(PatchModifierDTO patchModifierDTO, ProductModifier modifier) {
-        patchModifierDTO.getTitle().ifPresent(modifier::setTitle);
-        patchModifierDTO.getQuantityInStock().ifPresent(modifier::setQuantityInStock);
-        patchModifierDTO.getPrice().ifPresent(moneyDTO -> {
-            modifier.setPrice(moneyDTO.getAmount());
-            modifier.setCurrency(moneyDTO.getCurrency());
-        });
+    private void applyModifierUpdates(PutModifierDTO putModifierDTO, ProductModifier modifier) {
+        // Should be valid at this point
+        modifier.setTitle(putModifierDTO.getTitle());
+        modifier.setQuantityInStock(putModifierDTO.getQuantityInStock());
+        modifier.setPrice(putModifierDTO.getPrice().getAmount());
+        modifier.setCurrency(putModifierDTO.getPrice().getCurrency());
     }
 }

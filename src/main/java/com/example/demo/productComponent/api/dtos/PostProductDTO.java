@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @Getter
 @Builder
-@JsonDeserialize(builder = PostProductDTO.PostProductDTOBuilder.class)
 public class PostProductDTO {
     @NotNull(message = "Title is required")
     private final String title;
