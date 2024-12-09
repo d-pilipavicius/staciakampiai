@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
 import com.example.demo.BusinessComponent.API.DTOs.CreateBusinessDTO;
 import com.example.demo.BusinessComponent.API.DTOs.GetBusinessListDTO;
+import com.example.demo.BusinessComponent.API.DTOs.UpdateBusinessDTO;
 import com.example.demo.BusinessComponent.Domain.Entities.Business;
 import com.example.demo.BusinessComponent.Domain.Entities.User;
 
@@ -49,6 +50,20 @@ public class BusinessMapper {
       .totalPages(page.getTotalPages())
       //Get retrieved Business enitites list and map it to a BusinessDTO list
       .items(page.getContent().stream().map(this::toBusinessDTO).collect(Collectors.toList()))
+      .build();
+  }
+
+  public Business updateBusinessFromDto(@NotNull @Valid UpdateBusinessDTO updateBusinessDTO, @NotNull @Valid Business existingBusiness) {
+    //TODO: Decide whether null fields are allowed on updates, or should current fields be passed as they are?
+    return Business.builder()
+      .id(existingBusiness.getId()) 
+      .name(updateBusinessDTO.getName() != null ? updateBusinessDTO.getName() : existingBusiness.getName())
+      .owner(updateBusinessDTO.getOwnerId() != null 
+            ? User.builder().id(updateBusinessDTO.getOwnerId()).build() 
+            : existingBusiness.getOwner())
+      .address(updateBusinessDTO.getAddress() != null ? updateBusinessDTO.getAddress() : existingBusiness.getAddress())
+      .phoneNumber(updateBusinessDTO.getPhoneNumber() != null ? updateBusinessDTO.getPhoneNumber() : existingBusiness.getPhoneNumber())
+      .emailAddress(updateBusinessDTO.getEmailAddress() != null ? updateBusinessDTO.getEmailAddress() : existingBusiness.getEmailAddress())
       .build();
   }
 }

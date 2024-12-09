@@ -30,12 +30,14 @@ public class UserMapper {
   }
   public User toUser(@NotNull @Valid UpdateUserDTO updateUserDTO, @NotNull UUID userId) {
     //If businessId was passed as null, business is null, else pass business; 
+    Business business = (updateUserDTO.getBusinessId() == null) ? null : Business.builder().id(updateUserDTO.getBusinessId()).build();
     return User
       .builder()
       .id(userId)
       .fullName(updateUserDTO.getFullName())
       .phoneNumber(updateUserDTO.getPhoneNumber())
       .emailAddress(updateUserDTO.getEmailAddress())
+      .business(business)
       .role(updateUserDTO.getRole())
       .build();
   }

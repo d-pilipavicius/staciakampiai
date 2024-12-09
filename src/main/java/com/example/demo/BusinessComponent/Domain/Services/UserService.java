@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
+//TODO: Add exception handling
 public class UserService {
   private final IUserRepository userRepository;
   private final UserMapper userMapper;
@@ -29,7 +30,7 @@ public class UserService {
     return userMapper.toUserDTO(savedUser);
   }
 
-  public UserDTO getUser(@NotNull @Valid UUID userId) {
+  public UserDTO getUser(@NotNull UUID userId) {
     User user = userRepository.getReferenceById(userId);
     return userMapper.toUserDTO(user);
   }
@@ -40,7 +41,8 @@ public class UserService {
     return userMapper.toUserDTO(savedUser);
   }
 
-  public void deleteUser(@NotNull @Valid UUID userId) {
+  public void deleteUser(@NotNull UUID userId) {
+    //TODO:Add checking if user id null
     userRepository.deleteById(userId);
   }
 }
