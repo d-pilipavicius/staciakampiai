@@ -1,7 +1,10 @@
 package com.example.demo.productComponent.domain.services;
 
 import com.example.demo.helper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
+import com.example.demo.productComponent.api.dtos.ProductCompatibleModifierDTO;
 import com.example.demo.productComponent.domain.entities.ProductCompatibleModifier;
+import com.example.demo.productComponent.helper.factories.ProductFactory;
+import com.example.demo.productComponent.helper.mapper.ProductCompatibleModifierMapper;
 import com.example.demo.productComponent.helper.mapper.ProductMapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.productComponent.helper.validator.ProductValidator;
@@ -61,11 +64,8 @@ public class ProductService {
         // Map the products to DTOs
         List<ProductDTO> productDTOS = Mapper.mapToDTOList(products, ProductMapper.TO_DTO);
 
-        return GetProductsDTO.builder()
-                .items(productDTOS)
-                .businessId(businessId)
-                .totalItems(productDTOS.size())
-                .build();
+        // Build and return the DTO
+        return Mapper.mapToDTO(productDTOS, ProductMapper.LIST_TO_GET_PRODUCTS_DTO);
     }
 
     public GetProductsDTO getProductsByBusinessId(int page, int size, UUID businessId){
@@ -75,13 +75,8 @@ public class ProductService {
         // Map the products to DTOs
         Page<ProductDTO> productDTOS = Mapper.mapToDTOPage(products, ProductMapper.TO_DTO);
 
-        return GetProductsDTO.builder()
-                .items(productDTOS.getContent())
-                .businessId(businessId)
-                .totalItems((int) productDTOS.getTotalElements())
-                .currentPage(productDTOS.getPageable().getPageNumber())
-                .totalPages(productDTOS.getTotalPages())
-                .build();
+        // Build and return the DTO
+        return Mapper.mapToDTO(productDTOS, ProductMapper.PAGE_TO_GET_PRODUCTS_DTO);
     }
 
     @Transactional
@@ -169,13 +164,13 @@ public class ProductService {
         productValidator.productExists(productId);
         productValidator.modifierExists(modifierId);
 
-        // Build and save the product compatible modifier
-        ProductCompatibleModifier productCompatibleModifier = ProductCompatibleModifier
-                .builder()
-                .productId(productId)
-                .modifierId(modifierId)
-                .build();
+        // Create the DTO
+        ProductCompatibleModifierDTO productCompatibleModifierDTO = ProductFactory.createProductCompatibleModifierDTO(productId, modifierId);
 
+        // Map the DTO to the model
+        ProductCompatibleModifier productCompatibleModifier = Mapper.mapToDTO(productCompatibleModifierDTO, ProductCompatibleModifierMapper.TO_MODEL);
+
+        // Save the compatible product modifier
         productCompatibleModifierRepository.save(productCompatibleModifier);
     }
 

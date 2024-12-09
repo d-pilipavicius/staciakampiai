@@ -5,7 +5,6 @@ import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
-import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 import com.example.demo.productComponent.domain.entities.ProductModifier;
 import com.example.demo.productComponent.helper.mapper.ProductModifierMapper;
@@ -54,10 +53,7 @@ public class ProductModifierService {
         List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers, ProductModifierMapper.TO_DTO);
 
         // build and return the DTO
-        return GetModifiersDTO
-                .builder()
-                .items(productModifierDTOS)
-                .build();
+        return Mapper.mapToDTO(productModifierDTOS, ProductModifierMapper.LIST_TO_GET_MODIFIERS_DTO);
     }
 
     public GetModifiersDTO getModifiersByIds(List<UUID> modifierIds) {
@@ -67,10 +63,7 @@ public class ProductModifierService {
         // Map the modifiers to DTOs
         List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers, ProductModifierMapper.TO_DTO);
 
-        return GetModifiersDTO.builder()
-                .items(productModifierDTOS)
-                .totalItems(productModifierDTOS.size())
-                .build();
+        return Mapper.mapToDTO(productModifierDTOS, ProductModifierMapper.LIST_TO_GET_MODIFIERS_DTO);
     }
 
     public GetModifiersDTO getModifiersByBusinessId(int page, int size, UUID businessId) {
@@ -80,12 +73,7 @@ public class ProductModifierService {
         // Map the modifiers to DTOs
         Page<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOPage(productModifiers, ProductModifierMapper.TO_DTO);
 
-        return GetModifiersDTO.builder()
-                .items(productModifierDTOS.getContent())
-                .totalItems((int) productModifierDTOS.getTotalElements())
-                .currentPage(productModifierDTOS.getPageable().getPageNumber())
-                .totalPages(productModifiers.getTotalPages())
-                .build();
+        return Mapper.mapToDTO(productModifierDTOS, ProductModifierMapper.PAGE_TO_GET_MODIFIERS_DTO);
     }
 
     @Transactional
