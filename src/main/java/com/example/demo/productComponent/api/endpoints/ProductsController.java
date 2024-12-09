@@ -57,7 +57,7 @@ public class ProductsController {
         return ResponseEntity.ok(products);
     }
 
-    @PatchMapping("/{productId}")
+    @PutMapping("/{productId}")
     public ResponseEntity<Object> updateProduct(
             @PathVariable UUID productId,
             @RequestParam UUID employeeId,
@@ -109,7 +109,7 @@ public class ProductsController {
         return ResponseEntity.ok(modifiers);
     }
 
-    @PatchMapping("/modifiers/{modifierId}")
+    @PutMapping("/modifiers/{modifierId}")
     public ResponseEntity<Object> updateProductModifier(
             @PathVariable UUID modifierId,
             @RequestParam UUID employeeId,

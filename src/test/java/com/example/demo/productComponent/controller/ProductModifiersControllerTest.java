@@ -179,7 +179,7 @@ class ProductModifiersControllerTest {
                 .thenReturn(responseModifierDTO);
 
         // Act & Assert
-        mockMvc.perform(patch("/v1/products/modifiers/{modifierId}", modifierId)
+        mockMvc.perform(put("/v1/products/modifiers/{modifierId}", modifierId)
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validPutModifierDTO)))
@@ -195,7 +195,7 @@ class ProductModifiersControllerTest {
                 .when(productApplicationService).updateProductModifier(any(PutModifierDTO.class), eq(modifierId));
 
         // Act & Assert
-        mockMvc.perform(patch("/v1/products/modifiers/{modifierId}", modifierId)
+        mockMvc.perform(put("/v1/products/modifiers/{modifierId}", modifierId)
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validPutModifierDTO)))

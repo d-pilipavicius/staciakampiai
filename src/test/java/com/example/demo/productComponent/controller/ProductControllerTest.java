@@ -185,7 +185,7 @@ class ProductsControllerTest {
                 .thenReturn(responseProductDTO);
 
         // Act & Assert
-        mockMvc.perform(patch("/v1/products/{productId}", UUID.randomUUID())
+        mockMvc.perform(put("/v1/products/{productId}", UUID.randomUUID())
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(putProductDTO)))
@@ -208,7 +208,7 @@ class ProductsControllerTest {
                 .when(productApplicationService).updateProduct(any(PutProductDTO.class), eq(productId));
 
         // Act & Assert
-        mockMvc.perform(patch("/v1/products/{productId}", productId)
+        mockMvc.perform(put("/v1/products/{productId}", productId)
                         .param("employeeId", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(putProductDTO)))
