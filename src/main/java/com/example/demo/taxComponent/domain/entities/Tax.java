@@ -3,6 +3,7 @@ package com.example.demo.taxComponent.domain.entities;
 //import com.example.demo.productComponent.domain.entities.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter 
 @Setter
 @Table(

@@ -1,50 +1,35 @@
 package com.example.demo.taxComponent.helper.mapper;
 
-import com.example.demo.helper.mapper.base.Mapper;
-import com.example.demo.helper.mapper.base.StaticMapper;
+import org.springframework.stereotype.Component;
 import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
 import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
 import com.example.demo.taxComponent.domain.entities.Tax;
 
-import java.util.List;
-import java.util.Optional;
-
+@Component
 public class TaxMapper {
 
-    public static final StaticMapper<PostTaxDTO, Tax> TO_MODEL = dto -> {
-        if (dto == null) throw new IllegalArgumentException("PostTaxDTO is null");
-        Tax tax = new Tax();
-        tax.setTitle(dto.getTitle());
-        tax.setRatePercentage(dto.getRatePercentage());
-        tax.setBusinessId(dto.getBusinessId());
-        return tax;
-    };
+    public TaxDTO toTaxDTO(Tax tax) {
+        if (tax == null) {
+            throw new IllegalArgumentException("Tax entity cannot be null");
+        }
 
-    public static final StaticMapper<Tax, TaxDTO> TO_DTO = entity -> {
-        if (entity == null) throw new IllegalArgumentException("Tax is null");
-        return new TaxDTO(
-                entity.getId(),
-                entity.getTitle(),
-                entity.getRatePercentage(),
-                entity.getBusinessId()
-        );
-    };
-    
-
-    
-    public static List<Tax> mapToModelList(List<PostTaxDTO> dtos) {
-        return Mapper.mapToModelList(dtos, TO_MODEL);
+        return TaxDTO.builder()
+                .id(tax.getId())
+                .title(tax.getTitle())
+                .ratePercentage(tax.getRatePercentage())
+                .businessId(tax.getBusinessId())
+                .build();
     }
 
-    public static List<TaxDTO> mapToDTOList(List<Tax> entities) {
-        return Mapper.mapToDTOList(entities, TO_DTO);
-    }
+    public Tax toTax(PostTaxDTO postTaxDTO) {
+        if (postTaxDTO == null) {
+            throw new IllegalArgumentException("PostTaxDTO cannot be null");
+        }
 
-    public static Optional<Tax> mapToModelOptional(PostTaxDTO dto) {
-        return Mapper.mapToModelOptional(dto, TO_MODEL);
-    }
-
-    public static Optional<TaxDTO> mapToDTOOptional(Tax entity) {
-        return Mapper.mapToDTOOptional(entity, TO_DTO);
+        return Tax.builder()
+                .title(postTaxDTO.getTitle())
+                .ratePercentage(postTaxDTO.getRatePercentage())
+                .businessId(postTaxDTO.getBusinessId())
+                .build();
     }
 }

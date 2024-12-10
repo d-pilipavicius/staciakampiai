@@ -1,22 +1,22 @@
 package com.example.demo.taxComponent.domain.services;
 
-import com.example.demo.taxComponent.helper.mapper.TaxMapper;
-import com.example.demo.helper.mapper.base.Mapper;
-import com.example.demo.taxComponent.api.dtos.GetTaxesDTO;
-import com.example.demo.taxComponent.api.dtos.PutTaxDTO;
-import com.example.demo.taxComponent.api.dtos.ResponseTaxDTO;
-import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
-import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
-import com.example.demo.taxComponent.domain.entities.Tax;
-import com.example.demo.taxComponent.repository.TaxRepository;
-
-import lombok.AllArgsConstructor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.taxComponent.api.dtos.GetTaxesDTO;
+import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
+import com.example.demo.taxComponent.api.dtos.PutTaxDTO;
+import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
+import com.example.demo.taxComponent.domain.entities.Tax;
+import com.example.demo.taxComponent.helper.mapper.TaxMapper;
+import com.example.demo.taxComponent.repository.TaxRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+
+import org.springframework.data.domain.Pageable;
+
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,62 +25,50 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class TaxService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TaxService.class);
-
     private final TaxRepository taxRepository;
+    private final TaxMapper taxMapper;
 
-    @Transactional
-    public TaxDTO createTax(PostTaxDTO postTaxDTO){
-        return Mapper.mapToDTO(
-                taxRepository.save(
-                        Mapper.mapToModel(
-                                postTaxDTO,
-                                TaxMapper.TO_MODEL
-                        )
-                ),
-                TaxMapper.TO_DTO
-        );
+    public TaxDTO createTax(PostTaxDTO postTaxDTO) {
+        Tax tax = taxMapper.toTax(postTaxDTO);
+        Tax savedTax = taxRepository.save(tax);
+        return taxMapper.toTaxDTO(savedTax);
     }
 
-   
+    public GetTaxesDTO getAllTaxes(int page, int size) {   
+        Pageable pageable = PageRequest.of(page, size);
+        List<Tax> taxEntities = taxRepository.findAll(pageable).getContent();
 
-    public GetTaxesDTO getAllTaxes(int page, int size){
-        List<TaxDTO> taxes = taxRepository.findAll(PageRequest.of(page, size)).stream()
-                .map(TaxMapper.TO_DTO::map)
+        List<TaxDTO> taxDTOs = taxEntities.stream()
+                .map(taxMapper::toTaxDTO)  
                 .collect(Collectors.toList());
-
+        
         return new GetTaxesDTO(
-                taxes.size(),
-                size,
-                page,
-                taxes
+                taxDTOs.size(),   
+                size,              
+                page,              
+                taxDTOs           
         );
     }
 
     @Transactional
-    public ResponseTaxDTO updateTax(PutTaxDTO patchTaxDTO, UUID id){
+    public TaxDTO updateTax(PutTaxDTO putTaxDTO, UUID id) {
         Tax tax = taxRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Tax with id " + id + " not found"));
-
-        applyTaxUpdates(patchTaxDTO, tax);
-
-        return new ResponseTaxDTO(Mapper.mapToDTO(
-                taxRepository.save(tax),
-                TaxMapper.TO_DTO
-        ));
+                .orElseThrow(() -> new EntityNotFoundException("Tax with id " + id + " not found"));
+        applyTaxUpdates(putTaxDTO, tax);
+        Tax updatedTax = taxRepository.save(tax);    
+        return taxMapper.toTaxDTO(updatedTax);
     }
 
-    public void deleteTax(UUID id){
-        if (!taxRepository.existsById(id)) {
-            logger.error("Tax with id {} not found", id);
-            throw new IllegalArgumentException("Tax with id " + id + " not found");
+    private void applyTaxUpdates(PutTaxDTO putTaxDTO, Tax tax) {
+        putTaxDTO.getTitle().ifPresent(tax::setTitle);
+        putTaxDTO.getRatePercentage().ifPresent(tax::setRatePercentage);
+    }
+
+    public void deleteTax(UUID taxId) {
+        if (taxRepository.existsById(taxId)) {
+            taxRepository.deleteById(taxId);
+        }else{
+            throw new IllegalArgumentException("Tax with id " + taxId + " not found");
         }
-        taxRepository.deleteById(id);
-    }
-
-    private void applyTaxUpdates(PutTaxDTO patchTaxDTO, Tax tax) {
-        patchTaxDTO.getTitle().ifPresent(tax::setTitle);
-        patchTaxDTO.getRatePercentage().ifPresent(tax::setRatePercentage);
     }
 }

@@ -3,11 +3,11 @@ package com.example.demo.taxComponent.api.endpoints;
 import com.example.demo.taxComponent.api.dtos.GetTaxesDTO;
 import com.example.demo.taxComponent.api.dtos.PutTaxDTO;
 import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
-import com.example.demo.taxComponent.api.dtos.ResponseTaxDTO;
 import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
 import com.example.demo.taxComponent.applicationServices.TaxApplicationService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +17,11 @@ import java.util.UUID;
 
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/v1/taxes")
 public class TaxesController {
 
     private TaxApplicationService taxApplicationService;
-
-    @Autowired
-    public TaxesController(TaxApplicationService taxApplicationService){
-        this.taxApplicationService = taxApplicationService;
-    }
 
     @PostMapping
     public ResponseEntity<Object> createTax (@Valid @RequestBody PostTaxDTO postTaxDTO){
@@ -35,7 +31,7 @@ public class TaxesController {
 
     @PutMapping("{taxId}")
     public ResponseEntity<Object> putMethodName(@PathVariable UUID taxId, @Valid @RequestBody PutTaxDTO putTaxDTO) {
-        ResponseTaxDTO updatedTax = taxApplicationService.updateTax(putTaxDTO, taxId);
+        TaxDTO updatedTax = taxApplicationService.updateTax(putTaxDTO, taxId);
         return ResponseEntity.status(HttpStatus.OK).body(updatedTax);
     }
 
@@ -51,6 +47,4 @@ public class TaxesController {
         return ResponseEntity.status(HttpStatus.OK).body(taxes);
     }
     
-
-
 }
