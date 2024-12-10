@@ -22,13 +22,14 @@ public class TaxMapper {
 
     public static final StaticMapper<Tax, TaxDTO> TO_DTO = entity -> {
         if (entity == null) throw new IllegalArgumentException("Tax is null");
-        TaxDTO taxDTO = new TaxDTO();
-        taxDTO.setId(entity.getId());
-        taxDTO.setTitle(entity.getTitle());
-        taxDTO.setRatePercentage(entity.getRatePercentage());
-        taxDTO.setBusinessId(entity.getBusinessId());
-        return taxDTO;
+        return new TaxDTO(
+                entity.getId(),
+                entity.getTitle(),
+                entity.getRatePercentage(),
+                entity.getBusinessId()
+        );
     };
+    
 
     
     public static List<Tax> mapToModelList(List<PostTaxDTO> dtos) {

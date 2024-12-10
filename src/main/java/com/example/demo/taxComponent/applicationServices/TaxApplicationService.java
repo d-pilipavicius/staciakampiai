@@ -29,9 +29,7 @@ public class TaxApplicationService {
         return taxService.createTax(postTaxDTO);
     }
 
-    public GetTaxesDTO getAllTaxes() {
-        return taxService.getAllTaxes();
-    }
+
 
     public GetTaxesDTO getAllTaxes(int page, int size) {
         return taxService.getAllTaxes(page, size);

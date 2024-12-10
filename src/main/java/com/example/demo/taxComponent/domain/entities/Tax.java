@@ -3,17 +3,18 @@ package com.example.demo.taxComponent.domain.entities;
 //import com.example.demo.productComponent.domain.entities.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter 
+@Setter
 @Table(
         name = "tax",
         indexes = {
@@ -31,9 +32,9 @@ public class Tax {
    /* @ManyToMany(mappedBy = "taxes")
     private List<Product> products; */
 
-    @Column(nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "rate_percentage", nullable = false, precision = 10, scale = 2)
     private BigDecimal ratePercentage;
 }

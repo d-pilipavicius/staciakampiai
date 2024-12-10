@@ -2,15 +2,14 @@ package com.example.demo.taxComponent.api.dtos;
 
 import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class GetTaxesDTO {
     private int totalItems;
@@ -18,8 +17,4 @@ public class GetTaxesDTO {
     private int currentPage;
     private List<TaxDTO> items;
 
-    public GetTaxesDTO(List<TaxDTO> taxes, int totalItems) {
-        this.items = taxes;
-        this.totalItems = totalItems;
-    }
 }

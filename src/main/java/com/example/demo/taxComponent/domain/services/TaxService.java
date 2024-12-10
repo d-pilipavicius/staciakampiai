@@ -9,6 +9,9 @@ import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
 import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
 import com.example.demo.taxComponent.domain.entities.Tax;
 import com.example.demo.taxComponent.repository.TaxRepository;
+
+import lombok.AllArgsConstructor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -20,15 +23,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class TaxService {
 
     private static final Logger logger = LoggerFactory.getLogger(TaxService.class);
 
     private final TaxRepository taxRepository;
-
-    public TaxService(TaxRepository taxRepository) {
-        this.taxRepository = taxRepository;
-    }
 
     @Transactional
     public TaxDTO createTax(PostTaxDTO postTaxDTO){
@@ -43,13 +43,7 @@ public class TaxService {
         );
     }
 
-    public GetTaxesDTO getAllTaxes(){
-        List<TaxDTO> taxes = taxRepository.findAll().stream()
-                .map(TaxMapper.TO_DTO::map)
-                .collect(Collectors.toList());
-
-        return new GetTaxesDTO(taxes, taxes.size());
-    }
+   
 
     public GetTaxesDTO getAllTaxes(int page, int size){
         List<TaxDTO> taxes = taxRepository.findAll(PageRequest.of(page, size)).stream()
