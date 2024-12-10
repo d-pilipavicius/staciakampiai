@@ -11,15 +11,15 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class UpdateBusinessDTO {
-  
-  private String name;
-  
-  private UUID ownerId;
- 
-  private String address;
 
-  private String phoneNumber;
+  private final String name;
+
+  private final UUID ownerId;
+
+  private final String address;
+
+  private final String phoneNumber;
 
   @Email
-  private String emailAddress;
+  private final String emailAddress;
 }
