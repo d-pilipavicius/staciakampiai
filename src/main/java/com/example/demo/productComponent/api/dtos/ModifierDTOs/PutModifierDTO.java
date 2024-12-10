@@ -11,12 +11,12 @@ import lombok.*;
 public class PutModifierDTO {
     @NotNull
     @NotBlank
-    private String title;
+    private final String title;
 
     @NotNull
     @Min(0)
-    private Integer quantityInStock;
+    private final Integer quantityInStock;
 
     @NotNull
-    private MoneyDTO price;
+    private final MoneyDTO price;
 }

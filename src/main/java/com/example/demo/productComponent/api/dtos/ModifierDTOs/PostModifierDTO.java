@@ -12,15 +12,15 @@ import java.util.UUID;
 @Builder
 public class PostModifierDTO {
     @NotNull(message = "Title is required")
-    private String title;
+    private final String title;
 
     @NotNull(message = "Quantity in stock is required")
     @Min(value = 0, message = "Quantity in stock must be greater than or equal to 0")
-    private int quantityInStock;
+    private final int quantityInStock;
 
     @NotNull(message = "Price is required")
-    private MoneyDTO price;
+    private final MoneyDTO price;
 
     @NotNull(message = "Business ID is required")
-    private UUID businessId;
+    private final UUID businessId;
 }

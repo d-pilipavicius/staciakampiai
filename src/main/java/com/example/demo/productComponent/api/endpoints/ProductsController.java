@@ -46,8 +46,7 @@ public class ProductsController {
     public ResponseEntity<Object> getProducts(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam UUID businessId,
-            @RequestParam UUID employeeId
+            @RequestParam UUID businessId
     ){
 
         GetProductsDTO products = productApplicationService.getProductsByBusinessId(pageNumber, pageSize, businessId);
@@ -61,10 +60,10 @@ public class ProductsController {
     public ResponseEntity<Object> updateProduct(
             @PathVariable UUID productId,
             @RequestParam UUID employeeId,
-            @Valid @RequestBody PutProductDTO patchDiscountDTO
+            @Valid @RequestBody PutProductDTO putProductDTO
     ){
 
-        ProductDTO updatedProduct = productApplicationService.updateProduct(patchDiscountDTO, productId);
+        ProductDTO updatedProduct = productApplicationService.updateProduct(putProductDTO, productId);
 
         ValidationForDifferentHTTPCodes.checkFor404(updatedProduct);
 
@@ -73,8 +72,7 @@ public class ProductsController {
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Object> deleteProduct(
-            @PathVariable UUID productId,
-            @RequestParam UUID employeeId
+            @PathVariable UUID productId
     ){
         productApplicationService.deleteProduct(productId);
 
@@ -83,7 +81,6 @@ public class ProductsController {
 
     @PostMapping("/modifiers")
     public ResponseEntity<Object> createProductModifier(
-            @RequestParam UUID employeeId,
             @Valid @RequestBody PostModifierDTO postModifierDTO
     ) {
 
@@ -98,8 +95,7 @@ public class ProductsController {
     public ResponseEntity<GetModifiersDTO> getProductModifiers(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam UUID businessId,
-            @RequestParam UUID employeeId
+            @RequestParam UUID businessId
     ) {
 
         GetModifiersDTO modifiers = productApplicationService.getModifiersByBusinessId(pageNumber, pageSize, businessId);
@@ -112,7 +108,6 @@ public class ProductsController {
     @PutMapping("/modifiers/{modifierId}")
     public ResponseEntity<Object> updateProductModifier(
             @PathVariable UUID modifierId,
-            @RequestParam UUID employeeId,
             @Valid @RequestBody PutModifierDTO putModifierDTO
     ) {
 
@@ -125,11 +120,8 @@ public class ProductsController {
 
     @DeleteMapping("/modifiers/{modifierId}")
     public ResponseEntity<Void> deleteProductModifier(
-            @PathVariable UUID modifierId,
-            @RequestParam UUID employeeId
+            @PathVariable UUID modifierId
     ) {
-
-        // ResponseEntity<Object> badResponse = ValidationForDifferentHTTPCodes.checkFor403(employeeId);
 
         productApplicationService.deleteProductModifier(modifierId);
 
