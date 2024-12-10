@@ -13,6 +13,6 @@ import java.util.Optional;
 @Builder
 @AllArgsConstructor
 public class PutTaxDTO {
-    private Optional<String> title;
-    private Optional<BigDecimal> ratePercentage;
+    private final Optional<String> title;
+    private final Optional<BigDecimal> ratePercentage;
 }
