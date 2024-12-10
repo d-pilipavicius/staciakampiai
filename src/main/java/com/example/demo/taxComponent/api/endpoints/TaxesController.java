@@ -6,7 +6,7 @@ import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
 import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
 import com.example.demo.taxComponent.applicationServices.TaxApplicationService;
 
-import io.micrometer.common.lang.NonNull;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -26,25 +26,25 @@ public class TaxesController {
     private final TaxApplicationService taxApplicationService;
 
     @PostMapping
-    public ResponseEntity<Object> createTax (@NonNull @Valid @RequestBody PostTaxDTO postTaxDTO){
+    public ResponseEntity<Object> createTax (@NotNull @Valid @RequestBody PostTaxDTO postTaxDTO){
         TaxDTO createdTax = taxApplicationService.createTax(postTaxDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTax);
     }
 
     @PutMapping("{taxId}")
-    public ResponseEntity<Object> putMethodName(@NonNull @PathVariable UUID taxId, @Valid @RequestBody PutTaxDTO putTaxDTO) {
+    public ResponseEntity<Object> putMethodName(@NotNull @PathVariable UUID taxId, @NotNull @Valid @RequestBody PutTaxDTO putTaxDTO) {
         TaxDTO updatedTax = taxApplicationService.updateTax(putTaxDTO, taxId);
         return ResponseEntity.status(HttpStatus.OK).body(updatedTax);
     }
 
     @DeleteMapping("{taxId}")
-    public ResponseEntity<Object> deleteTax(@NonNull @PathVariable UUID taxId){
+    public ResponseEntity<Object> deleteTax(@NotNull @PathVariable UUID taxId){
         taxApplicationService.deleteTax(taxId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping
-    public ResponseEntity<Object> getTaxes(@NonNull @RequestParam int pageNumber, @RequestParam int pageSize){
+    public ResponseEntity<Object> getTaxes(@NotNull @RequestParam int pageNumber, @NotNull @RequestParam int pageSize){
         GetTaxesDTO taxes = taxApplicationService.getAllTaxes(pageNumber, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(taxes);
     }
