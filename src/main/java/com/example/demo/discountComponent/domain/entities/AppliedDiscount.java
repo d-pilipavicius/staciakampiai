@@ -6,10 +6,7 @@ import com.example.demo.discountComponent.domain.entities.enums.PricingStrategy;
 //import com.example.demo.orderComponent.domain.entities.Order;
 //import com.example.demo.orderComponent.domain.entities.OrderItem;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -18,7 +15,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Table(
         name = "applied_discount"/*,
         indexes = {
@@ -31,8 +29,9 @@ import java.util.UUID;
 )
 public class AppliedDiscount {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
 
     @JoinColumn(name = "order_id", nullable = false)
     private UUID orderId;
@@ -40,24 +39,26 @@ public class AppliedDiscount {
     @JoinColumn(name = "order_item_id", nullable = true)
     private UUID orderItemId;
 
+
     @JoinColumn(name = "discount_id", nullable = true)
     private UUID discountId;
+
 
     @JoinColumn(name = "charged_by_employee_id", nullable = false)
     private UUID employeeId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "type")
     @Enumerated(EnumType.STRING)
     private DiscountType type;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2, name = "amount")
     private BigDecimal amount;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "value_type")
     @Enumerated(EnumType.STRING)
     private PricingStrategy valueType;
 
-    @Column(nullable = true)
+    @Column(nullable = true, name = "currency")
     @Enumerated(EnumType.STRING)
     private Currency currency;
 }

@@ -1,12 +1,13 @@
 package com.example.demo.discountComponent.api.endpoints;
 
+import com.example.demo.discountComponent.api.dtos.DiscountDTO;
 import com.example.demo.discountComponent.api.dtos.GetDiscountsDTO;
-import com.example.demo.discountComponent.api.dtos.PatchDiscountDTO;
+import com.example.demo.discountComponent.api.dtos.PutDiscountDTO;
 import com.example.demo.discountComponent.api.dtos.PostDiscountDTO;
-import com.example.demo.discountComponent.api.dtos.ResponseDiscountDTO;
 import com.example.demo.discountComponent.applicationServices.DiscountApplicationService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,42 +15,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/v1/discounts")
 public class DiscountsController {
     private DiscountApplicationService discountAppService;
 
-    @Autowired
-    public DiscountsController(DiscountApplicationService discountAppService){
-        this.discountAppService = discountAppService;
-    }
-
     @PostMapping
-    public ResponseEntity<Object> createDiscount (@RequestParam UUID employeeId, @Valid @RequestBody PostDiscountDTO postDiscountDTO){
-        ResponseDiscountDTO createdDiscount = discountAppService.createDiscount(employeeId, postDiscountDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscount);
+    public ResponseEntity<DiscountDTO> createDiscount (@NotNull @RequestParam UUID employeeId, @NotNull @Valid @RequestBody PostDiscountDTO postDiscountDTO){
+        DiscountDTO createdDiscountDTO = discountAppService.createDiscount(employeeId, postDiscountDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscountDTO);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getDiscounts (@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam UUID businessId){
-        GetDiscountsDTO discounts = discountAppService.getDiscountsByBusinessId(businessId, pageNumber, pageSize);
-        return ResponseEntity.status(HttpStatus.CREATED).body(discounts);
+    public ResponseEntity<GetDiscountsDTO> getDiscounts (@NotNull @RequestParam int pageNumber, @NotNull @RequestParam int pageSize, @NotNull @RequestParam UUID businessId){
+        GetDiscountsDTO discountsDTO = discountAppService.getDiscountsByBusinessId(businessId, pageNumber, pageSize);
+        return ResponseEntity.status(HttpStatus.CREATED).body(discountsDTO);
     }
 
     @PatchMapping("/{discountId}")
-    public  ResponseEntity<Object> updateDiscount(@PathVariable UUID discountId, @RequestParam UUID  employeeId,
-                                                  @Valid @RequestBody PatchDiscountDTO patchDiscountDTO){
-        if(patchDiscountDTO.getCode() == null){
-            System.out.println("lalalalalala!!!");
-        }
-        if(patchDiscountDTO.getCurrency() == null){
-            System.out.println("gafasfa");
-        }
-        ResponseDiscountDTO updatedDiscount = discountAppService.updateDiscount(discountId, employeeId, patchDiscountDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedDiscount);
+    public  ResponseEntity<DiscountDTO> updateDiscount(@NotNull @PathVariable UUID discountId, @NotNull @RequestParam UUID  employeeId,
+                                                       @NotNull @Valid @RequestBody PutDiscountDTO putDiscountDTO){
+        DiscountDTO updatedDiscountDTO = discountAppService.updateDiscount(discountId, employeeId, putDiscountDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedDiscountDTO);
     }
 
+    //What the fuck do I return here instead of <Object>???????
     @DeleteMapping("/{discountId}")
-    public ResponseEntity<Object> deleteDiscount(@PathVariable UUID discountId, @RequestParam UUID employeeId){
+    public ResponseEntity<Object> deleteDiscount(@NotNull @PathVariable UUID discountId, @NotNull @RequestParam UUID employeeId){
          discountAppService.deleteDiscountById(discountId, employeeId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

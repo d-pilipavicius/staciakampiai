@@ -5,10 +5,7 @@ import com.example.demo.discountComponent.domain.entities.enums.Currency;
 import com.example.demo.discountComponent.domain.entities.enums.DiscountTarget;
 import com.example.demo.discountComponent.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -17,7 +14,8 @@ import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @Table(
@@ -29,7 +27,7 @@ import java.util.UUID;
 )
 public class Discount {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "business_id", nullable = false)
@@ -40,30 +38,30 @@ public class Discount {
     @Column(name = "product_id")
     private List<UUID> productIds;
 
-    @Column(nullable = true)
+    @Column(nullable = true, name = "code")
     private String code;
 
-    @Column(nullable = false, precision = 5, scale = 2)
+    @Column(nullable = false, precision = 5, scale = 2, name = "amount")
     private BigDecimal amount;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "value_type")
     @Enumerated(EnumType.STRING)
     private PricingStrategy valueType;
 
-    @Column(nullable = true)
+    @Column(nullable = true, name = "currency")
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "target")
     @Enumerated(EnumType.STRING)
     private DiscountTarget target;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "valid_from")
     private Timestamp validFrom;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "valid_until")
     private Timestamp validUntil;
 
-    @Column(nullable = true)
+    @Column(nullable = true, name = "usage_count_limit")
     private Integer usageCountLimit;
 }

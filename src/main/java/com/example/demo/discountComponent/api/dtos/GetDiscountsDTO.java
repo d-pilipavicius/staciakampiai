@@ -1,22 +1,20 @@
 package com.example.demo.discountComponent.api.dtos;
 
-import com.example.demo.discountComponent.api.dtos.DiscountHelperDTOs.DiscountDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class GetDiscountsDTO {
     @NotNull
-    private int totalItems;
+    private final int totalItems;
     @NotNull
-    private int totalPages;
+    private final int totalPages;
     @NotNull
-    private int currentPage;
+    private final int currentPage;
     @NotNull
-    private List<DiscountDTO> items;
+    private final List<@Valid DiscountDTO> items;
 }

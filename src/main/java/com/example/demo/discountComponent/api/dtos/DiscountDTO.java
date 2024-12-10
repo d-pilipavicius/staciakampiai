@@ -1,4 +1,4 @@
-package com.example.demo.discountComponent.api.dtos.DiscountHelperDTOs;
+package com.example.demo.discountComponent.api.dtos;
 
 import com.example.demo.discountComponent.domain.entities.enums.Currency;
 import com.example.demo.discountComponent.domain.entities.enums.DiscountTarget;
@@ -13,29 +13,27 @@ import java.util.UUID;
 
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class DiscountDTO {
     @NotNull
-    private UUID id;
+    private final UUID id;
     @NotNull
-    private int usageCount;
-    private String code;
+    private final int usageCount;
+    private final String code;
     @NotNull
-    private BigDecimal amount;
+    private final BigDecimal amount;
     @NotNull
-    private PricingStrategy valueType;
-    private Currency currency;
+    private final PricingStrategy valueType;
+    private final Currency currency;
     @NotNull
-    private Timestamp validFrom;
+    private final Timestamp validFrom;
     @NotNull
-    private Timestamp validUntil;
+    private final Timestamp validUntil;
     @NotNull
-    private DiscountTarget target;
+    private final DiscountTarget target;
     @NotNull
-    private List<UUID> entitledProductIds;
+    private final List<UUID> entitledProductIds;
     @NotNull
-    private UUID businessId;
+    private final UUID businessId;
     @NotNull
-    private Integer usageCountLimit;
+    private final Integer usageCountLimit;
 }

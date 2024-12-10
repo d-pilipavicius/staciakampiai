@@ -1,7 +1,5 @@
 package com.example.demo.discountComponent.validator;
 
-import com.example.demo.discountComponent.api.dtos.PatchDiscountDTO;
-import com.example.demo.discountComponent.domain.entities.Discount;
 import com.example.demo.discountComponent.domain.entities.enums.Currency;
 import com.example.demo.discountComponent.domain.entities.enums.DiscountTarget;
 import com.example.demo.discountComponent.domain.entities.enums.PricingStrategy;
