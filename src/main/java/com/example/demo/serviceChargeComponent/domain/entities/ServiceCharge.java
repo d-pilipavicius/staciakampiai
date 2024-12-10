@@ -26,7 +26,7 @@ import java.util.UUID;
 )
 public class ServiceCharge {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @JoinColumn(name = "business_id", nullable = false)
@@ -35,10 +35,10 @@ public class ServiceCharge {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "service_charge_value", nullable = false, precision = 10, scale = 2)
     private BigDecimal serviceChargeValue;
 
-    @Column(nullable = false)
+    @Column(name = "value_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PricingStrategy valueType;
 

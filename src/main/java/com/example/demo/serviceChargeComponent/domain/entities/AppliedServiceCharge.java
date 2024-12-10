@@ -6,16 +6,21 @@ import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStra
 //import com.example.demo.reservationComponent.domain.entities.Reservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
 @Table(
         name = "applied_service_charge",
         indexes = {
@@ -26,7 +31,7 @@ import java.util.UUID;
 )
 public class AppliedServiceCharge {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
    /* @ManyToOne
@@ -44,10 +49,10 @@ public class AppliedServiceCharge {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "service_charge_value", nullable = false, precision = 10, scale = 2)
     private BigDecimal value;
 
-    @Column(nullable = false)
+    @Column(name = "value_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PricingStrategy valueType;
 

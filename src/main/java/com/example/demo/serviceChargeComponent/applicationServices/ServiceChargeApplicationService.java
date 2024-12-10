@@ -27,12 +27,12 @@ public class ServiceChargeApplicationService {
         return serviceChargeService.getServiceCharges(page, size);
     }
 
-    @Transactional
+
     public ServiceChargeDTO updateServiceCharge(PutServiceChargeDTO patchServiceChargeDTO, UUID id) {
         return serviceChargeService.updateServiceCharge(patchServiceChargeDTO, id);
     }
 
-    @Transactional
+
     public void deleteServiceCharge(UUID id) {
         serviceChargeService.deleteServiceCharge(id);
     }

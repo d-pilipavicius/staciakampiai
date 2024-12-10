@@ -13,8 +13,8 @@ import java.util.Optional;
 @Builder
 @AllArgsConstructor
 public class PutServiceChargeDTO {
-    private Optional<String> title;
-    private Optional<PricingStrategy> valueType;
-    private Optional<BigDecimal> serviceChargeValue;
-    private Optional<Currency> currency;
+    private final Optional<String> title;
+    private final Optional<PricingStrategy> valueType;
+    private final Optional<BigDecimal> serviceChargeValue;
+    private final Optional<Currency> currency;
 }

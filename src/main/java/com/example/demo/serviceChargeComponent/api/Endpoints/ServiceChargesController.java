@@ -44,7 +44,7 @@ public class ServiceChargesController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getServiceCharges(@RequestParam int pageNumber, @RequestParam int pageSize){
+    public ResponseEntity<Object> getServiceCharges(@NotNull @RequestParam int pageNumber, @RequestParam int pageSize){
         GetServiceChargesDTO serviceCharges = serviceChargeApplicationService.getAllServiceCharges(pageNumber, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(serviceCharges);
     }
