@@ -50,7 +50,6 @@ public class TaxService {
         );
     }
 
-    @Transactional
     public TaxDTO updateTax(PutTaxDTO putTaxDTO, UUID id) {
         Tax tax = taxRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tax with id " + id + " not found"));
