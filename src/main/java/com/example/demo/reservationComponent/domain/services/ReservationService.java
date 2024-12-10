@@ -4,21 +4,19 @@ import com.example.demo.reservationComponent.helper.mapper.CustomerMapper;
 import com.example.demo.reservationComponent.helper.mapper.ReservationMapper;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.reservationComponent.api.dtos.GetReservationsDTO;
-import com.example.demo.reservationComponent.api.dtos.PatchReservationDTO;
+import com.example.demo.reservationComponent.api.dtos.PutReservationDTO;
 import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.ReservationDTO;
-import com.example.demo.reservationComponent.api.dtos.ResponseReservationDTO;
 import com.example.demo.reservationComponent.api.dtos.PostReservationDTO;
-import com.example.demo.serviceChargeComponent.domain.entities.AppliedServiceCharge;
 import com.example.demo.reservationComponent.domain.entities.Reservation;
-import com.example.demo.serviceChargeComponent.repository.AppliedServiceChargeRepository;
+import com.example.demo.reservationComponent.helper.validator.ReservationValidator;
 import com.example.demo.reservationComponent.repository.ReservationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,87 +25,56 @@ public class ReservationService {
     private static final Logger logger = LoggerFactory.getLogger(ReservationService.class);
 
     private final ReservationRepository reservationRepository;
-    private final AppliedServiceChargeRepository appliedServiceChargeRepository;
+    private final ReservationValidator reservationValidator;
 
     public ReservationService(
             ReservationRepository reservationRepository,
-            AppliedServiceChargeRepository appliedServiceChargeRepository
-    ) {
+            ReservationValidator reservationValidator) {
         this.reservationRepository = reservationRepository;
-        this.appliedServiceChargeRepository = appliedServiceChargeRepository;
+        this.reservationValidator = reservationValidator;
     }
 
     @Transactional
-    public ReservationDTO createReservation(PostReservationDTO postReservationDTO){
+    public ReservationDTO createReservation(PostReservationDTO postReservationDTO, UUID employeeId) {
         Reservation reservation = Mapper.mapToModel(
                 postReservationDTO,
                 ReservationMapper.TO_MODEL
         );
 
-        postReservationDTO.getServiceChargeIds()
-                .ifPresent(scIds -> {
-                    List<AppliedServiceCharge> appliedServiceCharges = getAppliedServiceChargesByIds(scIds);
-                    appliedServiceCharges.forEach(sc -> sc.setReservation(reservation));
-                    reservation.setAppliedServiceCharges(appliedServiceCharges);
-                });
+        reservation.setEmployeeId(employeeId);
 
-        return Mapper.mapToDTO(
-                reservationRepository.save(reservation),
-                ReservationMapper.TO_DTO
-        );
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        return Mapper.mapToDTO(savedReservation, ReservationMapper.TO_DTO);
     }
 
-    public GetReservationsDTO getReservations() {
-        List<ReservationDTO> reservations = reservationRepository.findAll().stream()
-                .map(ReservationMapper.TO_DTO::map)
-                .toList();
-
-        return new GetReservationsDTO(reservations, reservations.size());
-    }
-
-    public GetReservationsDTO getReservations(int page, int size) {
-        List<ReservationDTO> reservations = reservationRepository.findAll(PageRequest.of(page, size)).stream()
-                .map(ReservationMapper.TO_DTO::map)
-                .toList();
-
-        return new GetReservationsDTO(
-                reservations.size(),
-                size,
-                page,
-                reservations
-        );
+    public GetReservationsDTO getReservationsByBusinessId(UUID businessId, int page, int size) {
+        Page<Reservation> reservations = reservationRepository.findAllByBusinessId(businessId, PageRequest.of(page, size));
+        return Mapper.mapToDTO(reservations, ReservationMapper.PAGE_TO_DTO);
     }
 
     @Transactional
-    public ResponseReservationDTO updateReservation(PatchReservationDTO patchReservationDTO, UUID id) {
-        Reservation reservation = reservationRepository.findById(id)
+    public ReservationDTO updateReservation(PutReservationDTO putReservationDTO, UUID reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
 
-        applyReservationUpdates(patchReservationDTO, reservation);
+        applyReservationUpdates(putReservationDTO, reservation);
 
         Reservation updatedReservation = reservationRepository.save(reservation);
-        return new ResponseReservationDTO(Mapper.mapToDTO(
-                updatedReservation,
-                ReservationMapper.TO_DTO
-        ));
+
+        return Mapper.mapToDTO(updatedReservation, ReservationMapper.TO_DTO);
     }
 
-    public void deleteReservation(UUID id) {
-        reservationRepository.deleteById(id);
+    public void deleteReservation(UUID reservationId) {
+        // Validate if reservation exists
+        reservationValidator.validateReservationExists(reservationId);
+        reservationRepository.deleteById(reservationId);
     }
 
-    private List<AppliedServiceCharge> getAppliedServiceChargesByIds(List<UUID> serviceChargeIds) {
-        List<AppliedServiceCharge> appliedServiceCharges = appliedServiceChargeRepository.findAllById(serviceChargeIds);
-        if (appliedServiceCharges.size() != serviceChargeIds.size()) {
-            throw new IllegalArgumentException("Some of the service charges are not found");
-        }
-        return appliedServiceCharges;
-    }
-
-    private void applyReservationUpdates(PatchReservationDTO patchReservationDTO, Reservation reservation) {
-        patchReservationDTO.getReservationStartAt().ifPresent(reservation::setReservationStartAt);
-        patchReservationDTO.getReservationEndAt().ifPresent(reservation::setReservationEndAt);
-        patchReservationDTO.getCustomer()
+    private void applyReservationUpdates(PutReservationDTO putReservationDTO, Reservation reservation) {
+        putReservationDTO.getReservationStartAt().ifPresent(reservation::setReservationStartAt);
+        putReservationDTO.getReservationEndAt().ifPresent(reservation::setReservationEndAt);
+        putReservationDTO.getCustomer()
                 .ifPresent(customerDTO -> reservation.setCustomer(
                         Mapper.mapToModel(customerDTO, CustomerMapper.TO_MODEL)
                 ));

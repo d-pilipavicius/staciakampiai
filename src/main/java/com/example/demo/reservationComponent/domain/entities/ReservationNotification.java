@@ -1,8 +1,7 @@
 package com.example.demo.reservationComponent.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -10,6 +9,9 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@Builder
 @Table(
         name = "reservation_notification",
         indexes = {
@@ -18,12 +20,11 @@ import java.util.UUID;
 )
 public class ReservationNotification {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "reservation_id")
-    private Reservation reservation;
+    @Column(name = "reservation_id", nullable = false)
+    private UUID reservationId;
 
     @Column(nullable = false)
     private String text;

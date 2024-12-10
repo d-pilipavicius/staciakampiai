@@ -1,19 +1,17 @@
 package com.example.demo.reservationComponent.domain.entities;
 
-import com.example.demo.serviceChargeComponent.domain.entities.AppliedServiceCharge;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@Builder
 @Table(
         name = "reservation",
         indexes = {
@@ -25,26 +23,18 @@ import java.util.UUID;
 )
 public class Reservation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @JoinColumn(name = "business_id", nullable = false)
     private UUID businessId;
 
     @OneToOne
-    @JoinColumn(name = "customer_id", nullable = true)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @Column(name = "employee_id", nullable = true)
+    @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
-
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
-    @Column(nullable = true)
-    private List<ReservationNotification> reservationNotifications;
-
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
-    @Column(nullable = true)
-    private List<AppliedServiceCharge> appliedServiceCharges;
 
     @Column(nullable = false)
     private Timestamp createdAt;
