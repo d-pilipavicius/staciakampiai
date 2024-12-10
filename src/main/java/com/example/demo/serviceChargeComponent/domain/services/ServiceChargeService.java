@@ -48,7 +48,6 @@ public class ServiceChargeService {
         );
     }
 
-    @Transactional
     public ServiceChargeDTO updateServiceCharge(PutServiceChargeDTO putServiceChargeDTO, UUID id) {
         ServiceCharge serviceCharge = serviceChargeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ServiceCharge with id " + id + " not found"));
