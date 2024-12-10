@@ -39,7 +39,6 @@ public class DiscountsController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedDiscountDTO);
     }
 
-    //What the fuck do I return here instead of <Object>???????
     @DeleteMapping("/{discountId}")
     public ResponseEntity<Object> deleteDiscount(@NotNull @PathVariable UUID discountId, @NotNull @RequestParam UUID employeeId){
          discountAppService.deleteDiscountById(discountId, employeeId);
