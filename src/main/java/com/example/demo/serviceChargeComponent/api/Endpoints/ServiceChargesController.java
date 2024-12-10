@@ -38,13 +38,13 @@ public class ServiceChargesController {
     }
 
     @PutMapping("/{serviceChargeId}")
-    public ResponseEntity<ServiceChargeDTO> updateServiceCharge(@NotNull @PathVariable UUID serviceChargeId, @Valid @RequestBody PutServiceChargeDTO putServiceChargeDTO) {
+    public ResponseEntity<ServiceChargeDTO> updateServiceCharge(@NotNull @PathVariable UUID serviceChargeId, @NotNull @Valid @RequestBody PutServiceChargeDTO putServiceChargeDTO) {
         ServiceChargeDTO updatedServiceCharge = serviceChargeApplicationService.updateServiceCharge(putServiceChargeDTO, serviceChargeId);
         return ResponseEntity.status(HttpStatus.OK).body(updatedServiceCharge);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getServiceCharges(@NotNull @RequestParam int pageNumber, @RequestParam int pageSize){
+    public ResponseEntity<Object> getServiceCharges(@NotNull @RequestParam int pageNumber,@NotNull @RequestParam int pageSize){
         GetServiceChargesDTO serviceCharges = serviceChargeApplicationService.getAllServiceCharges(pageNumber, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(serviceCharges);
     }
