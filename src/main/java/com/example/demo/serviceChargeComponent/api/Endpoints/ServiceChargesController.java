@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.serviceChargeComponent.api.dtos.GetServiceChargesDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.PostServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.PutServiceChargeDTO;
-import com.example.demo.serviceChargeComponent.api.dtos.ResponseServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.ServiceChargeHelperDTOs.ServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.applicationServices.ServiceChargeApplicationService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -32,17 +32,14 @@ public class ServiceChargesController {
     private final ServiceChargeApplicationService serviceChargeApplicationService;
 
     @PostMapping
-    public ResponseEntity<ServiceChargeDTO> createServiceCharge(@Valid @RequestBody PostServiceChargeDTO postServiceChargeDTO) {
+    public ResponseEntity<ServiceChargeDTO> createServiceCharge(@NotNull @Valid @RequestBody PostServiceChargeDTO postServiceChargeDTO) {
         ServiceChargeDTO serviceChargeDTO = serviceChargeApplicationService.createServiceCharge(postServiceChargeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(serviceChargeDTO);
     }
 
     @PutMapping("/{serviceChargeId}")
-    public ResponseEntity<ResponseServiceChargeDTO> updateServiceCharge(
-            @PathVariable UUID serviceChargeId, 
-            @Valid @RequestBody PutServiceChargeDTO putServiceChargeDTO) {
-
-        ResponseServiceChargeDTO updatedServiceCharge = serviceChargeApplicationService.updateServiceCharge(putServiceChargeDTO, serviceChargeId);
+    public ResponseEntity<ServiceChargeDTO> updateServiceCharge(@NotNull @PathVariable UUID serviceChargeId, @Valid @RequestBody PutServiceChargeDTO putServiceChargeDTO) {
+        ServiceChargeDTO updatedServiceCharge = serviceChargeApplicationService.updateServiceCharge(putServiceChargeDTO, serviceChargeId);
         return ResponseEntity.status(HttpStatus.OK).body(updatedServiceCharge);
     }
 
@@ -53,7 +50,7 @@ public class ServiceChargesController {
     }
 
     @DeleteMapping("{serviceChargeId}")
-    public ResponseEntity<Object> deleteServiceCharge(@PathVariable UUID serviceChargeId){
+    public ResponseEntity<Object> deleteServiceCharge(@NotNull @PathVariable UUID serviceChargeId){
         serviceChargeApplicationService.deleteServiceCharge(serviceChargeId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

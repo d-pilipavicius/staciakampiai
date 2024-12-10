@@ -1,25 +1,24 @@
 package com.example.demo.serviceChargeComponent.api.dtos;
 
 import com.example.demo.serviceChargeComponent.api.dtos.ServiceChargeHelperDTOs.ServiceChargeDTO;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class GetServiceChargesDTO {
-    private int totalItems;
-    private int totalPages;
-    private int currentPage;
-    private List<ServiceChargeDTO> items;
+    private final int totalItems;
+    private final int totalPages;
+    private final int currentPage;
 
-    public GetServiceChargesDTO(List<ServiceChargeDTO> serviceCharges, int size) {
-        this.items = serviceCharges;
-        this.totalItems = size;
-    }
+    @NotNull
+    private List<@Valid ServiceChargeDTO> items;
 }

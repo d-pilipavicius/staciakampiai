@@ -4,16 +4,20 @@ import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
 import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
 @Table(
         name = "service_charge" /* ,
          indexes = {
