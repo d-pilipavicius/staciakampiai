@@ -8,12 +8,21 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import jakarta.validation.constraints.NotNull;
+
 @Getter
 @Builder
 @AllArgsConstructor
 public class TaxDTO {
-    private UUID id;
-    private String title;
-    private BigDecimal ratePercentage;
-    private UUID businessId;
+    @NotNull
+    private final UUID id;
+
+    @NotNull
+    private final String title;
+
+    @NotNull
+    private final BigDecimal ratePercentage;
+
+    @NotNull
+    private final UUID businessId;
 }

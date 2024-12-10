@@ -21,7 +21,7 @@ import java.util.UUID;
 @RequestMapping("/v1/taxes")
 public class TaxesController {
 
-    private TaxApplicationService taxApplicationService;
+    private final TaxApplicationService taxApplicationService;
 
     @PostMapping
     public ResponseEntity<Object> createTax (@Valid @RequestBody PostTaxDTO postTaxDTO){

@@ -12,7 +12,6 @@ import com.example.demo.taxComponent.helper.mapper.TaxMapper;
 import com.example.demo.taxComponent.repository.TaxRepository;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.Pageable;
 
