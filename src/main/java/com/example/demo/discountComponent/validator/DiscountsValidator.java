@@ -1,31 +1,28 @@
 package com.example.demo.discountComponent.validator;
 
-import com.example.demo.discountComponent.domain.entities.enums.Currency;
-import com.example.demo.discountComponent.domain.entities.enums.DiscountTarget;
-import com.example.demo.discountComponent.domain.entities.enums.PricingStrategy;
+import com.example.demo.helper.ErrorHandling.CustomExceptions.NotFoundException;
+import com.example.demo.helper.ErrorHandling.CustomExceptions.UnauthorizedException;
+import com.example.demo.helper.ErrorHandling.CustomExceptions.UnprocessableException;
+import com.example.demo.helper.enums.Currency;
+import com.example.demo.helper.enums.DiscountTarget;
+import com.example.demo.helper.enums.PricingStrategy;
 import com.example.demo.discountComponent.repository.DiscountRepository;
-import com.example.demo.helper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
-import org.springframework.http.HttpStatus;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
 @Component
+@AllArgsConstructor
 public final class DiscountsValidator {
     private final DiscountRepository discountRepository;
-
-    public DiscountsValidator(DiscountRepository discountRepository){
-        this.discountRepository = discountRepository;
-    }
 
     public void checkIfAuthorized(UUID id){
         //PLACEHOLDER FOR AUTHORIZATION
         boolean isAuthorized = true;
         if(!isAuthorized){
-            throw new HTTPExceptionJSON(
-                    HttpStatus.FORBIDDEN,
-                    "Unauthorized",
+            throw new UnauthorizedException(
                     "You are not authorized to perform this action. Please contact your IT administrator."
             );
         }
@@ -33,19 +30,15 @@ public final class DiscountsValidator {
 
     public void checkDatesOverlap(Timestamp startDate, Timestamp endDate){
         if(startDate.compareTo(endDate) > 0){
-            throw new HTTPExceptionJSON(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Invalid data",
-                    "The discount starts later than or at the same time as it ends"
+            throw new UnprocessableException(
+                    "The discount starts at " + startDate + " but ends at " + endDate +", therefore it starts later than ends."
             );
         }
     }
 
     public void checkPricingStrategy(Currency currency, PricingStrategy strat){
         if((currency == null && strat == PricingStrategy.FixedAmount) || (currency != null && strat == PricingStrategy.Percentage)){
-            throw new HTTPExceptionJSON(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Invalid data",
+            throw new UnprocessableException(
                     "No currency was provided for a fixedAmount discount, or currency was provided for a percentage discount."
             );
         }
@@ -54,9 +47,7 @@ public final class DiscountsValidator {
     //Presuming that if usageCountLimit is set to 1, means the discount automatically becomes a giftcard
     public void checkGiftcard(DiscountTarget target, Integer usageCountLimit, String code){
         if(usageCountLimit != null && usageCountLimit == 1 && (code == null || target != DiscountTarget.All)){
-            throw new HTTPExceptionJSON(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Invalid data",
+            throw new UnprocessableException(
                     "The usage count was given as 1, making it a giftcard, however the code was not given, or the target not set to ALL."
             );
         }
@@ -64,31 +55,25 @@ public final class DiscountsValidator {
 
     public void checkIfDiscountExists(UUID discountId){
         if(!discountRepository.existsById(discountId)){
-            throw new HTTPExceptionJSON(
-                    HttpStatus.NOT_FOUND,
-                    "Invalid discount id",
-                    "The given discount id wasn't associated with any discount inside the database."
+            throw new NotFoundException(
+                    "The given discount id " + discountId + " wasn't associated with any discount inside the database."
             );
         }
 
     }
 
-    public void checkIfBusinessHadDiscounts(int totalDiscountsOfBusiness){
+    public void checkIfBusinessHadDiscounts(int totalDiscountsOfBusiness, UUID businessId){
         if(totalDiscountsOfBusiness == 0){
-            throw new HTTPExceptionJSON(
-                    HttpStatus.NOT_FOUND,
-                    "No data was found by discount id",
-                    "The provided business id, had no discounts associated with it."
+            throw new NotFoundException(
+                    "The provided business id " + businessId + ", had no discounts associated with it."
             );
         }
     }
 
     public void checkIfDiscountPageExceeded(int askedPage, int totalPages){
         if(askedPage >= totalPages){
-            throw new HTTPExceptionJSON(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Invalid data",
-                    "Asked for a page of discounts which is bigger than total discount pages."
+            throw new UnprocessableException(
+                    "Asked for page " + askedPage + " of discounts which is bigger than total discount pages " + totalPages + "."
             );
         }
     }

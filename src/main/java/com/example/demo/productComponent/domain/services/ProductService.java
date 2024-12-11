@@ -1,6 +1,7 @@
 package com.example.demo.productComponent.domain.services;
 
-import com.example.demo.helper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
+import com.example.demo.helper.ErrorHandling.CustomExceptions.NotFoundException;
+import com.example.demo.helper.ErrorHandling.CustomExceptions.UnprocessableException;
 import com.example.demo.productComponent.api.dtos.ProductCompatibleModifierDTO;
 import com.example.demo.productComponent.domain.entities.ProductCompatibleModifier;
 import com.example.demo.productComponent.helper.factories.ProductFactory;
@@ -21,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,9 +86,7 @@ public class ProductService {
 
         // Fetch the product
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new HTTPExceptionJSON(
-                        HttpStatus.NOT_FOUND,
-                        "Not found",
+                .orElseThrow(() -> new NotFoundException(
                         "Product with id " + productId + " not found"
                 ));
 
@@ -140,9 +138,7 @@ public class ProductService {
     private void validateModifiers(List<UUID> modifierIds) {
         if(!productValidator.modifiersExist(modifierIds)){
             logger.error("Some of the modifiers are not found");
-            throw new HTTPExceptionJSON(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Invalid data",
+            throw new NotFoundException(
                     "Some of the modifiers are not found"
             );
         }
@@ -153,9 +149,7 @@ public class ProductService {
         // Check if the compatible product modifier already exists
         if(productValidator.compatibleModifierExists(productId, modifierId)){
             logger.error("Product with id {} is already compatible with modifier with id {}", productId, modifierId);
-            throw new HTTPExceptionJSON(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Invalid data",
+            throw new UnprocessableException(
                     "Product is already compatible with the modifier"
             );
         }
@@ -180,8 +174,8 @@ public class ProductService {
         productCompatibleModifierRepository.deleteByProductIdAndModifierId(productId, modifierId);
     }
 
-    public boolean validateProductIds(List<UUID> productIds) {
-        return productValidator.productsExist(productIds);
+    public void validateProductIds(List<UUID> productIds) {
+        productValidator.productsExist(productIds);
     }
 
     // If returns false, then the stock was not updated -> you should retry fetching the product and updating the stock
@@ -189,9 +183,7 @@ public class ProductService {
     public boolean updateProductStock(UUID productId, int newStock) {
         try{
             Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new HTTPExceptionJSON(
-                            HttpStatus.NOT_FOUND,
-                            "Not found",
+                    .orElseThrow(() -> new NotFoundException(
                             "Product with id " + productId + " not found"
                     ));
 

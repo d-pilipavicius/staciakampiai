@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.UUID;
 
 @RestController
@@ -32,7 +31,7 @@ public class DiscountsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(discountsDTO);
     }
 
-    @PatchMapping("/{discountId}")
+    @PutMapping("/{discountId}")
     public  ResponseEntity<DiscountDTO> updateDiscount(@NotNull @PathVariable UUID discountId, @NotNull @RequestParam UUID  employeeId,
                                                        @NotNull @Valid @RequestBody PutDiscountDTO putDiscountDTO){
         DiscountDTO updatedDiscountDTO = discountAppService.updateDiscount(discountId, employeeId, putDiscountDTO);

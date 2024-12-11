@@ -5,49 +5,42 @@ import com.example.demo.discountComponent.api.dtos.GetDiscountsDTO;
 import com.example.demo.discountComponent.api.dtos.PutDiscountDTO;
 import com.example.demo.discountComponent.api.dtos.PostDiscountDTO;
 import com.example.demo.discountComponent.domain.services.DiscountService;
-//import com.example.demo.productComponent.applicationServices.ProductApplicationService;
-//import com.example.demo.productComponent.domain.services.ProductService;
+import com.example.demo.productComponent.applicationServices.ProductApplicationService;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class DiscountApplicationService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DiscountApplicationService.class);
-
     private final DiscountService discountService;
-    //private final ProductApplicationService productApplicationService;
+    private final ProductApplicationService productApplicationService;
 
+    @Transactional
     public DiscountDTO createDiscount(UUID employeeId, PostDiscountDTO postDiscountDTO){
-        //Need products component, so will get implemented later on
-       /* postDiscountDTO.getEntitledProductIds().ifPresent(productIds -> {
-            if (!productApplicationService.validateProductIds(productIds)) {
-                throw new IllegalArgumentException("Invalid product IDs provided");
-            }
-        });*/
-
+        if(postDiscountDTO.getEntitledProductIds() != null){
+            productApplicationService.validateProductIds(postDiscountDTO.getEntitledProductIds());
+        }
         return discountService.createDiscount(employeeId, postDiscountDTO);
     }
 
+    @Transactional
     public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId, int page, int size){
         return discountService.getDiscountsByBusinessId(businessId, page, size);
     }
 
+    @Transactional
     public DiscountDTO updateDiscount(UUID discountId, UUID employeeId, PutDiscountDTO putDiscountDTO) {
-        //Need products component, so will get implemented later on
-        /*patchDiscountDTO.getEntitledProductIds().ifPresent(productIds -> {
-            if (!productApplicationService.validateProductIds(productIds)) {
-                throw new IllegalArgumentException("Invalid product IDs provided");
-            }
-        });*/
-
+        if(putDiscountDTO.getEntitledProductIds() != null){
+            productApplicationService.validateProductIds(putDiscountDTO.getEntitledProductIds());
+        }
         return discountService.updateDiscount(discountId, employeeId, putDiscountDTO);
     }
 
+    @Transactional
     public boolean deleteDiscountById(UUID discountId, UUID employeeId) {
         discountService.deleteDiscountById(discountId, employeeId);
         return true;

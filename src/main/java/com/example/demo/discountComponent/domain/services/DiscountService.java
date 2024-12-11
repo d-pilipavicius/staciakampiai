@@ -5,28 +5,27 @@ import com.example.demo.discountComponent.api.dtos.GetDiscountsDTO;
 import com.example.demo.discountComponent.api.dtos.PutDiscountDTO;
 import com.example.demo.discountComponent.domain.entities.Discount;
 import com.example.demo.discountComponent.helper.mapper.DiscountMapper;
-import com.example.demo.helper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
+import com.example.demo.helper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.helper.mapper.base.Mapper;
 import com.example.demo.discountComponent.api.dtos.PostDiscountDTO;
 import com.example.demo.discountComponent.repository.DiscountRepository;
 import com.example.demo.discountComponent.validator.DiscountsValidator;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class DiscountService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DiscountService.class);
     private final DiscountRepository discountRepository;
     private final DiscountsValidator discountsValidator;
 
+    @Transactional
     public DiscountDTO createDiscount(UUID employeeId, PostDiscountDTO postDiscountDTO){
         discountsValidator.checkIfAuthorized(employeeId);
         discountsValidator.checkDatesOverlap(postDiscountDTO.getValidFrom(), postDiscountDTO.getValidUntil());
@@ -39,24 +38,24 @@ public class DiscountService {
         return Mapper.mapToDTO(savedDiscount, DiscountMapper.TO_DiscountDTO);
     }
 
+    @Transactional
     public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId, int page, int size){
         Page<DiscountDTO> discountDTOS;
 
         discountDTOS = discountRepository.findByBusinessId(businessId, PageRequest.of(page, size))
                 .map(DiscountMapper.TO_DiscountDTO::map);
 
-        discountsValidator.checkIfBusinessHadDiscounts((int) discountDTOS.getTotalElements());
+        discountsValidator.checkIfBusinessHadDiscounts((int) discountDTOS.getTotalElements(), businessId);
         discountsValidator.checkIfDiscountPageExceeded(page, discountDTOS.getTotalPages());
 
         return Mapper.mapToDTO(discountDTOS, DiscountMapper.TO_GetDiscountsModel);
     }
 
+    @Transactional
     public DiscountDTO updateDiscount(UUID discountId, UUID employeeId, PutDiscountDTO putDiscountDTO){
         discountsValidator.checkIfAuthorized(employeeId);
 
-        Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new HTTPExceptionJSON(
-                HttpStatus.NOT_FOUND,
-                "Invalid discount id",
+        Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new NotFoundException(
                 "The given discount id wasn't associated with any discount inside the database for updating."
             ));
 
@@ -70,6 +69,7 @@ public class DiscountService {
         return Mapper.mapToDTO(savedDiscount, DiscountMapper.TO_DiscountDTO);
     }
 
+    @Transactional
     public void deleteDiscountById(UUID discountId, UUID employeeId){
         discountsValidator.checkIfAuthorized(employeeId);
         discountsValidator.checkIfDiscountExists(discountId);
