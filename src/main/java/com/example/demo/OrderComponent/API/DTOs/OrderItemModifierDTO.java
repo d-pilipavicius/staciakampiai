@@ -1,7 +1,6 @@
 package com.example.demo.OrderComponent.API.DTOs;
 
-import com.example.demo.OrderComponent.Domain.Entities.Enums.Currency;
-import lombok.AllArgsConstructor;
+import com.example.demo.helper.enums.Currency;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,8 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
-@AllArgsConstructor
-public class OrderItemModifierResponse {
+public class OrderItemModifierDTO {
     private UUID id;
     private String title;
     private BigDecimal price;

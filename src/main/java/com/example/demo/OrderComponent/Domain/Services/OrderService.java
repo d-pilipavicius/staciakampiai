@@ -1,7 +1,7 @@
 package com.example.demo.OrderComponent.Domain.Services;
 
+import com.example.demo.helper.enums.Currency;
 import com.example.demo.OrderComponent.API.DTOs.*;
-import com.example.demo.OrderComponent.Domain.Entities.Enums.Currency;
 import com.example.demo.OrderComponent.Domain.Entities.Order;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Entities.Enums.OrderStatus;
@@ -34,29 +34,34 @@ public class OrderService {
         this.orderItemModifierRepository = orderItemModifierRepository;
     }
 
-    public OrderResponse createOrder(CreateOrderRequest createOrderRequest) {
+    public OrderDTO createOrder(OrderDTO createOrderDTO) {
         Order order = new Order();
-        order.setBusinessId(createOrderRequest.getBusinessId());
-        order.setCreatedByEmployeeId(createOrderRequest.getCreatedByEmployeeId());
+        order.setBusinessId(createOrderDTO.getBusinessId());
+        order.setCreatedByEmployeeId(createOrderDTO.getEmployeeId());
         order.setCreatedAt(LocalDateTime.now());
         order.setStatus(OrderStatus.NEW);
-        order.setReservationId(createOrderRequest.getReservationId());
+        order.setReservationId(createOrderDTO.getReservationId());
 
         Order savedOrder = orderRepository.save(order);
         BigDecimal originalPrice = BigDecimal.ZERO;
         Currency currency = Currency.EUR;
 
         List<OrderItem> savedItems = new ArrayList<>();
-        for (OrderItemRequest itemRequest : createOrderRequest.getItems()) {
+        for (OrderItemDTO itemRequest : createOrderDTO.getItems()) {
             OrderItem orderItem = OrderMapper.mapToOrderItem(itemRequest, savedOrder.getId());
             originalPrice = originalPrice.add(orderItem.getUnitPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
 
             OrderItem savedOrderItem = orderItemRepository.save(orderItem);
             savedItems.add(savedOrderItem);
 
-            if (itemRequest.getSelectedModifierIds() != null) {
-                for (UUID modifierId : itemRequest.getSelectedModifierIds()) {
-                    OrderItemModifier orderItemModifier = OrderMapper.mapToOrderItemModifier(savedOrderItem.getId(), modifierId);
+            if (itemRequest.getModifiers() != null) {
+                for (OrderItemModifierDTO modifierDTO : itemRequest.getModifiers()) {
+                    OrderItemModifier orderItemModifier = new OrderItemModifier();
+                    orderItemModifier.setOrderItemId(savedOrderItem.getId());
+                    orderItemModifier.setProductModifierId(modifierDTO.getId());
+                    orderItemModifier.setTitle(modifierDTO.getTitle());
+                    orderItemModifier.setPrice(modifierDTO.getPrice());
+                    orderItemModifier.setCurrency(modifierDTO.getCurrency());
                     orderItemModifierRepository.save(orderItemModifier);
                 }
             }
@@ -64,7 +69,7 @@ public class OrderService {
 
         originalPrice = OrderHelper.calculateOriginalPrice(savedItems, orderItemModifierRepository);
 
-        List<OrderItemResponse> itemResponses = savedItems.stream().map(item -> {
+        List<OrderItemDTO> itemResponses = savedItems.stream().map(item -> {
             List<OrderItemModifier> modifiers = orderItemModifierRepository.findByOrderItemId(item.getId());
             return OrderMapper.mapToOrderItemResponse(item, modifiers);
         }).collect(Collectors.toList());
@@ -72,7 +77,7 @@ public class OrderService {
         return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, currency);
     }
 
-    public Page<OrderResponse> getOrders(int page, int pageSize) {
+    public Page<OrderDTO> getOrders(int page, int pageSize) {
         Page<Order> orders = orderRepository.findAll(PageRequest.of(page - 1, pageSize));
 
         return orders.map(order -> {
@@ -81,7 +86,7 @@ public class OrderService {
             BigDecimal originalPrice = OrderHelper.calculateOriginalPrice(items, orderItemModifierRepository);
             Currency currency = OrderHelper.determineCurrency(items);
 
-            List<OrderItemResponse> itemResponses = items.stream().map(item -> {
+            List<OrderItemDTO> itemResponses = items.stream().map(item -> {
                 List<OrderItemModifier> modifiers = orderItemModifierRepository.findByOrderItemId(item.getId());
                 return OrderMapper.mapToOrderItemResponse(item, modifiers);
             }).collect(Collectors.toList());
@@ -90,7 +95,7 @@ public class OrderService {
         });
     }
 
-    public OrderResponse getOrderById(UUID orderId) {
+    public OrderDTO getOrderById(UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
 
@@ -99,7 +104,7 @@ public class OrderService {
         BigDecimal originalPrice = OrderHelper.calculateOriginalPrice(items, orderItemModifierRepository);
         Currency currency = OrderHelper.determineCurrency(items);
 
-        List<OrderItemResponse> itemResponses = items.stream().map(item -> {
+        List<OrderItemDTO> itemResponses = items.stream().map(item -> {
             List<OrderItemModifier> modifiers = orderItemModifierRepository.findByOrderItemId(item.getId());
             return OrderMapper.mapToOrderItemResponse(item, modifiers);
         }).collect(Collectors.toList());
@@ -108,7 +113,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse modifyOrder(UUID orderId, ModifyOrderRequest modifyOrderRequest) {
+    public OrderDTO modifyOrder(UUID orderId, ModifyOrderDTO modifyOrderRequest) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
 
@@ -133,7 +138,7 @@ public class OrderService {
         List<OrderItem> updatedItems = new ArrayList<>();
 
         if (modifyOrderRequest.getItems() != null) {
-            for (OrderItemRequest itemRequest : modifyOrderRequest.getItems()) {
+            for (OrderItemDTO itemRequest : modifyOrderRequest.getItems()) {
                 OrderItem orderItem = existingItemsMap.get(itemRequest.getProductId());
                 boolean isNewItem = orderItem == null;
 
@@ -143,43 +148,32 @@ public class OrderService {
                 }
 
                 orderItem.setProductID(itemRequest.getProductId());
-                orderItem.setTitle("Should get title from product table");
+                orderItem.setTitle(itemRequest.getTitle());
                 orderItem.setQuantity(itemRequest.getQuantity());
-                orderItem.setUnitPrice(BigDecimal.valueOf(2.5));  // Example, this should be fetched dynamically
-                orderItem.setCurrency(Currency.EUR);
+                orderItem.setUnitPrice(itemRequest.getUnitPrice().getBase());
+                orderItem.setCurrency(itemRequest.getCurrency());
 
                 originalPrice = originalPrice.add(orderItem.getUnitPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
 
                 OrderItem savedOrderItem = orderItemRepository.save(orderItem);
                 updatedItems.add(savedOrderItem);
 
-                List<UUID> newModifierIds = itemRequest.getSelectedModifierIds() != null ? itemRequest.getSelectedModifierIds() : Collections.emptyList();
-                List<OrderItemModifier> existingModifiers = orderItemModifierRepository.findByOrderItemId(savedOrderItem.getId());
-                Map<UUID, OrderItemModifier> existingModifiersMap = existingModifiers.stream()
-                        .collect(Collectors.toMap(OrderItemModifier::getProductModifierId, modifier -> modifier));
-
-                for (UUID modifierId : newModifierIds) {
-                    OrderItemModifier modifier = existingModifiersMap.get(modifierId);
-                    if (modifier == null) {
-                        modifier = new OrderItemModifier();
-                        modifier.setOrderItemId(savedOrderItem.getId());
-                        modifier.setProductModifierId(modifierId);
-                        modifier.setTitle("Hardcoded Modifier Title");
-                        modifier.setPrice(BigDecimal.valueOf(1.0));  // Example, this should be fetched dynamically
-                        modifier.setCurrency(Currency.EUR);
+                if (itemRequest.getModifiers() != null) {
+                    for (OrderItemModifierDTO modifierDTO : itemRequest.getModifiers()) {
+                        OrderItemModifier orderItemModifier = new OrderItemModifier();
+                        orderItemModifier.setOrderItemId(savedOrderItem.getId());
+                        orderItemModifier.setProductModifierId(modifierDTO.getId());
+                        orderItemModifier.setTitle(modifierDTO.getTitle());
+                        orderItemModifier.setPrice(modifierDTO.getPrice());
+                        orderItemModifier.setCurrency(modifierDTO.getCurrency());
+                        orderItemModifierRepository.save(orderItemModifier);
                     }
-
-                    orderItemModifierRepository.save(modifier);
                 }
-
-                existingModifiersMap.keySet().stream()
-                        .filter(modifierId -> !newModifierIds.contains(modifierId))
-                        .forEach(modifierId -> orderItemModifierRepository.delete(existingModifiersMap.get(modifierId)));
             }
         }
 
         Set<UUID> newItemIds = modifyOrderRequest.getItems().stream()
-                .map(OrderItemRequest::getProductId)
+                .map(OrderItemDTO::getProductId)
                 .collect(Collectors.toSet());
 
         existingItemsMap.keySet().stream()
@@ -193,7 +187,7 @@ public class OrderService {
 
         originalPrice = OrderHelper.calculateOriginalPrice(updatedItems, orderItemModifierRepository);
 
-        List<OrderItemResponse> itemResponses = updatedItems.stream().map(item -> {
+        List<OrderItemDTO> itemResponses = updatedItems.stream().map(item -> {
             List<OrderItemModifier> modifiers = orderItemModifierRepository.findByOrderItemId(item.getId());
             return OrderMapper.mapToOrderItemResponse(item, modifiers);
         }).collect(Collectors.toList());

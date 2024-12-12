@@ -1,13 +1,13 @@
 package com.example.demo.OrderComponent.Helpers.Mappers;
 
-import com.example.demo.OrderComponent.API.DTOs.OrderItemModifierResponse;
-import com.example.demo.OrderComponent.API.DTOs.OrderItemRequest;
-import com.example.demo.OrderComponent.API.DTOs.OrderItemResponse;
-import com.example.demo.OrderComponent.API.DTOs.OrderResponse;
-import com.example.demo.OrderComponent.Domain.Entities.Enums.Currency;
+import com.example.demo.helper.enums.Currency;
+import com.example.demo.OrderComponent.API.DTOs.OrderItemModifierDTO;
+import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
+import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.Domain.Entities.Order;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItemModifier;
+import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,9 +16,20 @@ import java.util.stream.Collectors;
 
 public class OrderMapper {
 
-    public static OrderItemResponse mapToOrderItemResponse(OrderItem item, List<OrderItemModifier> modifiers) {
-        List<OrderItemModifierResponse> modifierResponses = modifiers.stream()
-                .map(modifier -> OrderItemModifierResponse.builder()
+    public static List<OrderItemModifierDTO> mapToOrderItemModifierResponse(List<ProductModifierDTO> modifiers) {
+        return modifiers.stream()
+                .map(modifier -> OrderItemModifierDTO.builder()
+                        .id(modifier.getId())
+                        .title(modifier.getTitle())
+                        .price(modifier.getPrice().getAmount())
+                        .currency(modifier.getPrice().getCurrency())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public static OrderItemDTO mapToOrderItemResponse(OrderItem item, List<OrderItemModifier> modifiers) {
+        List<OrderItemModifierDTO> modifierResponses = modifiers.stream()
+                .map(modifier -> OrderItemModifierDTO.builder()
                         .id(modifier.getId())
                         .title(modifier.getTitle())
                         .price(modifier.getPrice())
@@ -32,12 +43,12 @@ public class OrderMapper {
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
         BigDecimal originalPrice = withModifiersPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
 
-        return OrderItemResponse.builder()
+        return OrderItemDTO.builder()
                 .id(item.getId())
                 .productId(item.getProductID())
                 .title(item.getTitle())
                 .quantity(item.getQuantity())
-                .unitPrice(OrderItemResponse.UnitPrice.builder()
+                .unitPrice(OrderItemDTO.UnitPrice.builder()
                         .base(basePrice)
                         .withModifiers(withModifiersPrice)
                         .build())
@@ -47,8 +58,8 @@ public class OrderMapper {
                 .build();
     }
 
-    public static OrderResponse mapToOrderResponse(Order order, List<OrderItemResponse> itemResponses, BigDecimal originalPrice, Currency currency) {
-        return OrderResponse.builder()
+    public static OrderDTO mapToOrderResponse(Order order, List<OrderItemDTO> itemResponses, BigDecimal originalPrice, Currency currency) {
+        return OrderDTO.builder()
                 .id(order.getId())
                 .businessId(order.getBusinessId())
                 .employeeId(order.getCreatedByEmployeeId())
@@ -61,14 +72,14 @@ public class OrderMapper {
                 .build();
     }
 
-    public static OrderItem mapToOrderItem(OrderItemRequest itemRequest, UUID orderId) {
+    public static OrderItem mapToOrderItem(OrderItemDTO itemRequest, UUID orderId) {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrderId(orderId);
         orderItem.setProductID(itemRequest.getProductId());
-        orderItem.setTitle("Should get title from product table");
+        orderItem.setTitle(itemRequest.getTitle());
         orderItem.setQuantity(itemRequest.getQuantity());
-        orderItem.setUnitPrice(BigDecimal.valueOf(2.5));
-        orderItem.setCurrency(Currency.EUR);
+        orderItem.setUnitPrice(itemRequest.getUnitPrice().getBase());
+        orderItem.setCurrency(itemRequest.getCurrency());
         return orderItem;
     }
 

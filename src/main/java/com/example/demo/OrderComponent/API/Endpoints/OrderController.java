@@ -1,9 +1,8 @@
 package com.example.demo.OrderComponent.API.Endpoints;
 
-import com.example.demo.OrderComponent.API.DTOs.CreateOrderRequest;
-import com.example.demo.OrderComponent.API.DTOs.ModifyOrderRequest;
-import com.example.demo.OrderComponent.API.DTOs.OrderResponse;
-import com.example.demo.OrderComponent.Domain.Services.OrderService;
+import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
+import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
+import com.example.demo.OrderComponent.ApplicationServices.OrderApplicationService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,16 +15,16 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/orders")
 public class OrderController {
-    private final OrderService orderService;
+    private final OrderApplicationService orderApplicationService;
 
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
+    public OrderController(OrderApplicationService orderApplicationService) {
+        this.orderApplicationService = orderApplicationService;
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderDTO createOrderDTO) {
         try {
-            OrderResponse response = orderService.createOrder(createOrderRequest);
+            OrderDTO response = orderApplicationService.createOrder(createOrderDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("order", response));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -40,7 +39,7 @@ public class OrderController {
     public ResponseEntity<Map<String, Object>> getOrders(@RequestParam(defaultValue = "1") int page,
                                                          @RequestParam(defaultValue = "10") int pageSize) {
         try {
-            Page<OrderResponse> ordersPage = orderService.getOrders(page, pageSize);
+            Page<OrderDTO> ordersPage = orderApplicationService.getOrders(page, pageSize);
 
             Map<String, Object> response = Map.of(
                     "totalItems", ordersPage.getTotalElements(),
@@ -59,8 +58,8 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable UUID orderId) {
         try {
-            OrderResponse orderResponse = orderService.getOrderById(orderId);
-            return ResponseEntity.status(HttpStatus.OK).body(Map.of("order", orderResponse));
+            OrderDTO orderDTO = orderApplicationService.getOrderById(orderId);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("order", orderDTO));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("message", "Order not found"));
@@ -71,9 +70,9 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}")
-    public ResponseEntity<?> modifyOrder(@PathVariable UUID orderId, @RequestBody ModifyOrderRequest modifyOrderRequest) {
+    public ResponseEntity<?> modifyOrder(@PathVariable UUID orderId, @RequestBody ModifyOrderDTO modifyOrderRequest) {
         try {
-            OrderResponse updatedOrder = orderService.modifyOrder(orderId, modifyOrderRequest);
+            OrderDTO updatedOrder = orderApplicationService.modifyOrder(orderId, modifyOrderRequest);
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("order", updatedOrder));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
@@ -83,5 +82,4 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "An unexpected error occurred"));
         }
     }
-
 }

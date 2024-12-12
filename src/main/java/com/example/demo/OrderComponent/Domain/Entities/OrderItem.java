@@ -1,6 +1,6 @@
 package com.example.demo.OrderComponent.Domain.Entities;
 
-import com.example.demo.OrderComponent.Domain.Entities.Enums.Currency;
+import com.example.demo.helper.enums.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 

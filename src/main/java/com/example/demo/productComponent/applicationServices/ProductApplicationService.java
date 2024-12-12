@@ -113,4 +113,8 @@ public class ProductApplicationService {
     public boolean updateProductStock(UUID productId, int newStock) {
         return productService.updateProductStock(productId, newStock);
     }
+
+    public ProductDTO getProductById(UUID productId) {
+        return productService.getProductById(productId);
+    }
 }

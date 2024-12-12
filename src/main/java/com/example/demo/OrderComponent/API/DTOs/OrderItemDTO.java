@@ -1,34 +1,29 @@
 package com.example.demo.OrderComponent.API.DTOs;
 
-import com.example.demo.OrderComponent.Domain.Entities.Enums.Currency;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
+import com.example.demo.helper.enums.Currency;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+@Setter
 @Getter
 @Builder
-@AllArgsConstructor
-public class OrderItemResponse {
-    @NonNull
+public class OrderItemDTO {
+
     private UUID id;
     @NonNull
     private UUID productId;
-    @NonNull
     private String title;
     @NonNull
     private int quantity;
-    @NonNull
     private UnitPrice unitPrice;
-    @NonNull
     private BigDecimal originalPrice;
-    @NonNull
     private Currency currency;
-    private List<OrderItemModifierResponse> modifiers;
+    private List<UUID> selectedModifierIds;
+    private List<OrderItemModifierDTO> modifiers;
+
     @Getter
     @Builder
     @AllArgsConstructor

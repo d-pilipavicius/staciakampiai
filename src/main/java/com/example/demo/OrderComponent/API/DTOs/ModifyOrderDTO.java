@@ -7,12 +7,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Builder
-@AllArgsConstructor
-public class ModifyOrderRequest {
+public class ModifyOrderDTO {
     private UUID reservationId;
     private OrderStatus status;
-    private List<OrderItemRequest> items;
+    private List<OrderItemDTO> items;
 }
 

@@ -1,6 +1,6 @@
 package com.example.demo.OrderComponent.Helpers;
 
-import com.example.demo.OrderComponent.Domain.Entities.Enums.Currency;
+import com.example.demo.helper.enums.Currency;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItemModifier;
 import com.example.demo.OrderComponent.Repositories.IOrderItemModifierRepository;
@@ -23,7 +23,6 @@ public class OrderHelper {
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
 
     public static Currency determineCurrency(List<OrderItem> items) {
         return items.isEmpty() ? Currency.EUR : items.get(0).getCurrency();
