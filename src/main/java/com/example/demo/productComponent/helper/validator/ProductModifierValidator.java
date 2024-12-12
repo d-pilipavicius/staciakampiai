@@ -1,6 +1,6 @@
 package com.example.demo.productComponent.helper.validator;
 
-import com.example.demo.helper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
+import com.example.demo.CommonHelper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.repository.ProductModifierRepository;
 import lombok.AllArgsConstructor;
@@ -22,8 +22,8 @@ public class ProductModifierValidator {
     private final ProductModifierRepository productModifierRepository;
 
     public boolean modifiersExist(List<UUID> modifierIds) {
-         long count = productModifierRepository.countByIdIn(modifierIds);
-         return count == modifierIds.size();
+        long count = productModifierRepository.countByIdIn(modifierIds);
+        return count == modifierIds.size();
     }
 
     public void modifierExists(UUID modifierId) {
@@ -32,8 +32,7 @@ public class ProductModifierValidator {
             throw new HTTPExceptionJSON(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Invalid data",
-                    "Modifier with id " + modifierId + " does not exist"
-            );
+                    "Modifier with id " + modifierId + " does not exist");
         }
     }
 }

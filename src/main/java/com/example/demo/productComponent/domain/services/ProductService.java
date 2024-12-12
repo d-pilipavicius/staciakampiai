@@ -1,12 +1,12 @@
 package com.example.demo.productComponent.domain.services;
 
-import com.example.demo.helper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
 import com.example.demo.productComponent.api.dtos.ProductCompatibleModifierDTO;
 import com.example.demo.productComponent.domain.entities.ProductCompatibleModifier;
 import com.example.demo.productComponent.helper.factories.ProductFactory;
 import com.example.demo.productComponent.helper.mapper.ProductCompatibleModifierMapper;
 import com.example.demo.productComponent.helper.mapper.ProductMapper;
-import com.example.demo.helper.mapper.base.Mapper;
+import com.example.demo.CommonHelper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
+import com.example.demo.CommonHelper.mapper.base.Mapper;
 import com.example.demo.productComponent.helper.validator.ProductValidator;
 import com.example.demo.productComponent.api.dtos.GetProductsDTO;
 import com.example.demo.productComponent.api.dtos.PutProductDTO;
@@ -39,7 +39,7 @@ public class ProductService {
     private final ProductCompatibleModifierRepository productCompatibleModifierRepository;
 
     @Transactional
-    public ProductDTO createProduct(PostProductDTO postProductDTO){
+    public ProductDTO createProduct(PostProductDTO postProductDTO) {
         // Map the DTO to the model
         Product product = Mapper.mapToModel(postProductDTO, ProductMapper.TO_MODEL);
 
@@ -47,17 +47,16 @@ public class ProductService {
         Product savedProduct = productRepository.save(product);
 
         // Add the product modifiers to the product
-        if(postProductDTO.getCompatibleModifierIds() != null){
-            postProductDTO.getCompatibleModifierIds().forEach(modifierId ->
-                addModifierToProduct(savedProduct.getId(), modifierId)
-            );
+        if (postProductDTO.getCompatibleModifierIds() != null) {
+            postProductDTO.getCompatibleModifierIds()
+                    .forEach(modifierId -> addModifierToProduct(savedProduct.getId(), modifierId));
         }
 
         // Save the product and return the DTO
         return Mapper.mapToDTO(savedProduct, ProductMapper.TO_DTO);
     }
 
-    public GetProductsDTO getProductsByBusinessId(UUID businessId){
+    public GetProductsDTO getProductsByBusinessId(UUID businessId) {
         // Get all the products by business id
         List<Product> products = productRepository.findAllByBusinessId(businessId);
 
@@ -68,7 +67,7 @@ public class ProductService {
         return Mapper.mapToDTO(productDTOS, ProductMapper.LIST_TO_GET_PRODUCTS_DTO);
     }
 
-    public GetProductsDTO getProductsByBusinessId(int page, int size, UUID businessId){
+    public GetProductsDTO getProductsByBusinessId(int page, int size, UUID businessId) {
         // Get all the products by business id
         Page<Product> products = productRepository.findAllByBusinessId(businessId, PageRequest.of(page, size));
 
@@ -80,7 +79,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDTO updateProduct(PutProductDTO putProductDTO, UUID productId){
+    public ProductDTO updateProduct(PutProductDTO putProductDTO, UUID productId) {
         // Validate the modifiers
         productValidator.modifiersExist(putProductDTO.getCompatibleModifierIds());
 
@@ -89,8 +88,7 @@ public class ProductService {
                 .orElseThrow(() -> new HTTPExceptionJSON(
                         HttpStatus.NOT_FOUND,
                         "Not found",
-                        "Product with id " + productId + " not found"
-                ));
+                        "Product with id " + productId + " not found"));
 
         // Apply updates to the product
         applyProductUpdates(putProductDTO, product);
@@ -103,7 +101,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(UUID productId){
+    public void deleteProduct(UUID productId) {
         productValidator.productExists(productId);
         productCompatibleModifierRepository.deleteByProductId(productId);
         productRepository.deleteById(productId);
@@ -138,26 +136,24 @@ public class ProductService {
     }
 
     private void validateModifiers(List<UUID> modifierIds) {
-        if(!productValidator.modifiersExist(modifierIds)){
+        if (!productValidator.modifiersExist(modifierIds)) {
             logger.error("Some of the modifiers are not found");
             throw new HTTPExceptionJSON(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Invalid data",
-                    "Some of the modifiers are not found"
-            );
+                    "Some of the modifiers are not found");
         }
     }
 
     @Transactional
-    public void addModifierToProduct(UUID productId, UUID modifierId){
+    public void addModifierToProduct(UUID productId, UUID modifierId) {
         // Check if the compatible product modifier already exists
-        if(productValidator.compatibleModifierExists(productId, modifierId)){
+        if (productValidator.compatibleModifierExists(productId, modifierId)) {
             logger.error("Product with id {} is already compatible with modifier with id {}", productId, modifierId);
             throw new HTTPExceptionJSON(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Invalid data",
-                    "Product is already compatible with the modifier"
-            );
+                    "Product is already compatible with the modifier");
         }
 
         // Check if the product and modifier exist
@@ -165,10 +161,12 @@ public class ProductService {
         productValidator.modifierExists(modifierId);
 
         // Create the DTO
-        ProductCompatibleModifierDTO productCompatibleModifierDTO = ProductFactory.createProductCompatibleModifierDTO(productId, modifierId);
+        ProductCompatibleModifierDTO productCompatibleModifierDTO = ProductFactory
+                .createProductCompatibleModifierDTO(productId, modifierId);
 
         // Map the DTO to the model
-        ProductCompatibleModifier productCompatibleModifier = Mapper.mapToDTO(productCompatibleModifierDTO, ProductCompatibleModifierMapper.TO_MODEL);
+        ProductCompatibleModifier productCompatibleModifier = Mapper.mapToDTO(productCompatibleModifierDTO,
+                ProductCompatibleModifierMapper.TO_MODEL);
 
         // Save the compatible product modifier
         productCompatibleModifierRepository.save(productCompatibleModifier);
@@ -184,16 +182,16 @@ public class ProductService {
         return productValidator.productsExist(productIds);
     }
 
-    // If returns false, then the stock was not updated -> you should retry fetching the product and updating the stock
+    // If returns false, then the stock was not updated -> you should retry fetching
+    // the product and updating the stock
     @Transactional
     public boolean updateProductStock(UUID productId, int newStock) {
-        try{
+        try {
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new HTTPExceptionJSON(
                             HttpStatus.NOT_FOUND,
                             "Not found",
-                            "Product with id " + productId + " not found"
-                    ));
+                            "Product with id " + productId + " not found"));
 
             product.setQuantityInStock(newStock);
             productRepository.save(product);

@@ -1,6 +1,6 @@
 package com.example.demo.productComponent.helper.validator;
 
-import com.example.demo.helper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
+import com.example.demo.CommonHelper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
 import com.example.demo.productComponent.repository.ProductCompatibleModifierRepository;
 import com.example.demo.productComponent.repository.ProductModifierRepository;
 import com.example.demo.productComponent.repository.ProductRepository;
@@ -23,15 +23,15 @@ public class ProductValidator {
     private final ProductModifierRepository productModifierRepository;
     private final ProductCompatibleModifierRepository productCompatibleModifierRepository;
 
-     public boolean productsExist(List<UUID> productIds) {
-         long count = productRepository.countByIdIn(productIds);
-         return count == productIds.size();
-     }
+    public boolean productsExist(List<UUID> productIds) {
+        long count = productRepository.countByIdIn(productIds);
+        return count == productIds.size();
+    }
 
-     public boolean modifiersExist(List<UUID> modifierIds) {
-         long count = productModifierRepository.countByIdIn(modifierIds);
-         return count == modifierIds.size();
-     }
+    public boolean modifiersExist(List<UUID> modifierIds) {
+        long count = productModifierRepository.countByIdIn(modifierIds);
+        return count == modifierIds.size();
+    }
 
     public void productExists(UUID productId) {
         if (!productRepository.existsById(productId)) {
@@ -39,8 +39,7 @@ public class ProductValidator {
             throw new HTTPExceptionJSON(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Invalid data",
-                    "Product with id " + productId + " does not exist"
-            );
+                    "Product with id " + productId + " does not exist");
         }
     }
 
@@ -50,8 +49,7 @@ public class ProductValidator {
             throw new HTTPExceptionJSON(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Invalid data",
-                    "Modifier with id " + modifierId + " does not exist"
-            );
+                    "Modifier with id " + modifierId + " does not exist");
         }
     }
 

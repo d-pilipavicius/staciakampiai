@@ -1,4 +1,4 @@
-package com.example.demo.helper.mapper.base;
+package com.example.demo.CommonHelper.mapper.base;
 
 /**
  * Functional interface for mapping DTO to Model and vice versa

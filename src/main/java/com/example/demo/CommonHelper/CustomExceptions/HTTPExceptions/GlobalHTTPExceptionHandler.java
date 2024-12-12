@@ -1,4 +1,4 @@
-package com.example.demo.helper.CustomExceptions.HTTPExceptions;
+package com.example.demo.CommonHelper.CustomExceptions.HTTPExceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +10,10 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalHTTPExceptionHandler {
     @ExceptionHandler(HTTPExceptionJSON.class)
-    public ResponseEntity<Map<String, Object>> customException(HTTPExceptionJSON ex){
+    public ResponseEntity<Map<String, Object>> customException(HTTPExceptionJSON ex) {
         Map<String, Object> response = Map.of(
                 "errorCode", ex.getErrorCode(),
-                "errorMessage", ex.getErrorMessage()
-        );
+                "errorMessage", ex.getErrorMessage());
 
         return ResponseEntity.status(ex.getResponse()).body(response);
     }

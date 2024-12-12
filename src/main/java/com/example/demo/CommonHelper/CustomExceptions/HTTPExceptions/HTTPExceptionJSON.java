@@ -1,4 +1,4 @@
-package com.example.demo.helper.CustomExceptions.HTTPExceptions;
+package com.example.demo.CommonHelper.CustomExceptions.HTTPExceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
