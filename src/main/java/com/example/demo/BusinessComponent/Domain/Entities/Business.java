@@ -2,6 +2,8 @@ package com.example.demo.BusinessComponent.Domain.Entities;
 
 import java.util.UUID;
 
+import com.example.demo.UserComponent.Domain.Entities.User;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,7 +45,7 @@ public class Business {
   @Pattern(regexp = "\\+\\d{3,30}")
   @Column(name = "phone_number", nullable = false)
   private String phoneNumber;
-  
+
   @Email
   @Column(name = "email_address", nullable = false)
   private String emailAddress;

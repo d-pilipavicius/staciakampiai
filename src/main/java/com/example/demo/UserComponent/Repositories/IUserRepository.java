@@ -1,10 +1,10 @@
-package com.example.demo.BusinessComponent.Repositories;
+package com.example.demo.UserComponent.Repositories;
 
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.BusinessComponent.Domain.Entities.User;
+import com.example.demo.UserComponent.Domain.Entities.User;
 
 public interface IUserRepository extends JpaRepository<User, UUID> {
 }
