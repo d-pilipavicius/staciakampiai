@@ -16,7 +16,6 @@ import java.util.UUID;
 public class DiscountDTO {
     @NotNull
     private final UUID id;
-    @NotNull
     private final int usageCount;
     private final String code;
     @NotNull
