@@ -1,0 +1,77 @@
+/* Reset some default styles */
+body, h1, ul {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial';
+  background-color: #f4f4f4;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: linear-gradient(0deg, #82b4ff, #0b9ffb);
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo h1 {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar ul li {
+  display: inline;
+}
+
+.header a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  transition: color 0.3s, border-bottom 0.3s;
+}
+
+.header a:hover {
+  color: #a8dadc;
+}
+
+.businessPage {
+  padding: 30px;
+  font-family: "Arial";
+}
+
+.businessPage h3 {
+  padding-top: 30px;
+  padding-left: 5px;
+}
+
+.rounded {
+  background: white;
+  width: 50%;
+  padding: 20px;
+}
+
+.rounded * {
+  margin: 5px;
+}
+
+.businessInfo {
+  font-family: "Arial";
+}
