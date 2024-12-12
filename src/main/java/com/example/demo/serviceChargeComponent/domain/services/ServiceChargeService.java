@@ -11,11 +11,10 @@ import com.example.demo.serviceChargeComponent.repository.ServiceChargeRepositor
 import org.springframework.data.domain.Pageable;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,20 +33,18 @@ public class ServiceChargeService {
 
     public GetServiceChargesDTO getServiceCharges(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<ServiceCharge> serviceChargeEntities = serviceChargeRepository.findAll(pageable).getContent();
-
-        List<ServiceChargeDTO> serviceChargeDTOs = serviceChargeEntities.stream()
-                .map(serviceChargeMapper::toServiceChargeDTO)
-                .collect(Collectors.toList());
-
-        return new GetServiceChargesDTO(
-                serviceChargeDTOs.size(),  
-                size,                     
-                page,                    
-                serviceChargeDTOs         
-        );
+        Page<ServiceCharge> serviceChargePage = serviceChargeRepository.findAll(pageable);
+    
+        return GetServiceChargesDTO.builder()
+                .currentPage(serviceChargePage.getNumber())  
+                .totalItems((int) serviceChargePage.getTotalElements())  
+                .totalPages(serviceChargePage.getTotalPages())  
+                .items(serviceChargePage.getContent().stream()  
+                    .map(serviceChargeMapper::toServiceChargeDTO)
+                    .collect(Collectors.toList()))
+                .build();
     }
-
+    
     public ServiceChargeDTO updateServiceCharge(PutServiceChargeDTO putServiceChargeDTO, UUID id) {
         ServiceCharge serviceCharge = serviceChargeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ServiceCharge with id " + id + " not found"));
