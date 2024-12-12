@@ -1,8 +1,8 @@
-package com.example.demo.BusinessComponent.API.DTOs;
+package com.example.demo.UserComponent.API.DTOs;
 
 import java.util.UUID;
 
-import com.example.demo.BusinessComponent.Domain.Entities.Enums.RoleType;
+import com.example.demo.UserComponent.Domain.Entities.Enums.RoleType;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,7 +16,10 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class CreateUserDTO {
+public class UserDTO {
+
+  @NotNull
+  private final UUID id;
 
   @NotNull
   private final String fullName;
@@ -30,7 +33,7 @@ public class CreateUserDTO {
   private final String emailAddress;
 
   private final UUID businessId;
-  
+
   @Enumerated(EnumType.STRING)
   @NotNull
   private final RoleType role;

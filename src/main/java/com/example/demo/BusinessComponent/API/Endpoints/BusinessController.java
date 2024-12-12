@@ -15,7 +15,6 @@ import com.example.demo.BusinessComponent.API.DTOs.CreateBusinessDTO;
 import com.example.demo.BusinessComponent.API.DTOs.GetBusinessListDTO;
 import com.example.demo.BusinessComponent.API.DTOs.UpdateBusinessDTO;
 import com.example.demo.BusinessComponent.ApplicationServices.BusinessApplicationService;
-import com.example.demo.BusinessComponent.Domain.Entities.Business;
 import com.example.demo.CommonDTOs.PageinationDTO;
 
 import jakarta.validation.Valid;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-
 
 @RestController
 @RequestMapping("/v1/business")
@@ -41,30 +39,32 @@ public class BusinessController {
   }
 
   @GetMapping
-  public ResponseEntity<GetBusinessListDTO> getBusinessList(@Valid @NotNull @ModelAttribute PageinationDTO pageinationInfo) {
+  public ResponseEntity<GetBusinessListDTO> getBusinessList(
+      @Valid @NotNull @ModelAttribute PageinationDTO pageinationInfo) {
     GetBusinessListDTO getBusinessListDTO = businessApplicationService.getBusinessList(pageinationInfo);
     return ResponseEntity.ok(getBusinessListDTO);
   }
-  
+
   @GetMapping("/{businessId}")
   public ResponseEntity<BusinessDTO> getBusiness(@NotNull @PathVariable UUID businessId) {
     BusinessDTO businessDTO = businessApplicationService.getBusiness(businessId);
     return ResponseEntity.ok().body(businessDTO);
   }
-  
+
   @PutMapping("/{businessId}")
-  public ResponseEntity<BusinessDTO> updateBusiness(@NotNull @PathVariable UUID businessId, @NotNull @Valid @RequestBody UpdateBusinessDTO updateBusinessDTO) {
+  public ResponseEntity<BusinessDTO> updateBusiness(@NotNull @PathVariable UUID businessId,
+      @NotNull @Valid @RequestBody UpdateBusinessDTO updateBusinessDTO) {
     BusinessDTO businessDTO = businessApplicationService.updateBusiness(businessId, updateBusinessDTO);
     return ResponseEntity.status(HttpStatus.OK).body(businessDTO);
   }
 
   @DeleteMapping("/{businessId}")
   public ResponseEntity<Void> deleteBusiness(@NotNull @PathVariable UUID businessId) {
-      try {
-          businessApplicationService.deleteBusiness(businessId);
-          return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); 
-      } catch (IllegalArgumentException ex) {
-          return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build(); 
-      }
+    try {
+      businessApplicationService.deleteBusiness(businessId);
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } catch (IllegalArgumentException ex) {
+      return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+    }
   }
 }

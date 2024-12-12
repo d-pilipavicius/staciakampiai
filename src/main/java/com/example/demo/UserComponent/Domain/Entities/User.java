@@ -1,8 +1,9 @@
-package com.example.demo.BusinessComponent.Domain.Entities;
+package com.example.demo.UserComponent.Domain.Entities;
 
 import java.util.UUID;
 
-import com.example.demo.BusinessComponent.Domain.Entities.Enums.RoleType;
+import com.example.demo.BusinessComponent.Domain.Entities.Business;
+import com.example.demo.UserComponent.Domain.Entities.Enums.RoleType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,7 +50,7 @@ public class User {
   @Pattern(regexp = "\\+\\d{3,30}")
   @Column(name = "phone_number", nullable = false)
   private String phoneNumber;
-  
+
   @Email
   @Column(name = "email_address", nullable = false)
   private String emailAddress;
