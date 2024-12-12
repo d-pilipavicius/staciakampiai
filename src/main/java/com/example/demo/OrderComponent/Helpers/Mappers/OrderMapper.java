@@ -82,14 +82,4 @@ public class OrderMapper {
         orderItem.setCurrency(itemRequest.getCurrency());
         return orderItem;
     }
-
-    public static OrderItemModifier mapToOrderItemModifier(UUID orderItemId, UUID modifierId) {
-        OrderItemModifier orderItemModifier = new OrderItemModifier();
-        orderItemModifier.setOrderItemId(orderItemId);
-        orderItemModifier.setProductModifierId(modifierId);
-        orderItemModifier.setTitle("Hardcoded Modifier Title");
-        orderItemModifier.setPrice(BigDecimal.valueOf(1.0));
-        orderItemModifier.setCurrency(Currency.EUR);
-        return orderItemModifier;
-    }
 }

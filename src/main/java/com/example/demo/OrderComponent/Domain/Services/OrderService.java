@@ -194,4 +194,21 @@ public class OrderService {
 
         return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, currency);
     }
+
+    public OrderDTO getOrderReceipt(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+
+        List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
+
+        BigDecimal originalPrice = OrderHelper.calculateOriginalPrice(items, orderItemModifierRepository);
+        Currency currency = OrderHelper.determineCurrency(items);
+
+        List<OrderItemDTO> itemResponses = items.stream().map(item -> {
+            List<OrderItemModifier> modifiers = orderItemModifierRepository.findByOrderItemId(item.getId());
+            return OrderMapper.mapToOrderItemResponse(item, modifiers);
+        }).collect(Collectors.toList());
+
+        return OrderMapper.mapToOrderResponse(order, itemResponses, originalPrice, currency);
+    }
 }

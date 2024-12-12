@@ -8,6 +8,4 @@ import java.util.UUID;
 
 public interface IOrderItemRepository extends JpaRepository<OrderItem, UUID>{
     List<OrderItem> findByOrderId(UUID orderId);
-
-    void deleteByOrderId(UUID id);
 }

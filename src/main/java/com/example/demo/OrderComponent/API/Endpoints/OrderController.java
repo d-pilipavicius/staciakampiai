@@ -82,4 +82,16 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "An unexpected error occurred"));
         }
     }
+    
+    @GetMapping("/{orderId}/receipt")
+    public ResponseEntity<?> getOrderReceipt(@PathVariable UUID orderId) {
+        try {
+            OrderDTO orderReceipt = orderApplicationService.getOrderReceipt(orderId);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("orderReceipt", orderReceipt));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Order not found"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "An unexpected error occurred"));
+        }
+    }
 }

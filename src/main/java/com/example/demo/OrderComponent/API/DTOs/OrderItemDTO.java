@@ -1,6 +1,7 @@
 package com.example.demo.OrderComponent.API.DTOs;
 
 import com.example.demo.helper.enums.Currency;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -10,8 +11,8 @@ import java.util.UUID;
 @Setter
 @Getter
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderItemDTO {
-
     private UUID id;
     @NonNull
     private UUID productId;

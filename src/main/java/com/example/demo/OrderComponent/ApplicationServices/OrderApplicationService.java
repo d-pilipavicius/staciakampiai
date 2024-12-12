@@ -7,8 +7,6 @@ import com.example.demo.OrderComponent.Domain.Services.OrderService;
 import com.example.demo.OrderComponent.Helpers.Mappers.OrderMapper;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;
@@ -58,5 +56,14 @@ public class OrderApplicationService {
                     .collect(Collectors.toList());
             itemRequest.setModifiers(OrderMapper.mapToOrderItemModifierResponse(selectedModifiers));
         }
+    }
+
+    public OrderDTO getOrderReceipt(UUID orderId) {
+        OrderDTO orderDTO = orderService.getOrderReceipt(orderId);
+        orderDTO.setEmployeeId(null);
+        orderDTO.setReservationId(null);
+        orderDTO.setStatus(null);
+        orderDTO.setBusinessId(null);
+        return orderDTO;
     }
 }
