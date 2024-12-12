@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @Service
 @AllArgsConstructor
@@ -33,16 +33,8 @@ public class ServiceChargeService {
 
     public GetServiceChargesDTO getServiceCharges(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ServiceCharge> serviceChargePage = serviceChargeRepository.findAll(pageable);
-    
-        return GetServiceChargesDTO.builder()
-                .currentPage(serviceChargePage.getNumber())  
-                .totalItems((int) serviceChargePage.getTotalElements())  
-                .totalPages(serviceChargePage.getTotalPages())  
-                .items(serviceChargePage.getContent().stream()  
-                    .map(serviceChargeMapper::toServiceChargeDTO)
-                    .collect(Collectors.toList()))
-                .build();
+        Page<ServiceCharge> serviceChargePage = serviceChargeRepository.findAll(pageable);     
+        return serviceChargeMapper.toGetServiceChargesDTO(serviceChargePage);
     }
     
     public ServiceChargeDTO updateServiceCharge(PutServiceChargeDTO putServiceChargeDTO, UUID id) {

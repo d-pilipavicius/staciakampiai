@@ -1,12 +1,16 @@
 package com.example.demo.serviceChargeComponent.helper.mapper;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.serviceChargeComponent.api.dtos.GetServiceChargesDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.PostServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.ServiceChargeHelperDTOs.ServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.domain.entities.ServiceCharge;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class ServiceChargeMapper {
@@ -31,5 +35,20 @@ public class ServiceChargeMapper {
                 .currency(postServiceChargeDTO.getCurrency().orElse(null))
                 .build();
     }
+
+    public GetServiceChargesDTO toGetServiceChargesDTO(Page<ServiceCharge> serviceChargePage) {
+        List<ServiceChargeDTO> serviceChargeDTOs = serviceChargePage.getContent().stream()
+                .map(this::toServiceChargeDTO)  
+                .collect(Collectors.toList());
+
+        return GetServiceChargesDTO.builder()
+                .currentPage(serviceChargePage.getNumber())
+                .totalItems((int) serviceChargePage.getTotalElements())  
+                .totalPages(serviceChargePage.getTotalPages())
+                .items(serviceChargeDTOs)
+                .build();
+    }
+
+    
 }
 
