@@ -1,13 +1,12 @@
-package com.example.demo.serviceChargeComponent.domain.entities;
+package com.example.demo.OrderComponent.Domain.Entities;
 
 //import com.example.demo.orderComponent.domain.entities.Order;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
+import com.example.demo.helper.enums.Currency;
 import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 //import com.example.demo.reservationComponent.domain.entities.Reservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,7 +35,7 @@ public class AppliedServiceCharge {
 
    /* @ManyToOne
     @JoinColumn(name = "charged_by_employee_id", nullable = false)
-    private Employee employee; 
+    private Employee employee;
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = true)
@@ -45,6 +44,16 @@ public class AppliedServiceCharge {
     @ManyToOne
     @JoinColumn(name = "reservation_id", nullable = true)
     private Reservation reservation; */
+
+    @Column(name = "charged_by_employee_id", nullable = false)
+    private UUID employeeId;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = true)
+    private Order order;
+
+    @Column(name = "reservation_id", nullable = true)
+    private UUID reservation;
 
     @Column(nullable = false)
     private String title;

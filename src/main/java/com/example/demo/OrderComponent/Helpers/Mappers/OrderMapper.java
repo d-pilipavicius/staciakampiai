@@ -1,5 +1,7 @@
 package com.example.demo.OrderComponent.Helpers.Mappers;
 
+import com.example.demo.OrderComponent.API.DTOs.AppliedServiceChargeDTO;
+import com.example.demo.OrderComponent.Domain.Entities.AppliedServiceCharge;
 import com.example.demo.OrderComponent.Domain.Entities.Enums.OrderStatus;
 import com.example.demo.helper.enums.Currency;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemModifierDTO;
@@ -9,6 +11,8 @@ import com.example.demo.OrderComponent.Domain.Entities.Order;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItemModifier;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
+import com.example.demo.serviceChargeComponent.api.dtos.ServiceChargeHelperDTOs.ServiceChargeDTO;
+import com.example.demo.OrderComponent.Helpers.OrderHelper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -60,7 +64,15 @@ public class OrderMapper {
                 .build();
     }
 
-    public static OrderDTO mapToOrderResponse(Order order, List<OrderItemDTO> itemResponses, BigDecimal originalPrice, Currency currency) {
+    public static OrderDTO mapToOrderResponse(Order order, List<OrderItemDTO> itemResponses, BigDecimal originalPrice, Currency currency, List<AppliedServiceCharge> appliedServiceCharges) {
+        List<AppliedServiceChargeDTO> serviceChargeResponses = appliedServiceCharges.stream()
+                .map(serviceCharge -> {
+                    BigDecimal amount = OrderHelper.calculateServiceChargeAmount(serviceCharge, originalPrice);
+
+                    return toAppliedServiceChargeDTO(serviceCharge, amount);
+                })
+                .collect(Collectors.toList());
+
         return OrderDTO.builder()
                 .id(order.getId())
                 .businessId(order.getBusinessId())
@@ -70,7 +82,23 @@ public class OrderMapper {
                 .reservationId(order.getReservationId())
                 .items(itemResponses)
                 .originalPrice(originalPrice)
+                .finalPrice(originalPrice.add(serviceChargeResponses.stream()
+                        .map(AppliedServiceChargeDTO::getAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)))
                 .currency(currency)
+                .serviceCharges(serviceChargeResponses)
+                .build();
+    }
+
+    public static AppliedServiceChargeDTO toAppliedServiceChargeDTO(AppliedServiceCharge serviceCharge, BigDecimal amount) {
+        return AppliedServiceChargeDTO.builder()
+                .id(serviceCharge.getId())
+                .chargedByEmployeeId(serviceCharge.getEmployeeId())
+                .title(serviceCharge.getTitle())
+                .valueType(serviceCharge.getValueType())
+                .value(serviceCharge.getValue())
+                .amount(amount)
+                .currency(serviceCharge.getCurrency())
                 .build();
     }
 
@@ -120,4 +148,26 @@ public class OrderMapper {
         existingItem.setUnitPrice(itemRequest.getUnitPrice().getBase());
         existingItem.setCurrency(itemRequest.getCurrency());
     }
+    public static AppliedServiceChargeDTO mapToAppliedServiceChargeDTO(ServiceChargeDTO serviceChargeDTO) {
+        return AppliedServiceChargeDTO.builder()
+                .id(serviceChargeDTO.getId())
+                .title(serviceChargeDTO.getTitle())
+                .value(serviceChargeDTO.getServiceChargeValue())
+                .valueType(serviceChargeDTO.getValueType())
+                .currency(serviceChargeDTO.getCurrency().orElse(null))
+                .build();
+    }
+
+    public static AppliedServiceCharge mapToAppliedServiceCharge(AppliedServiceChargeDTO serviceChargeDTO, Order savedOrder) {
+        return AppliedServiceCharge.builder()
+                .title(serviceChargeDTO.getTitle())
+                .value(serviceChargeDTO.getValue())
+                .valueType(serviceChargeDTO.getValueType())
+                .currency(serviceChargeDTO.getCurrency())
+                .order(savedOrder)
+                .employeeId(savedOrder.getCreatedByEmployeeId())
+                .reservation(savedOrder.getReservationId())
+                .build();
+    }
+
 }

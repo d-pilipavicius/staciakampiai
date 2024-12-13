@@ -1,5 +1,7 @@
 package com.example.demo.OrderComponent.Domain.Services;
 
+import com.example.demo.OrderComponent.Domain.Entities.AppliedServiceCharge;
+import com.example.demo.OrderComponent.Repositories.IAppliedServiceChargeRepository;
 import com.example.demo.helper.enums.Currency;
 import com.example.demo.OrderComponent.API.DTOs.*;
 import com.example.demo.OrderComponent.Domain.Entities.Order;
@@ -28,13 +30,13 @@ public class OrderService {
     private final IOrderRepository orderRepository;
     private final IOrderItemRepository orderItemRepository;
     private final IOrderItemModifierRepository orderItemModifierRepository;
+    private final IAppliedServiceChargeRepository appliedServiceChargeRepository;
 
     public OrderDTO createOrder(OrderDTO createOrderDTO) {
         Order order = OrderMapper.mapToOrder(createOrderDTO);
 
         Order savedOrder = orderRepository.save(order);
         BigDecimal originalPrice = BigDecimal.ZERO;
-        Currency currency = Currency.EUR;
 
         List<OrderItem> savedItems = new ArrayList<>();
         for (OrderItemDTO itemRequest : createOrderDTO.getItems()) {
@@ -59,7 +61,13 @@ public class OrderService {
             return OrderMapper.mapToOrderItemResponse(item, modifiers);
         }).collect(Collectors.toList());
 
-        return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, currency);
+        List<AppliedServiceChargeDTO> serviceCharges = createOrderDTO.getServiceCharges();
+        List<AppliedServiceCharge> appliedServiceCharges = serviceCharges.stream()
+                .map(serviceChargeDTO -> OrderMapper.mapToAppliedServiceCharge(serviceChargeDTO, savedOrder))
+                .collect(Collectors.toList());
+        appliedServiceChargeRepository.saveAll(appliedServiceCharges);
+
+        return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, createOrderDTO.getCurrency(), appliedServiceCharges);
     }
 
     public Page<OrderDTO> getOrders(int page, int pageSize) {
@@ -76,7 +84,7 @@ public class OrderService {
                 return OrderMapper.mapToOrderItemResponse(item, modifiers);
             }).collect(Collectors.toList());
 
-            return OrderMapper.mapToOrderResponse(order, itemResponses, originalPrice, currency);
+            return OrderMapper.mapToOrderResponse(order, itemResponses, originalPrice, currency, appliedServiceChargeRepository.findByOrderId(order.getId()));
         });
     }
 
@@ -94,7 +102,7 @@ public class OrderService {
             return OrderMapper.mapToOrderItemResponse(item, modifiers);
         }).collect(Collectors.toList());
 
-        return OrderMapper.mapToOrderResponse(order, itemResponses, originalPrice, currency);
+        return OrderMapper.mapToOrderResponse(order, itemResponses, originalPrice, currency, appliedServiceChargeRepository.findByOrderId(order.getId()));
     }
 
     @Transactional
@@ -119,7 +127,7 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
 
-        return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, currency);
+        return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, currency, appliedServiceChargeRepository.findByOrderId(order.getId()));
     }
 
 
@@ -193,6 +201,6 @@ public class OrderService {
             return OrderMapper.mapToOrderItemResponse(item, modifiers);
         }).collect(Collectors.toList());
 
-        return OrderMapper.mapToOrderResponse(order, itemResponses, originalPrice, currency);
+        return OrderMapper.mapToOrderResponse(order, itemResponses, originalPrice, currency, appliedServiceChargeRepository.findByOrderId(order.getId()));
     }
 }

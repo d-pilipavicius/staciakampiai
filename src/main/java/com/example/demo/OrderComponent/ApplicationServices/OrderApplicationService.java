@@ -1,15 +1,18 @@
 package com.example.demo.OrderComponent.ApplicationServices;
 
+import com.example.demo.OrderComponent.API.DTOs.AppliedServiceChargeDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
 import com.example.demo.OrderComponent.Domain.Services.OrderService;
 import com.example.demo.OrderComponent.Helpers.Mappers.OrderMapper;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
+import com.example.demo.serviceChargeComponent.applicationServices.ServiceChargeApplicationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -18,9 +21,17 @@ import java.util.stream.Collectors;
 public class OrderApplicationService {
     private final OrderService orderService;
     private final ProductApplicationService productApplicationService;
+    private final ServiceChargeApplicationService serviceChargeApplicationService;
 
     public OrderDTO createOrder(OrderDTO createOrderDTO) {
         createOrderDTO.getItems().forEach(this::setProductAndModifierDetails);
+        if (createOrderDTO.getServiceChargeIds() != null) {
+            List<AppliedServiceChargeDTO> serviceCharges = createOrderDTO.getServiceChargeIds().stream()
+                    .map(serviceChargeApplicationService::getServiceChargeById)
+                    .map(OrderMapper::mapToAppliedServiceChargeDTO)
+                    .collect(Collectors.toList());
+            createOrderDTO.setServiceCharges(serviceCharges);
+        }
         return orderService.createOrder(createOrderDTO);
     }
 

@@ -24,7 +24,10 @@ public class OrderDTO {
     private OrderStatus status;
     private LocalDateTime createdAt;
     private BigDecimal originalPrice;
+    private BigDecimal finalPrice;
     private Currency currency;
     private List<OrderItemDTO> items;
+    private List<UUID> serviceChargeIds;
+    private List<AppliedServiceChargeDTO> serviceCharges;
     private UUID businessId;
 }
