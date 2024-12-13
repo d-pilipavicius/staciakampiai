@@ -27,5 +27,4 @@ public class OrderHelper {
     public static Currency determineCurrency(List<OrderItem> items) {
         return items.isEmpty() ? Currency.EUR : items.get(0).getCurrency();
     }
-
 }

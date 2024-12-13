@@ -10,8 +10,8 @@ import java.util.UUID;
 @Getter
 @Builder
 public class OrderItemModifierDTO {
-    private UUID id;
-    private String title;
-    private BigDecimal price;
-    private Currency currency;
+    private final UUID id;
+    private final String title;
+    private final BigDecimal price;
+    private final Currency currency;
 }

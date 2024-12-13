@@ -12,35 +12,25 @@ import com.example.demo.OrderComponent.Repositories.IOrderItemModifierRepository
 import com.example.demo.OrderComponent.Repositories.IOrderRepository;
 import com.example.demo.OrderComponent.Repositories.IOrderItemRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class OrderService {
     private final IOrderRepository orderRepository;
     private final IOrderItemRepository orderItemRepository;
     private final IOrderItemModifierRepository orderItemModifierRepository;
 
-    public OrderService(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository, IOrderItemModifierRepository orderItemModifierRepository) {
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.orderItemModifierRepository = orderItemModifierRepository;
-    }
-
     public OrderDTO createOrder(OrderDTO createOrderDTO) {
-        Order order = new Order();
-        order.setBusinessId(createOrderDTO.getBusinessId());
-        order.setCreatedByEmployeeId(createOrderDTO.getEmployeeId());
-        order.setCreatedAt(LocalDateTime.now());
-        order.setStatus(OrderStatus.NEW);
-        order.setReservationId(createOrderDTO.getReservationId());
+        Order order = OrderMapper.mapToOrder(createOrderDTO);
 
         Order savedOrder = orderRepository.save(order);
         BigDecimal originalPrice = BigDecimal.ZERO;
@@ -56,12 +46,7 @@ public class OrderService {
 
             if (itemRequest.getModifiers() != null) {
                 for (OrderItemModifierDTO modifierDTO : itemRequest.getModifiers()) {
-                    OrderItemModifier orderItemModifier = new OrderItemModifier();
-                    orderItemModifier.setOrderItemId(savedOrderItem.getId());
-                    orderItemModifier.setProductModifierId(modifierDTO.getId());
-                    orderItemModifier.setTitle(modifierDTO.getTitle());
-                    orderItemModifier.setPrice(modifierDTO.getPrice());
-                    orderItemModifier.setCurrency(modifierDTO.getCurrency());
+                    OrderItemModifier orderItemModifier = OrderMapper.mapToOrderItemModifier(modifierDTO, savedOrderItem.getId());
                     orderItemModifierRepository.save(orderItemModifier);
                 }
             }
@@ -121,53 +106,54 @@ public class OrderService {
             throw new IllegalStateException("Order is already closed and cannot be modified.");
         }
 
+        updateOrderDetails(order, modifyOrderRequest);
+        List<OrderItem> updatedItems = updateOrderItems(order, modifyOrderRequest);
+
+        Order savedOrder = orderRepository.save(order);
+        BigDecimal originalPrice = OrderHelper.calculateOriginalPrice(updatedItems, orderItemModifierRepository);
+        Currency currency = OrderHelper.determineCurrency(updatedItems);
+        List<OrderItemDTO> itemResponses = updatedItems.stream()
+                .map(item -> {
+                    List<OrderItemModifier> modifiers = orderItemModifierRepository.findByOrderItemId(item.getId());
+                    return OrderMapper.mapToOrderItemResponse(item, modifiers);
+                })
+                .collect(Collectors.toList());
+
+        return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, currency);
+    }
+
+
+    private void updateOrderDetails(Order order, ModifyOrderDTO modifyOrderRequest) {
         if (modifyOrderRequest.getReservationId() != null) {
             order.setReservationId(modifyOrderRequest.getReservationId());
         }
-
         if (modifyOrderRequest.getStatus() != null) {
             order.setStatus(modifyOrderRequest.getStatus());
         }
+    }
 
+    private List<OrderItem> updateOrderItems(Order order, ModifyOrderDTO modifyOrderRequest) {
         List<OrderItem> existingItems = orderItemRepository.findByOrderId(order.getId());
         Map<UUID, OrderItem> existingItemsMap = existingItems.stream()
                 .collect(Collectors.toMap(OrderItem::getId, item -> item));
 
-        BigDecimal originalPrice = BigDecimal.ZERO;
-        Currency currency = Currency.EUR;
         List<OrderItem> updatedItems = new ArrayList<>();
-
         if (modifyOrderRequest.getItems() != null) {
             for (OrderItemDTO itemRequest : modifyOrderRequest.getItems()) {
                 OrderItem orderItem = existingItemsMap.get(itemRequest.getProductId());
                 boolean isNewItem = orderItem == null;
 
                 if (isNewItem) {
-                    orderItem = new OrderItem();
-                    orderItem.setOrderId(order.getId());
+                    orderItem = OrderMapper.mapToOrderItem(itemRequest, order.getId());
+                } else {
+                    OrderMapper.mapToExistingOrderItem(orderItem, itemRequest);
                 }
-
-                orderItem.setProductID(itemRequest.getProductId());
-                orderItem.setTitle(itemRequest.getTitle());
-                orderItem.setQuantity(itemRequest.getQuantity());
-                orderItem.setUnitPrice(itemRequest.getUnitPrice().getBase());
-                orderItem.setCurrency(itemRequest.getCurrency());
-
-                originalPrice = originalPrice.add(orderItem.getUnitPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
 
                 OrderItem savedOrderItem = orderItemRepository.save(orderItem);
                 updatedItems.add(savedOrderItem);
 
                 if (itemRequest.getModifiers() != null) {
-                    for (OrderItemModifierDTO modifierDTO : itemRequest.getModifiers()) {
-                        OrderItemModifier orderItemModifier = new OrderItemModifier();
-                        orderItemModifier.setOrderItemId(savedOrderItem.getId());
-                        orderItemModifier.setProductModifierId(modifierDTO.getId());
-                        orderItemModifier.setTitle(modifierDTO.getTitle());
-                        orderItemModifier.setPrice(modifierDTO.getPrice());
-                        orderItemModifier.setCurrency(modifierDTO.getCurrency());
-                        orderItemModifierRepository.save(orderItemModifier);
-                    }
+                    updateOrderItemModifiers(savedOrderItem, itemRequest.getModifiers());
                 }
             }
         }
@@ -183,16 +169,14 @@ public class OrderService {
                     orderItemRepository.deleteById(itemId);
                 });
 
-        Order savedOrder = orderRepository.save(order);
+        return updatedItems;
+    }
 
-        originalPrice = OrderHelper.calculateOriginalPrice(updatedItems, orderItemModifierRepository);
-
-        List<OrderItemDTO> itemResponses = updatedItems.stream().map(item -> {
-            List<OrderItemModifier> modifiers = orderItemModifierRepository.findByOrderItemId(item.getId());
-            return OrderMapper.mapToOrderItemResponse(item, modifiers);
-        }).collect(Collectors.toList());
-
-        return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, currency);
+    private void updateOrderItemModifiers(OrderItem savedOrderItem, List<OrderItemModifierDTO> modifiers) {
+        for (OrderItemModifierDTO modifierDTO : modifiers) {
+            OrderItemModifier orderItemModifier = OrderMapper.mapToOrderItemModifier(modifierDTO, savedOrderItem.getId());
+            orderItemModifierRepository.save(orderItemModifier);
+        }
     }
 
     public OrderDTO getOrderReceipt(UUID orderId) {

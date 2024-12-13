@@ -4,6 +4,8 @@ import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.ApplicationServices.OrderApplicationService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +16,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/orders")
+@AllArgsConstructor
 public class OrderController {
     private final OrderApplicationService orderApplicationService;
 
-    public OrderController(OrderApplicationService orderApplicationService) {
-        this.orderApplicationService = orderApplicationService;
-    }
-
+    @NotNull
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderDTO createOrderDTO) {
         try {
@@ -69,7 +69,8 @@ public class OrderController {
         }
     }
 
-    @PatchMapping("/{orderId}")
+    @NotNull
+    @PutMapping("/{orderId}")
     public ResponseEntity<?> modifyOrder(@PathVariable UUID orderId, @RequestBody ModifyOrderDTO modifyOrderRequest) {
         try {
             OrderDTO updatedOrder = orderApplicationService.modifyOrder(orderId, modifyOrderRequest);

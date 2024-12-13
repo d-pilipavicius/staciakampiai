@@ -1,5 +1,6 @@
 package com.example.demo.OrderComponent.Helpers.Mappers;
 
+import com.example.demo.OrderComponent.Domain.Entities.Enums.OrderStatus;
 import com.example.demo.helper.enums.Currency;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemModifierDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
@@ -10,6 +11,7 @@ import com.example.demo.OrderComponent.Domain.Entities.OrderItemModifier;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -73,13 +75,49 @@ public class OrderMapper {
     }
 
     public static OrderItem mapToOrderItem(OrderItemDTO itemRequest, UUID orderId) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrderId(orderId);
-        orderItem.setProductID(itemRequest.getProductId());
-        orderItem.setTitle(itemRequest.getTitle());
-        orderItem.setQuantity(itemRequest.getQuantity());
-        orderItem.setUnitPrice(itemRequest.getUnitPrice().getBase());
-        orderItem.setCurrency(itemRequest.getCurrency());
-        return orderItem;
+        return OrderItem.builder()
+                .orderId(orderId)
+                .productID(itemRequest.getProductId())
+                .title(itemRequest.getTitle())
+                .quantity(itemRequest.getQuantity())
+                .unitPrice(itemRequest.getUnitPrice().getBase())
+                .currency(itemRequest.getCurrency())
+                .build();
+    }
+
+    public static OrderDTO.OrderDTOBuilder mapToOrderReceipt(OrderDTO orderDTO) {
+        return OrderDTO.builder()
+                .id(orderDTO.getId())
+                .items(orderDTO.getItems())
+                .originalPrice(orderDTO.getOriginalPrice())
+                .currency(orderDTO.getCurrency());
+    }
+
+    public static OrderItemModifier mapToOrderItemModifier(OrderItemModifierDTO modifierDTO, UUID orderItemId) {
+        return OrderItemModifier.builder()
+                .orderItemId(orderItemId)
+                .productModifierId(modifierDTO.getId())
+                .title(modifierDTO.getTitle())
+                .price(modifierDTO.getPrice())
+                .currency(modifierDTO.getCurrency())
+                .build();
+    }
+
+    public static Order mapToOrder(OrderDTO createOrderDTO) {
+        return Order.builder()
+                .businessId(createOrderDTO.getBusinessId())
+                .createdByEmployeeId(createOrderDTO.getEmployeeId())
+                .createdAt(LocalDateTime.now())
+                .status(OrderStatus.NEW)
+                .reservationId(createOrderDTO.getReservationId())
+                .build();
+    }
+
+    public static void mapToExistingOrderItem(OrderItem existingItem, OrderItemDTO itemRequest) {
+        existingItem.setProductID(itemRequest.getProductId());
+        existingItem.setTitle(itemRequest.getTitle());
+        existingItem.setQuantity(itemRequest.getQuantity());
+        existingItem.setUnitPrice(itemRequest.getUnitPrice().getBase());
+        existingItem.setCurrency(itemRequest.getCurrency());
     }
 }

@@ -19,19 +19,19 @@ public class OrderItemModifier {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "orderItemId", nullable = false)
+    @Column(name = "order_item_id", nullable = false)
     private UUID orderItemId;
 
-    @Column(nullable = false)
+    @Column(name = "product_modifier_id", nullable = false)
     private UUID productModifierId;
 
-    @Column(nullable = false)
+    @Column(name = "title",nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(name = "price",nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column(name = "currency",nullable = false)
     @Enumerated(EnumType.STRING)
     private Currency currency;
 }

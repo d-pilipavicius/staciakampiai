@@ -6,6 +6,7 @@ import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
 import com.example.demo.OrderComponent.Domain.Services.OrderService;
 import com.example.demo.OrderComponent.Helpers.Mappers.OrderMapper;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 
@@ -13,14 +14,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class OrderApplicationService {
     private final OrderService orderService;
     private final ProductApplicationService productApplicationService;
-
-    public OrderApplicationService(OrderService orderService, ProductApplicationService productApplicationService) {
-        this.orderService = orderService;
-        this.productApplicationService = productApplicationService;
-    }
 
     public OrderDTO createOrder(OrderDTO createOrderDTO) {
         createOrderDTO.getItems().forEach(this::setProductAndModifierDetails);
@@ -60,10 +57,6 @@ public class OrderApplicationService {
 
     public OrderDTO getOrderReceipt(UUID orderId) {
         OrderDTO orderDTO = orderService.getOrderReceipt(orderId);
-        orderDTO.setEmployeeId(null);
-        orderDTO.setReservationId(null);
-        orderDTO.setStatus(null);
-        orderDTO.setBusinessId(null);
-        return orderDTO;
+        return OrderMapper.mapToOrderReceipt(orderDTO).build();
     }
 }

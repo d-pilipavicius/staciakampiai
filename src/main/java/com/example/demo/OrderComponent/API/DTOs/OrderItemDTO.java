@@ -30,8 +30,8 @@ public class OrderItemDTO {
     @AllArgsConstructor
     public static class UnitPrice {
         @NonNull
-        private BigDecimal base;
+        private final BigDecimal base;
         @NonNull
-        private BigDecimal withModifiers;
+        private final BigDecimal withModifiers;
     }
 }
