@@ -1,5 +1,8 @@
 package com.example.demo.BusinessComponent.Helpers.Mappers;
 
+import com.example.demo.BusinessComponent.API.DTOs.PostUserDTO;
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
@@ -8,7 +11,9 @@ import com.example.demo.BusinessComponent.Domain.Entities.Business;
 import com.example.demo.BusinessComponent.Domain.Entities.User;
 
 @Component
+@AllArgsConstructor
 public class BusinessMapper {
+  private final PasswordEncoder passwordEncoder;
 
   public BusinessDTO toBusinessDTO(Business business) {
     return BusinessDTO

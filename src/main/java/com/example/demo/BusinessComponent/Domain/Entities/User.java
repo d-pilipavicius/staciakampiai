@@ -53,4 +53,11 @@ public class User {
   @Email
   @Column(name = "email_address", nullable = false)
   private String emailAddress;
+
+  @Column(name = "username", nullable = false)
+  private String username;
+
+  @Column(name = "password", nullable = false)
+  private String password;
+
 }
