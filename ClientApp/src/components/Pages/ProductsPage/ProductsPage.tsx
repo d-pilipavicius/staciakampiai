@@ -1,0 +1,78 @@
+import { ReactNode, useEffect, useState } from "react";
+import { BusinessDTO, GetProductsDTO } from "../../../data/Responses";
+import Header from "../../Header";
+import { getMyBusiness, getMyBusinessProducts, postProductAPI } from "../../../data/APICalls";
+import Pageination from "../../Pageination";
+import ProductCard from "./ProductCard";
+import "./products.css"
+import Popup from "../../Popup";
+
+const pageSize = 20;
+
+function ProductsPage() {
+  //Input boxes 
+  const [trigger, setTrigger] = useState(0);
+  const [title, setTitle] = useState("");
+  const [quantityInStock, setQuantityInStock] = useState("");
+  const [price, setPrice] = useState("");
+  const [compatibleModifierIds, setCompatibleModifierIds] = useState([]);
+
+  const [isVisible, setVisibility] = useState(false); 
+  const [products, setProducts] = useState<GetProductsDTO | null>();
+  const [page, setPage] = useState(1);
+
+  const businessId = localStorage.getItem("userBusinessId");
+
+  useEffect(() => {
+    const getProducts = async () => {
+      const productsdto = await getMyBusinessProducts(page, pageSize);
+      if(productsdto)
+        setProducts(productsdto);
+    }
+  
+    getProducts();
+    return;
+  }, [trigger, page, pageSize, setProducts]);
+
+  const createProduct = async () => {
+    if(businessId)
+      postProductAPI({
+        title: title,
+        quantityInStock: Number(quantityInStock),
+        businessId: businessId,
+        price: {
+          amount: Number(price),
+          currency: "USD",
+        },
+        compatibleModifiers: []
+      })
+    setTitle("");
+    setQuantityInStock("");
+    setPrice("");
+    setCompatibleModifierIds([]);
+    setVisibility(false);
+    setTrigger(trigger+1);
+  }
+
+  return <>
+    <Header/>
+    <Popup setVisibility={isVisible}>
+      <h1>Add new product</h1>
+      <input value={title} onChange={(event) => {setTitle(event.target.value)}} type="text" className="form-control" placeholder="Set title"/>
+      <input value={quantityInStock} onChange={(event) => {setQuantityInStock(event.target.value)}} type="text" className="form-control" placeholder="Set quantity"/>
+      <input value={price} onChange={(event) => {setPrice(event.target.value)}} type="text" className="form-control" placeholder="Set price"/>
+      <button type="button" onClick={createProduct} className="btn btn-success" disabled={!Boolean(businessId)}>Submit</button>
+      <button type="button" onClick={() => setVisibility(false)} className="btn btn-danger" disabled={!Boolean(businessId)}>Cancel</button>
+    </Popup>
+    <div className="productPage">
+      <h1>Business products</h1>
+      <button type="button" onClick={()=>setVisibility(true)} className="btn btn-primary" disabled={!Boolean(businessId)}>Add product</button>
+      {products && products.totalItems > 0
+      ? products.items.map((item) => <ProductCard key={item.id} product={item} updatePage={() => setTrigger(trigger+1)}/>) 
+      : <p>No products available</p>}
+      <Pageination selectedPage={page} totalPages={products ? products.totalPages : 0} setPage={setPage}/>
+    </div>
+  </>
+}
+
+export default ProductsPage;

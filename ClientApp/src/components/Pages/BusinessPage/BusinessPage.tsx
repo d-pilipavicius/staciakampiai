@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Header from "../Header";
-import { getBusinessAPI, getUserAPI } from "../../data/APICalls";
-import { BusinessDTO, UserDTO } from "../../data/Responses";
-import BusinessInfoBox from "../BusinessInfoBox";
-import BusinessEditBox from "../BusinessEditBox";
+import Header from "../../Header";
+import { getBusinessAPI, getMyBusiness } from "../../../data/APICalls";
+import { BusinessDTO } from "../../../data/Responses";
+import BusinessInfoBox from "./BusinessInfoBox";
+import BusinessEditBox from "./BusinessEditBox";
 
 function BusinessPage() {
   const [isEditing, setEditing] = useState(false);
@@ -13,14 +13,13 @@ function BusinessPage() {
     if(isEditing)
       return;
     const fetchData = async (id: string) => {
-      const userdto: UserDTO = await getUserAPI(id);
-      const businessdto = await getBusinessAPI(userdto.businessId);
+      const businessdto = await getMyBusiness();
       setBusiness(businessdto);
     }
-    const userId = localStorage.getItem("userId");
-    if (userId)
-      fetchData(userId);
-  }, []);
+    const businessId = localStorage.getItem("userBusinessId");
+    if (businessId)
+      fetchData(businessId);
+  }, [isEditing, setBusiness]);
 
   return <>
     <Header/>

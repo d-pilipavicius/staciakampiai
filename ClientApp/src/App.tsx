@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import BusinessPage from "./components/Pages/BusinessPage";
+import BusinessPage from "./components/Pages/BusinessPage/BusinessPage";
 import OrderPage from "./components/Pages/OrderPage";
-import ProductsPage from "./components/Pages/ProductsPage";
+import ProductsPage from "./components/Pages/ProductsPage/ProductsPage";
 import TaxPage from "./components/Pages/TaxPage";
 import Home from "./components/Pages/Home";
 import NotFound from "./components/Pages/NotFound";
-import Login from "./components/Pages/Login";
+import Login from "./components/Pages/Login/Login";
+import Popup from "./components/Popup";
 
 function App() {
   return <>

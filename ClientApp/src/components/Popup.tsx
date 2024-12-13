@@ -1,11 +1,22 @@
-import { useState } from "react";
+import { ReactNode } from 'react';
+import './popup.css'
 
-function Popup() {
-  const [modal, setModal] = useState(false);
+interface Param {
+  setVisibility: boolean
+  children: ReactNode
+}
 
-  return <>
-    <button></button>
-  </>
+function Popup({setVisibility, children}: Param) {
+  return (
+    setVisibility &&
+    <div>
+      <div className="popupBackground"/>
+      <div className="popup">
+        {children}
+      </div>
+    </div>
+  );
+  
 }
 
 export default Popup;

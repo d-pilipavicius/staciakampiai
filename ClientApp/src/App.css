@@ -6,7 +6,7 @@ body, h1, ul {
 }
 
 body {
-  font-family: 'Arial';
+  font-family: "Arial";
   background-color: #f4f4f4;
 }
 
@@ -54,7 +54,6 @@ body {
 
 .businessPage {
   padding: 30px;
-  font-family: "Arial";
 }
 
 .businessPage h3 {
@@ -72,6 +71,27 @@ body {
   margin: 5px;
 }
 
-.businessInfo {
-  font-family: "Arial";
+.productPage {
+  padding: 30px;
+}
+
+.productPage h1 {
+  margin-bottom: 30px;
+}
+
+.pageination {
+  padding: 30px;
+}
+
+.pageination * {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.pageination a {
+  text-decoration: none;
+}
+
+.selected {
+  text-decoration: underline!important;
 }

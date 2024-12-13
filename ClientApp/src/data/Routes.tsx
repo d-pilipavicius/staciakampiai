@@ -22,3 +22,22 @@ export const deleteUserLink = (id: string) => user(id);
 function user(id: string) { 
   return address+"/v1/user/"+id;
 }
+
+//Product links
+export const postProductLink = address+"/v1/products";
+export const getProductListLink = address+"/v1/products";
+export const putProductLink = (id: string) => product(id);
+export const deleteProductLink = (id: string) => product(id);
+export const postProductModifierLink = address+"/v1/products/modifiers";
+export const getProductModifierListLink = address+"/v1/products/modifiers";
+export const putProductModifierLink = (id: string) => productModifier(id);
+export const deleteProductModifierLink = (id: string) => productModifier(id);
+
+
+function product(id: string) {
+  return address+"/v1/products/"+id;
+}
+
+function productModifier(id: string) {
+  return address+"/v1/products/modifiers/"+id
+}

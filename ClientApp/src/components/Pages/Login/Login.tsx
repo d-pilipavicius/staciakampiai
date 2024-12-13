@@ -1,7 +1,9 @@
 import { useRef, useState } from "react"
-import "../styles/login.css"
+import "./login.css"
 import validator from "validator"
 import { useNavigate } from "react-router";
+import { getUserAPI } from "../../../data/APICalls";
+import { getUserLink } from "../../../data/Routes";
 
 function Login() {
   const [pVisible, setPVisible] = useState(false);
@@ -9,7 +11,7 @@ function Login() {
   const textRef = useRef<HTMLParagraphElement>(null);
   const nav = useNavigate();
 
-  const onClick = () => {
+  const onClick = async () => {
     if(inpRef.current && textRef.current){
       const text = inpRef.current.value;
       if(!text) {
@@ -19,9 +21,13 @@ function Login() {
         textRef.current.innerText = "Invalid username!"
         setPVisible(true);
       } else {
-        localStorage.setItem("userId", text);
-        setPVisible(false);
-        nav("/home");
+        const user = await getUserAPI(text);
+        if(user) {
+          localStorage.setItem("userId", user.id);
+          localStorage.setItem("userBusinessId", user.businessId);
+          setPVisible(false);
+          nav("/home");
+        }
       }
     }
   };

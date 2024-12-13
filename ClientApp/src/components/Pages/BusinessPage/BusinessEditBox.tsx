@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { BusinessDTO } from "../data/Responses";
-import { putBusinessAPI } from "../data/APICalls";
+import { BusinessDTO } from "../../../data/Responses";
+import { putBusinessAPI } from "../../../data/APICalls";
+import CardComponent from "../../CardComponent";
 
 interface Param {
   business: BusinessDTO | null
@@ -23,14 +24,14 @@ function BusinessEditBox({business, onClick}: Param) {
   }
 
   return <>
-    <div className="rounded box businessInfo">
+    <CardComponent className="businessInfo">
       <p>Business Name: {business? business.name : "Business not available"}</p>
       <input value={email} onChange={(event) => {setEmail(event.target.value)}} type="text" className="form-control" placeholder="Email"/>
       <input value={phone} onChange={(event) => {setPhone(event.target.value)}} type="text" className="form-control" placeholder="Phone"/>
       <input value={address} onChange={(event) => {setAddress(event.target.value)}} type="text" className="form-control" placeholder="Address"/>
-      <button type="button" onClick={onAccept} className="btn btn-primary" disabled={!Boolean(business)}>Submit</button>
-      <button type="button" onClick={onClick} className="btn btn-primary" disabled={!Boolean(business)}>Cancel</button>
-    </div>
+      <button type="button" onClick={onAccept} className="btn btn-success" disabled={!Boolean(business)}>Submit</button>
+      <button type="button" onClick={onClick} className="btn btn-danger" disabled={!Boolean(business)}>Cancel</button>
+    </CardComponent>
   </>;
 }
 
