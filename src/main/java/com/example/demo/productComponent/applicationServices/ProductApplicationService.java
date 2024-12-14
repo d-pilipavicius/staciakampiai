@@ -105,8 +105,8 @@ public class ProductApplicationService {
     }
 
     // Helper methods for other components
-    public boolean validateProductIds(List<UUID> productIds) {
-        return productService.validateProductIds(productIds);
+    public void validateProductIds(List<UUID> productIds) {
+        productService.validateProductIds(productIds);
     }
 
     @Transactional
