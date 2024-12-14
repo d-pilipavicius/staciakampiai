@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BusinessDTO } from "../../../data/Responses";
-import { deleteProductModifierAPI, putBusinessAPI } from "../../../data/APICalls";
+import { putBusinessAPI } from "../../../data/APICalls";
 import CardComponent from "../../CardComponent";
 
 interface Param {

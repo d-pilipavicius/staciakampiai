@@ -54,17 +54,16 @@ function tax(id: string) {
 }
 
 //Service charges
-export const postServiceChargeLink = address+"/v1/taxes";
-export const getServiceChargeLink = address+"/v1/taxes";
+export const postServiceChargeLink = address+"/v1/service-charges";
+export const getServiceChargeLink = address+"/v1/service-charges";
 export const putServiceChargeLink = (id: string) => serviceCharge(id);
 export const deleteServiceChargeLink = (id: string) => serviceCharge(id);
 
 function serviceCharge(id: string) {
-  return address+"/v1/taxes/"+id
+  return address+"/v1/service-charges/"+id
 }
 
 //Discounts
-
 export const postDiscountLink = address+"/v1/discounts";
 export const getDiscountLink = address+"/v1/discounts";
 export const putDiscountLink = (id: string) => discount(id);

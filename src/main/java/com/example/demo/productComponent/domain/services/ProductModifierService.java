@@ -1,6 +1,6 @@
 package com.example.demo.productComponent.domain.services;
 
-import com.example.demo.CommonHelper.CustomExceptions.HTTPExceptions.HTTPExceptionJSON;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.CommonHelper.mapper.base.Mapper;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
@@ -14,7 +14,6 @@ import com.example.demo.productComponent.repository.ProductModifierRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,9 +83,7 @@ public class ProductModifierService {
     public ProductModifierDTO updateModifier(PutModifierDTO putModifierDTO, UUID id) {
         // Fetch the product modifier
         ProductModifier productModifier = productModifierRepository.findById(id)
-                .orElseThrow(() -> new HTTPExceptionJSON(
-                        HttpStatus.NOT_FOUND,
-                        "Not found",
+                .orElseThrow(() -> new NotFoundException(
                         "Modifier with id " + id + " not found"));
 
         // Apply updates to the product modifier

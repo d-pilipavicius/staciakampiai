@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ProductDTO, ProductModifierDTO, PutProductDTO } from "../../../data/Responses";
 import CardComponent from "../../CardComponent";
 import DialogBox from "../../DialogBox";
-import { deleteProductAPI, getProductModifierAPI, postProductModifierAPI, putProductAPI } from "../../../data/APICalls";
+import { deleteProductAPI, deleteProductModifierAPI, getProductModifierAPI, postProductModifierAPI, putProductAPI } from "../../../data/APICalls";
 import Popup from "../../Popup";
 import ScrollableList from "../../ScrollableList";
 import ProductModifierCard from "./ProductModifierCard";
@@ -24,6 +24,7 @@ function ProductCard({product, updatePage}: Props) {
 
   const onDelete = async () => {
     await deleteProductAPI(product.id);
+    product.compatibleModifiers.map(async (item) => deleteProductModifierAPI(item.id));
     setDelete(false);
     updatePage();
   }

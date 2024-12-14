@@ -1,8 +1,6 @@
-import Home from "./Pages/Home";
-
 function Header() {
-  const names=["Business", "Products", "Orders", "Tax"];
-  const links=["/business", "/products", "/orders", "/tax"];
+  const names=["Business", "Products", "Orders", "Tax", "Discount"];
+  const links=["/business", "/products", "/orders", "/tax", "/discounts"];
 
   return <>
       <header className="header">
