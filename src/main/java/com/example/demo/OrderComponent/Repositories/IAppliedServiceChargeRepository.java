@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface IAppliedServiceChargeRepository extends JpaRepository<AppliedServiceCharge, UUID> {
 
     List<AppliedServiceCharge> findByOrderId(UUID id);
+
+    void deleteByOrderId(UUID id);
 }

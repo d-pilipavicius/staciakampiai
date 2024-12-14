@@ -45,7 +45,18 @@ public class OrderApplicationService {
 
     public OrderDTO modifyOrder(UUID orderId, ModifyOrderDTO modifyOrderRequest) {
         modifyOrderRequest.getItems().forEach(this::setProductAndModifierDetails);
+        if (modifyOrderRequest.getServiceChargeIds() != null) {
+            List<AppliedServiceChargeDTO> serviceCharges = modifyOrderRequest.getServiceChargeIds().stream()
+                    .map(serviceChargeApplicationService::getServiceChargeById)
+                    .map(OrderMapper::mapToAppliedServiceChargeDTO)
+                    .collect(Collectors.toList());
+            modifyOrderRequest.setServiceCharges(serviceCharges);
+        }
         return orderService.modifyOrder(orderId, modifyOrderRequest);
+    }
+    public OrderDTO getOrderReceipt(UUID orderId) {
+        OrderDTO orderDTO = orderService.getOrderReceipt(orderId);
+        return OrderMapper.mapToOrderReceipt(orderDTO).build();
     }
 
     private void setProductAndModifierDetails(OrderItemDTO itemRequest) {
@@ -64,10 +75,5 @@ public class OrderApplicationService {
                     .collect(Collectors.toList());
             itemRequest.setModifiers(OrderMapper.mapToOrderItemModifierResponse(selectedModifiers));
         }
-    }
-
-    public OrderDTO getOrderReceipt(UUID orderId) {
-        OrderDTO orderDTO = orderService.getOrderReceipt(orderId);
-        return OrderMapper.mapToOrderReceipt(orderDTO).build();
     }
 }

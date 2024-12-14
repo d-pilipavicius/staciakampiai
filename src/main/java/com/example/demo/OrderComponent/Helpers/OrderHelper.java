@@ -37,4 +37,16 @@ public class OrderHelper {
 
         return amount.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
+
+
+    public static BigDecimal calculateItemPrice(OrderItem item, IOrderItemModifierRepository orderItemModifierRepository) {
+        BigDecimal itemPrice = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+
+        List<OrderItemModifier> modifiers = orderItemModifierRepository.findByOrderItemId(item.getId());
+        BigDecimal modifiersPrice = modifiers.stream()
+                .map(modifier -> modifier.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return itemPrice.add(modifiersPrice);
+    }
 }
