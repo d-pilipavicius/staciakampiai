@@ -40,7 +40,9 @@ function ProductModifierCard ({prodModifier, updatePage}: Props) {
     updatePage();
   }
 
-  return <CardComponent color="#eeeeee" className="productModifierCard">
+  return <>
+  <DialogBox setVisibility={isDelete} question={`Are you sure you want to delete "${prodModifier.title}" from the product modifier list?`} onAccept={onDelete} onCancel={() => setDelete(false)}/>
+  <CardComponent color="#eeeeee" className="productModifierCard">
     {!isEdit ? <><div>
       <p>Title: {prodModifier.title}</p>
       <p>Price: {prodModifier.price.amount} {prodModifier.price.currency}</p>
@@ -58,8 +60,8 @@ function ProductModifierCard ({prodModifier, updatePage}: Props) {
       <button type="button" onClick={onEdit} className="btn btn-success">Set</button>
       <button type="button" onClick={() =>setEditing(false)} className="btn btn-danger">Cancel</button>
     </div>}
-    <DialogBox setVisibility={isDelete} question={`Are you sure you want to delete "${prodModifier.title}" from the product modifier list?`} onAccept={onDelete} onCancel={() => setDelete(false)}/>
   </CardComponent>
+  </>
 }
 
 export default ProductModifierCard;

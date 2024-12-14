@@ -81,7 +81,26 @@ function ProductCard({product, updatePage}: Props) {
     setAddModifier(false);
   }
 
-  return <><CardComponent className="productCard">
+  return <>
+  <DialogBox setVisibility={isDelete} question={`Are you sure you want to delete "${product.title}" from the product list?`} onAccept={onDelete} onCancel={() => setDelete(false)}></DialogBox>
+  <Popup setVisibility={isEditModifiers}>
+    <h3>Editing "{product.title}" modifiers</h3>
+    <button type="button" onClick={onAddModifier} className="btn btn-primary">Add modifier</button>
+    <button type="button" onClick={() =>setEditingModifiers(false)} className="btn btn-danger">Cancel</button>
+    { product.compatibleModifiers.length > 0 && 
+      <ScrollableList>
+        {product.compatibleModifiers.map((item) => <ProductModifierCard key={item.id} prodModifier={item} updatePage={updatePage}/>)}
+      </ScrollableList>
+    } 
+  </Popup>
+  <Popup setVisibility={isAddModifier}>
+    <input value={title} onChange={(event) => {setTitle(event.target.value)}} type="text" className="form-control" placeholder="Set title"/>
+    <input value={price} onChange={(event) => {setPrice(event.target.value)}} type="text" className="form-control" placeholder="Set price"/>
+    <input value={stock} onChange={(event) => {setStock(event.target.value)}} type="text" className="form-control" placeholder="Set stock count"/>
+    <button type="button" onClick={onCreateModifier} className="btn btn-success">Create</button>
+    <button type="button" onClick={onCancelAddModifier} className="btn btn-danger">Cancel</button>
+  </Popup>
+  <CardComponent className="productCard">
     {!isEdit ? <><div>
       <p>Title: {product.title}</p>
       <p>Price: {product.price.amount} {product.price.currency}</p>
@@ -102,24 +121,6 @@ function ProductCard({product, updatePage}: Props) {
       <button type="button" onClick={() =>setEditing(false)} className="btn btn-danger">Cancel</button>
     </div>}
     </CardComponent>
-    <DialogBox setVisibility={isDelete} question={`Are you sure you want to delete "${product.title}" from the product list?`} onAccept={onDelete} onCancel={() => setDelete(false)}></DialogBox>
-    <Popup setVisibility={isEditModifiers}>
-      <h3>Editing "{product.title}" modifiers</h3>
-      <button type="button" onClick={onAddModifier} className="btn btn-primary">Add modifier</button>
-      <button type="button" onClick={() =>setEditingModifiers(false)} className="btn btn-danger">Cancel</button>
-      { product.compatibleModifiers.length > 0 && 
-        <ScrollableList>
-          {product.compatibleModifiers.map((item) => <ProductModifierCard key={item.id} prodModifier={item} updatePage={updatePage}/>)}
-        </ScrollableList>
-      } 
-    </Popup>
-    <Popup setVisibility={isAddModifier}>
-      <input value={title} onChange={(event) => {setTitle(event.target.value)}} type="text" className="form-control" placeholder="Set title"/>
-      <input value={price} onChange={(event) => {setPrice(event.target.value)}} type="text" className="form-control" placeholder="Set price"/>
-      <input value={stock} onChange={(event) => {setStock(event.target.value)}} type="text" className="form-control" placeholder="Set stock count"/>
-      <button type="button" onClick={onCreateModifier} className="btn btn-success">Create</button>
-      <button type="button" onClick={onCancelAddModifier} className="btn btn-danger">Cancel</button>
-    </Popup>
     </>
 }
 

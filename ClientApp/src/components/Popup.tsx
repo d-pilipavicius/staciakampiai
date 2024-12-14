@@ -4,6 +4,7 @@ import './popup.css'
 interface Param {
   setVisibility: boolean
   children: ReactNode
+  backgroundClass?: string
 }
 
 function Popup({setVisibility, children}: Param) {
