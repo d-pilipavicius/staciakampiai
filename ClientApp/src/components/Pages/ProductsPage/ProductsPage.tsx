@@ -6,6 +6,7 @@ import Pageination from "../../Pageination";
 import ProductCard from "./ProductCard";
 import "./products.css"
 import Popup from "../../Popup";
+import ScrollableList from "../../ScrollableList";
 
 const pageSize = 20;
 
@@ -23,20 +24,18 @@ function ProductsPage() {
 
   const businessId = localStorage.getItem("userBusinessId");
 
+  const getProducts = async () => {
+    const productsdto = await getMyBusinessProducts(page, pageSize);
+    if(productsdto) setProducts(productsdto);
+  };
+
   useEffect(() => {
-    const getProducts = async () => {
-      const productsdto = await getMyBusinessProducts(page, pageSize);
-      if(productsdto)
-        setProducts(productsdto);
-    }
-  
     getProducts();
-    return;
-  }, [trigger, page, pageSize, setProducts]);
+  }, [trigger]);
 
   const createProduct = async () => {
-    if(businessId)
-      postProductAPI({
+    if(businessId) {
+      const response = await postProductAPI({
         title: title,
         quantityInStock: Number(quantityInStock),
         businessId: businessId,
@@ -46,12 +45,13 @@ function ProductsPage() {
         },
         compatibleModifiers: []
       })
+      if(response) getProducts();
+    }
     setTitle("");
     setQuantityInStock("");
     setPrice("");
     setCompatibleModifierIds([]);
     setVisibility(false);
-    setTrigger(trigger+1);
   }
 
   return <>
