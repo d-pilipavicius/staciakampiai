@@ -198,9 +198,7 @@ public class ProductService {
 
     public ProductDTO getProductById(UUID productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new HTTPExceptionJSON(
-                        HttpStatus.NOT_FOUND,
-                        "Not found",
+                .orElseThrow(() -> new NotFoundException(
                         "Product with id " + productId + " not found"
                 ));
 

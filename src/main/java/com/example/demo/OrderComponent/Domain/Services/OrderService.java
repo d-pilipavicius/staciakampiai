@@ -13,7 +13,8 @@ import com.example.demo.OrderComponent.Helpers.OrderHelper;
 import com.example.demo.OrderComponent.Repositories.IOrderItemModifierRepository;
 import com.example.demo.OrderComponent.Repositories.IOrderRepository;
 import com.example.demo.OrderComponent.Repositories.IOrderItemRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.demo.helper.ErrorHandling.CustomExceptions.NotFoundException;
+import com.example.demo.helper.ErrorHandling.CustomExceptions.UnprocessableException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,7 +67,6 @@ public class OrderService {
                 .map(serviceChargeDTO -> OrderMapper.mapToAppliedServiceCharge(serviceChargeDTO, savedOrder))
                 .collect(Collectors.toList());
         appliedServiceChargeRepository.saveAll(appliedServiceCharges);
-
         return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, createOrderDTO.getCurrency(), appliedServiceCharges);
     }
 
@@ -90,7 +90,7 @@ public class OrderService {
 
     public OrderDTO getOrderById(UUID orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+                .orElseThrow(() -> new NotFoundException("Order not found"));
 
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
 
@@ -108,10 +108,10 @@ public class OrderService {
     @Transactional
     public OrderDTO modifyOrder(UUID orderId, ModifyOrderDTO modifyOrderRequest) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+                .orElseThrow(() -> new NotFoundException("Order not found"));
 
         if (order.getStatus() == OrderStatus.CLOSED) {
-            throw new IllegalStateException("Order is already closed and cannot be modified.");
+            throw new UnprocessableException("Order is already closed and cannot be modified.");
         }
 
         updateOrderDetails(order, modifyOrderRequest);
@@ -129,7 +129,6 @@ public class OrderService {
 
         return OrderMapper.mapToOrderResponse(savedOrder, itemResponses, originalPrice, currency, appliedServiceChargeRepository.findByOrderId(order.getId()));
     }
-
 
     private void updateOrderDetails(Order order, ModifyOrderDTO modifyOrderRequest) {
         if (modifyOrderRequest.getReservationId() != null) {
@@ -189,7 +188,7 @@ public class OrderService {
 
     public OrderDTO getOrderReceipt(UUID orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+                .orElseThrow(() -> new NotFoundException("Order not found"));
 
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
 
