@@ -28,6 +28,11 @@ export interface ProductDTO {
   businessId: string;
 }
 
+export interface GetProductsDTO extends PageinationDTO {
+  items: ProductDTO[];
+  businessId: string;
+}
+
 export interface PostProductDTO extends Omit<ProductDTO, 'id'> {
 }
 
@@ -35,6 +40,7 @@ export interface PutProductDTO extends Omit<ProductDTO, 'id' | 'businessId'> {
 
 }
 
+//Product modifier
 export interface ProductModifierDTO {
   id: string;
   title: string;
@@ -43,21 +49,25 @@ export interface ProductModifierDTO {
   businessId: string;
 }
 
-export interface MoneyDTO {
-  amount: number;
-  currency: string;
+export interface GetProductModifiersDTO extends PageinationDTO {
+  items: ProductModifierDTO[]
 }
 
-export interface GetProductsDTO extends PageinationDTO {
-  items: ProductDTO[];
-  businessId: string;
+export interface PostProductModifierDTO extends Omit<ProductModifierDTO, "id"> {
 }
 
-
+export interface PutProductModifierDTO extends Omit<ProductModifierDTO, "id" | "businessId"> {
+}
 
 //Pageination
 export interface PageinationDTO {
   totalItems: number;
   totalPages: number;
   currentPage: number;
+}
+
+//General
+export interface MoneyDTO {
+  amount: number;
+  currency: string;
 }

@@ -1,5 +1,5 @@
-import { BusinessDTO, GetProductsDTO, PostProductDTO, ProductDTO, PutProductDTO, UserDTO } from "./Responses";
-import { deleteProductLink, getBusinessLink, getProductListLink, getUserLink, postProductLink, putBusinessLink, putProductLink } from "./Routes";
+import { BusinessDTO, GetProductModifiersDTO, GetProductsDTO, PostProductDTO, PostProductModifierDTO, ProductDTO, ProductModifierDTO, PutProductDTO, PutProductModifierDTO, UserDTO } from "./Responses";
+import { deleteProductLink, getBusinessLink, getProductListLink, getProductModifierListLink, getUserLink, postProductLink, postProductModifierLink, putBusinessLink, putProductLink, putProductModifierLink } from "./Routes";
 
 export async function getMyBusiness(): Promise<BusinessDTO> {
   const businessId = localStorage.getItem("userBusinessId");
@@ -17,13 +17,15 @@ export async function getMyBusinessProducts(pageNumber: number, pageSize: number
     throw new Error(`Error: Bad login!`);
 }
 
+
+//Products
 export async function getBusinessProductsAPI(pageNumber: number, pageSize: number, businessId: string): Promise<GetProductsDTO> {
   const response = await fetch(getProductListLink+`?pageNumber=${pageNumber-1}&pageSize=${pageSize}&businessId=${businessId}&employeeId=${localStorage.getItem("userId")}`);
 
-  if(!response.ok)
+  if(!response.ok) {
     if(response.status == 500) {
       return {
-        "businessId": businessId,
+        "businessId": "",
         "totalPages": 0,
         "totalItems": 0,
         "currentPage": 0,
@@ -31,7 +33,8 @@ export async function getBusinessProductsAPI(pageNumber: number, pageSize: numbe
       }
     }
     else 
-    throw new Error(`Error ${response.status}: ${response.text}`);
+      throw new Error(`Error ${response.status}: ${response.text}`);
+  }
 
   const data: GetProductsDTO = await response.json();
   return data;
@@ -56,7 +59,46 @@ export async function deleteProductAPI(productId: string) {
   }
 }
 
+//Product modifiers
+export async function postProductModifierAPI(dto: PostProductModifierDTO): Promise<ProductModifierDTO> {
+  const response = await basicAPI(postProductModifierLink+`?employeeId=${localStorage.getItem("userId")}`, "POST", JSON.stringify(dto));
 
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+  
+  return await response.json();
+}
+
+export async function getProductModifierAPI(pageNumber: number, pageSize: number, businessId: string): Promise<GetProductModifiersDTO> {
+  const response = await fetch(getProductModifierListLink+`?pageNumber=${pageNumber}&pageSize=${pageSize}&businessId=${businessId}&employeeId=${localStorage.getItem("userId")}`);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return await response.json();
+}
+
+export async function putProductModifierAPI(modifierId: string, dto: PutProductModifierDTO): Promise<ProductModifierDTO> {
+  const response = await basicAPI(putProductModifierLink(modifierId)+`?employeeId=${localStorage.getItem("userId")}`, "PUT", JSON.stringify(dto));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+  
+  return await response.json();
+}
+
+export async function deleteProductModifierAPI(modifierId: string) {
+  const response = await basicAPI(deleteProductModifierAPI(modifierId)+`?employeeId=${localStorage.getItem("userId")}`, "DELETE", "");
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+}
+
+//User
 export async function getUserAPI(id: string): Promise<UserDTO> {
   const response = await fetch(getUserLink(id));
 
@@ -68,6 +110,8 @@ export async function getUserAPI(id: string): Promise<UserDTO> {
   return data;
 }
 
+
+//Business
 export async function getBusinessAPI(id: string): Promise<BusinessDTO> {
   const response = await fetch(getBusinessLink(id));
 
@@ -87,6 +131,8 @@ export async function putBusinessAPI(business: BusinessDTO): Promise<BusinessDTO
   return data;
 }
 
+
+//Custom API sending method
 async function basicAPI(url: string, method: string, body: string) {
   const response = await fetch(url, {
     method: method,
@@ -96,8 +142,5 @@ async function basicAPI(url: string, method: string, body: string) {
     body: body
   })
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: ${response.text}`);
-  }
   return response;
 }

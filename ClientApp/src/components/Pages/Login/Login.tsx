@@ -3,7 +3,6 @@ import "./login.css"
 import validator from "validator"
 import { useNavigate } from "react-router";
 import { getUserAPI } from "../../../data/APICalls";
-import { getUserLink } from "../../../data/Routes";
 
 function Login() {
   const [pVisible, setPVisible] = useState(false);
@@ -31,6 +30,9 @@ function Login() {
       }
     }
   };
+
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userBusinessId");
 
   return <>
     <div className="loginPage">

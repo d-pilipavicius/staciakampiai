@@ -12,7 +12,7 @@ interface Props {
   updatePage: () => void;
 }
 
-const getPageCount = 10000;
+const getPageCount = 1;
 
 function ProductCard({product, updatePage}: Props) {
   const [isDelete, setDelete] = useState(false);

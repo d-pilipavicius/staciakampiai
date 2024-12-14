@@ -8,7 +8,7 @@ import "./products.css"
 import Popup from "../../Popup";
 import ScrollableList from "../../ScrollableList";
 
-const pageSize = 20;
+const pageSize = 1;
 
 function ProductsPage() {
   //Input boxes 
@@ -32,6 +32,11 @@ function ProductsPage() {
   useEffect(() => {
     getProducts();
   }, [trigger]);
+
+  const onSetPage = (id: number) => {
+    setPage(id);
+    setTrigger(trigger+1);
+  };
 
   const createProduct = async () => {
     if(businessId) {
@@ -70,7 +75,7 @@ function ProductsPage() {
       {products && products.totalItems > 0
       ? products.items.map((item) => <ProductCard key={item.id} product={item} updatePage={() => setTrigger(trigger+1)}/>) 
       : <p>No products available</p>}
-      <Pageination selectedPage={page} totalPages={products ? products.totalPages : 0} setPage={setPage}/>
+      <Pageination selectedPage={page} totalPages={products ? products.totalPages : 0} setPage={onSetPage}/>
     </div>
   </>
 }

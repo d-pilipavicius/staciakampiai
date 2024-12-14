@@ -28,16 +28,62 @@ export const postProductLink = address+"/v1/products";
 export const getProductListLink = address+"/v1/products";
 export const putProductLink = (id: string) => product(id);
 export const deleteProductLink = (id: string) => product(id);
-export const postProductModifierLink = address+"/v1/products/modifiers";
-export const getProductModifierListLink = address+"/v1/products/modifiers";
-export const putProductModifierLink = (id: string) => productModifier(id);
-export const deleteProductModifierLink = (id: string) => productModifier(id);
-
 
 function product(id: string) {
   return address+"/v1/products/"+id;
 }
 
+//Product modifier links
+export const postProductModifierLink = address+"/v1/products/modifiers";
+export const getProductModifierListLink = address+"/v1/products/modifiers";
+export const putProductModifierLink = (id: string) => productModifier(id);
+export const deleteProductModifierLink = (id: string) => productModifier(id);
+
 function productModifier(id: string) {
   return address+"/v1/products/modifiers/"+id
 }
+
+//Tax links
+export const postTaxLink = address+"/v1/taxes";
+export const getTaxLink = address+"/v1/taxes";
+export const putTaxLink = (id: string) => tax(id);
+export const deleteTaxLink = (id: string) => tax(id);
+
+function tax(id: string) {
+  return address+"/v1/taxes/"+id
+}
+
+//Service charges
+export const postServiceChargeLink = address+"/v1/taxes";
+export const getServiceChargeLink = address+"/v1/taxes";
+export const putServiceChargeLink = (id: string) => serviceCharge(id);
+export const deleteServiceChargeLink = (id: string) => serviceCharge(id);
+
+function serviceCharge(id: string) {
+  return address+"/v1/taxes/"+id
+}
+
+//Discounts
+
+export const postDiscountLink = address+"/v1/discounts";
+export const getDiscountLink = address+"/v1/discounts";
+export const putDiscountLink = (id: string) => discount(id);
+export const deleteDiscountLink = (id: string) => discount(id);
+
+function discount(id: string) {
+  return address+"/v1/discounts/"+id;
+}
+
+//Reservations
+export const postReservationLink = address+"/v1/reservations";
+export const getReservationLink = address+"/v1/reservations";
+export const putReservationLink = (id: string) => reservation(id);
+export const deleteReservationLink = (id: string) => reservation(id);
+
+function reservation(id: string) {
+  return address+"/v1/reservations/"+id;
+}
+
+//Orders
+
+//Payments
