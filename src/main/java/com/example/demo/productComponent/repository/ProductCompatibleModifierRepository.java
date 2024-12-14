@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ProductCompatibleModifierRepository extends JpaRepository<ProductCompatibleModifier, UUID> {
+public interface ProductCompatibleModifierRepository extends JpaRepository<ProductCompatibleModifier, ProductCompatibleModifier> {
     boolean existsByProductIdAndModifierId(UUID productId, UUID modifierId);
 
     @Query("SELECT m.modifierId FROM ProductCompatibleModifier m WHERE m.productId = :productId")
