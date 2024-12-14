@@ -1,14 +1,13 @@
-import { ReactNode, useEffect, useState } from "react";
-import { BusinessDTO, GetProductsDTO } from "../../../data/Responses";
+import { useEffect, useState } from "react";
+import { GetProductsDTO } from "../../../data/Responses";
 import Header from "../../Header";
-import { getMyBusiness, getMyBusinessProducts, postProductAPI } from "../../../data/APICalls";
+import { getMyBusinessProducts, postProductAPI } from "../../../data/APICalls";
 import Pageination from "../../Pageination";
 import ProductCard from "./ProductCard";
 import "./products.css"
 import Popup from "../../Popup";
-import ScrollableList from "../../ScrollableList";
 
-const pageSize = 1;
+const pageSize = 20;
 
 function ProductsPage() {
   //Input boxes 
@@ -16,7 +15,6 @@ function ProductsPage() {
   const [title, setTitle] = useState("");
   const [quantityInStock, setQuantityInStock] = useState("");
   const [price, setPrice] = useState("");
-  const [compatibleModifierIds, setCompatibleModifierIds] = useState([]);
 
   const [isVisible, setVisibility] = useState(false); 
   const [products, setProducts] = useState<GetProductsDTO | null>();
@@ -41,21 +39,20 @@ function ProductsPage() {
   const createProduct = async () => {
     if(businessId) {
       const response = await postProductAPI({
-        title: title,
-        quantityInStock: Number(quantityInStock),
-        businessId: businessId,
-        price: {
-          amount: Number(price),
-          currency: "USD",
+        "title": title,
+        "quantityInStock": Number(quantityInStock),
+        "businessId": businessId,
+        "price": {
+          "amount": Number(price),
+          "currency": "USD",
         },
-        compatibleModifiers: []
+        "compatibleModifierIds": []
       })
       if(response) getProducts();
     }
     setTitle("");
     setQuantityInStock("");
     setPrice("");
-    setCompatibleModifierIds([]);
     setVisibility(false);
   }
 

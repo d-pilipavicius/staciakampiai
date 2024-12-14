@@ -1,5 +1,5 @@
 import { BusinessDTO, GetProductModifiersDTO, GetProductsDTO, PostProductDTO, PostProductModifierDTO, ProductDTO, ProductModifierDTO, PutProductDTO, PutProductModifierDTO, UserDTO } from "./Responses";
-import { deleteProductLink, getBusinessLink, getProductListLink, getProductModifierListLink, getUserLink, postProductLink, postProductModifierLink, putBusinessLink, putProductLink, putProductModifierLink } from "./Routes";
+import { deleteProductLink, deleteProductModifierLink, getBusinessLink, getProductListLink, getProductModifierListLink, getUserLink, postProductLink, postProductModifierLink, putBusinessLink, putProductLink, putProductModifierLink } from "./Routes";
 
 export async function getMyBusiness(): Promise<BusinessDTO> {
   const businessId = localStorage.getItem("userBusinessId");
@@ -91,7 +91,7 @@ export async function putProductModifierAPI(modifierId: string, dto: PutProductM
 }
 
 export async function deleteProductModifierAPI(modifierId: string) {
-  const response = await basicAPI(deleteProductModifierAPI(modifierId)+`?employeeId=${localStorage.getItem("userId")}`, "DELETE", "");
+  const response = await basicAPI(deleteProductModifierLink(modifierId)+`?employeeId=${localStorage.getItem("userId")}`, "DELETE", "");
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);

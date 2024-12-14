@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductDTO, ProductModifierDTO } from "../../../data/Responses";
+import { ProductDTO, ProductModifierDTO, PutProductDTO } from "../../../data/Responses";
 import CardComponent from "../../CardComponent";
 import DialogBox from "../../DialogBox";
 import { deleteProductAPI, getProductModifierAPI, postProductModifierAPI, putProductAPI } from "../../../data/APICalls";
@@ -11,8 +11,6 @@ interface Props {
   product: ProductDTO;
   updatePage: () => void;
 }
-
-const getPageCount = 1;
 
 function ProductCard({product, updatePage}: Props) {
   const [isDelete, setDelete] = useState(false);
@@ -38,7 +36,7 @@ function ProductCard({product, updatePage}: Props) {
         "currency": product.price.currency
       },
       "quantityInStock": Number(stock),
-      "compatibleModifiers": product.compatibleModifiers,
+      "compatibleModifierIds": product.compatibleModifiers.map((item) => item.id),
     });
     product.title = data.title;
     product.price = data.price;
@@ -48,7 +46,7 @@ function ProductCard({product, updatePage}: Props) {
   }
 
   const onCreateModifier = async () => {
-    await postProductModifierAPI({
+    const modifier = await postProductModifierAPI({
       "title": title,
       "price": {
         "amount": Number(price),
@@ -57,6 +55,15 @@ function ProductCard({product, updatePage}: Props) {
       "quantityInStock": Number(stock),
       "businessId": product.businessId
     });
+    const modifList = product.compatibleModifiers.map((item) => item.id);
+    modifList.push(modifier.id)
+    const a: PutProductDTO = {
+      "price": product.price,
+      "title": product.title,
+      "quantityInStock": product.quantityInStock,
+      "compatibleModifierIds": modifList
+    };
+    await putProductAPI(product.id, a);
     onCancelAddModifier();
     updatePage();
   }
@@ -74,11 +81,12 @@ function ProductCard({product, updatePage}: Props) {
     setAddModifier(false);
   }
 
-  return <CardComponent className="productCard">
+  return <><CardComponent className="productCard">
     {!isEdit ? <><div>
       <p>Title: {product.title}</p>
       <p>Price: {product.price.amount} {product.price.currency}</p>
       <p>In stock: {product.quantityInStock}</p>
+      <p>Modifier count: {product.compatibleModifiers.length}</p>
     </div>     
     <div className="buttonSlot">
       <button type="button" onClick={() => setEditing(true)} className="btn btn-primary">Edit</button>
@@ -93,10 +101,10 @@ function ProductCard({product, updatePage}: Props) {
       <button type="button" onClick={onEdit} className="btn btn-success">Set</button>
       <button type="button" onClick={() =>setEditing(false)} className="btn btn-danger">Cancel</button>
     </div>}
-
+    </CardComponent>
     <DialogBox setVisibility={isDelete} question={`Are you sure you want to delete "${product.title}" from the product list?`} onAccept={onDelete} onCancel={() => setDelete(false)}></DialogBox>
     <Popup setVisibility={isEditModifiers}>
-      <h3>Editing {product.title} modifiers</h3>
+      <h3>Editing "{product.title}" modifiers</h3>
       <button type="button" onClick={onAddModifier} className="btn btn-primary">Add modifier</button>
       <button type="button" onClick={() =>setEditingModifiers(false)} className="btn btn-danger">Cancel</button>
       { product.compatibleModifiers.length > 0 && 
@@ -112,7 +120,7 @@ function ProductCard({product, updatePage}: Props) {
       <button type="button" onClick={onCreateModifier} className="btn btn-success">Create</button>
       <button type="button" onClick={onCancelAddModifier} className="btn btn-danger">Cancel</button>
     </Popup>
-    </CardComponent>
+    </>
 }
 
 export default ProductCard;

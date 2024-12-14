@@ -33,11 +33,12 @@ export interface GetProductsDTO extends PageinationDTO {
   businessId: string;
 }
 
-export interface PostProductDTO extends Omit<ProductDTO, 'id'> {
+export interface PostProductDTO extends Omit<ProductDTO, 'id' | 'compatibleModifiers'> {
+  compatibleModifierIds: string[]
 }
 
-export interface PutProductDTO extends Omit<ProductDTO, 'id' | 'businessId'> {
-
+export interface PutProductDTO extends Omit<ProductDTO, 'id' | 'businessId' | 'compatibleModifiers'> {
+  compatibleModifierIds: string[]
 }
 
 //Product modifier

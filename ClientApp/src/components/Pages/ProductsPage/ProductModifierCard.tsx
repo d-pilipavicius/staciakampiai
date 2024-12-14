@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductModifierDTO } from "../../../data/Responses";
+import { ProductDTO, ProductModifierDTO } from "../../../data/Responses";
 import CardComponent from "../../CardComponent";
 import DialogBox from "../../DialogBox";
 import { deleteProductModifierAPI, putProductModifierAPI } from "../../../data/APICalls";
