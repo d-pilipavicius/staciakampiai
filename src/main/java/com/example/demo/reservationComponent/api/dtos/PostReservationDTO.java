@@ -23,7 +23,7 @@ public class PostReservationDTO {
     @NotNull
     private final Timestamp reservationEndAt;
 
-    private final List<UUID> serviceChargeIds = Collections.emptyList();
+    private final List<UUID> serviceChargeIds;
 
     @NotNull
     private final UUID businessId;
