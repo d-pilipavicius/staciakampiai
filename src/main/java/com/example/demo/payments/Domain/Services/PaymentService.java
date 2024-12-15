@@ -3,6 +3,7 @@ package com.example.demo.payments.Domain.Services;
 import com.example.demo.payments.API.DTOs.*;
 import com.example.demo.payments.Helpers.Helpers;
 import com.example.demo.payments.Helpers.Mappers;
+import com.stripe.model.checkout.Session;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +14,6 @@ import com.example.demo.payments.Domain.Entities.Payment;
 import com.example.demo.payments.Domain.Entities.Refund;
 import com.example.demo.payments.Domain.Entities.Tip;
 import com.example.demo.payments.Domain.Entities.Enums.PaymentMethod;
-import com.example.demo.payments.Domain.Entities.Enums.PaymentRefundStatus;
 import com.example.demo.payments.Domain.Entities.Enums.PaymentStatus;
 import com.example.demo.payments.Repositories.IOrderItemPaymentRepository;
 import com.example.demo.payments.Repositories.IPaymentRepository;
@@ -21,12 +21,8 @@ import com.example.demo.payments.Repositories.IRefundRepository;
 import com.example.demo.payments.Repositories.ITipRepository;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -36,11 +32,14 @@ public class PaymentService {
     private final IOrderItemPaymentRepository IOrderItemPaymentRepository;
     private final ITipRepository ITipRepository;
 
+    private final StripeService stripeService;
+
     public Object createPaymentsForOrderItems(CreatePaymentDTO request, PaymentMethod paymentMethod) {
         BigDecimal totalAmount = Helpers.calculateTotalAmount(request.getOrderItems());
 
-        Payment payment = Mappers.toPayment(request, totalAmount, paymentMethod);
+        long totalAmountInCents = totalAmount.multiply(BigDecimal.valueOf(100)).longValue();
 
+        Payment payment = Mappers.toPayment(request, totalAmount, paymentMethod);
         payment = IPaymentRepository.save(payment);
 
         List<OrderItemPayment> orderItemPayments = Mappers.toOrderItemPayments(request, payment.getId());
@@ -51,7 +50,17 @@ public class PaymentService {
         if (paymentMethod == PaymentMethod.CASH) {
             return Mappers.toPaymentResponseDTO(payment, orderItems);
         } else {
-            return Mappers.toCheckoutSessionDTO(payment);
+            try {
+                Session session = stripeService.createStripeSession(totalAmountInCents, request.getOrderId().toString());
+
+                payment.setPaymentProcessorId(session.getId());
+                payment.setStatus(PaymentStatus.PENDING);
+                IPaymentRepository.save(payment);
+
+                return Mappers.toCheckoutSessionDTO(session.getUrl(), payment);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to create Stripe PaymentIntent", e);
+            }
         }
     }
 

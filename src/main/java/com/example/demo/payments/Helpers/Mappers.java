@@ -98,9 +98,8 @@ public class Mappers {
         );
     }
 
-    public static CheckoutSessionDTO toCheckoutSessionDTO(Payment payment) {
-        String checkoutUrl = "https://www.clickheretocompletecheckout.com/" + payment.getId();
-        return new CheckoutSessionDTO(payment.getId(), checkoutUrl);
+    public static CheckoutSessionDTO toCheckoutSessionDTO(String clientSecret, Payment payment) {
+        return new CheckoutSessionDTO(payment.getId(), clientSecret);
     }
 
     public static List<OrderItemPaymentDTO> mapToOrderItemPaymentDTOs(List<OrderItemPayment> orderItemPayments, BigDecimal totalAmount) {
