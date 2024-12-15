@@ -1,6 +1,8 @@
 package com.example.demo.payments.Domain.Services;
 
+import com.stripe.model.Refund;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.RefundCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,19 @@ public class StripeService {
                 .build();
 
         return Session.create(params);
+    }
+
+    public Refund issueRefund(String paymentIntentId, long amountInCents) throws Exception {
+        RefundCreateParams params = RefundCreateParams.builder()
+                .setPaymentIntent(paymentIntentId)
+                .setAmount(amountInCents)
+                .build();
+
+        return Refund.create(params);
+    }
+
+    public String getPaymentIntentIdFromSession(String sessionId) throws Exception {
+        Session session = Session.retrieve(sessionId);
+        return session.getPaymentIntent();
     }
 }

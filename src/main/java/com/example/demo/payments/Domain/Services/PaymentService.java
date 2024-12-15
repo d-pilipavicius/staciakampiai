@@ -68,8 +68,16 @@ public class PaymentService {
         Payment payment = IPaymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        Refund refund = Mappers.toRefund(payment, paymentId);
+        if (payment.getMethod() == PaymentMethod.CARD) {
+            try {
+                String paymentIntentId = stripeService.getPaymentIntentIdFromSession(payment.getPaymentProcessorId());
+                stripeService.issueRefund(paymentIntentId, payment.getAmount().multiply(BigDecimal.valueOf(100)).longValue());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to issue Stripe refund", e);
+            }
+        }
 
+        Refund refund = Mappers.toRefund(payment, paymentId);
         Refund savedRefund = IRefundRepository.save(refund);
 
         payment.setStatus(PaymentStatus.REFUNDED);
