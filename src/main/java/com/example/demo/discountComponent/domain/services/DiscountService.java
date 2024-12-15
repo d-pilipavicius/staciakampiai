@@ -79,7 +79,7 @@ public class DiscountService {
     @Transactional
     public DiscountDTO updateUsage(UUID discountId){
         Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new NotFoundException(
-                "The given discount id wasn't associated with any discount inside the database for updating."
+                "The given discount id wasn't associated with any discount inside the database for increasing usage count."
         ));
         discount.setUsageCount(discount.getUsageCount() + 1);
         discountsValidator.checkIfUsageLimitExceeded(discount);

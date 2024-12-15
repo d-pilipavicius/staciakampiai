@@ -11,6 +11,5 @@ import java.util.UUID;
 public interface DiscountRepository extends JpaRepository<Discount, UUID> {
     Page<Discount> findByBusinessIdAndUsageCountLimitGreaterThan(UUID businessId, int usageCountLimit, Pageable pageable);
 
-    // Fetch discounts with usageCountLimit = 1
     Page<Discount> findByBusinessIdAndUsageCountLimit(UUID businessId, int usageCountLimit, Pageable pageable);
 }
