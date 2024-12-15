@@ -1,8 +1,9 @@
 package com.example.demo.payments.Domain.Services;
 
 import com.example.demo.payments.API.DTOs.*;
+import com.example.demo.payments.Helpers.Helpers;
 import com.example.demo.payments.Helpers.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,64 +29,29 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class PaymentService {
-
-    @Autowired
-    private IPaymentRepository IPaymentRepository;
-    @Autowired
-    private IRefundRepository IRefundRepository;
-    @Autowired
+    private final IPaymentRepository IPaymentRepository;
+    private final IRefundRepository IRefundRepository;
     private final IOrderItemPaymentRepository IOrderItemPaymentRepository;
-    @Autowired
-    private ITipRepository ITipRepository;
+    private final ITipRepository ITipRepository;
 
     public Object createPaymentsForOrderItems(CreatePaymentDTO request, PaymentMethod paymentMethod) {
-        List<OrderItemPaymentDTO> orderItemPayments = new ArrayList<>();
+        BigDecimal totalAmount = Helpers.calculateTotalAmount(request.getOrderItems());
 
-        BigDecimal totalAmount = request.getOrderItems().stream()
-                .map(item -> item.getAmount().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        Payment payment = Payment.builder()
-                .orderId(request.getOrderId())
-                .businessId(request.getBusinessId())
-                .employeeId(request.getEmployeeId())
-                .amount(totalAmount)
-                .currency(request.getCurrency())
-                .method(paymentMethod)
-                .status(PaymentStatus.PENDING)
-                .createdAt(LocalDateTime.now())
-                .build();
+        Payment payment = Mappers.toPayment(request, totalAmount, paymentMethod);
 
         payment = IPaymentRepository.save(payment);
 
-        for (OrderItemPaymentDTO item : request.getOrderItems()) {
-            OrderItemPayment orderItemPayment = OrderItemPayment.builder()
-                    .orderItemId(item.getOrderItemId())
-                    .quantity(item.getQuantity())
-                    .paymentId(payment.getId())
-                    .build();
-            IOrderItemPaymentRepository.save(orderItemPayment);
-        }
+        List<OrderItemPayment> orderItemPayments = Mappers.toOrderItemPayments(request, payment.getId());
+        IOrderItemPaymentRepository.saveAll(orderItemPayments);
 
-        List<OrderItemPaymentDTO> orderItems = request.getOrderItems().stream()
-                .map(item -> new OrderItemPaymentDTO(item.getOrderItemId(), item.getAmount(), item.getQuantity()))
-                .collect(Collectors.toList());
+        List<OrderItemPaymentDTO> orderItems = Mappers.mapToOrderItemPaymentDTOs(orderItemPayments, totalAmount);
 
         if (paymentMethod == PaymentMethod.CASH) {
-            return new PaymentResponseDTO(
-                    payment.getId(),
-                    payment.getOrderId(),
-                    orderItems,
-                    payment.getAmount(),
-                    payment.getCurrency(),
-                    payment.getMethod(),
-                    payment.getStatus(),
-                    payment.getCreatedAt()
-            );
+            return Mappers.toPaymentResponseDTO(payment, orderItems);
         } else {
-            String checkoutUrl = "https://www.clickheretocompletecheckout.com/" + payment.getId();
-            return new CheckoutSessionDTO(payment.getId(), checkoutUrl);
+            return Mappers.toCheckoutSessionDTO(payment);
         }
     }
 
@@ -93,15 +59,7 @@ public class PaymentService {
         Payment payment = IPaymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        Refund refund = new Refund();
-        refund.setId(UUID.randomUUID());
-        refund.setPaymentId(paymentId);
-        refund.setAmount(payment.getAmount());
-        refund.setCurrency(payment.getCurrency());
-        refund.setBusinessId(payment.getBusinessId());
-        refund.setEmployeeId(payment.getEmployeeId());
-        refund.setStatus(PaymentRefundStatus.SUCCEEDED);
-        refund.setCreatedAt(LocalDateTime.now());
+        Refund refund = Mappers.toRefund(payment, paymentId);
 
         Refund savedRefund = IRefundRepository.save(refund);
 
@@ -117,25 +75,17 @@ public class PaymentService {
             return false;
         }
 
-        for (Payment payment : payments) {
+        payments.forEach(payment -> {
             payment.setStatus(PaymentStatus.SUCCEEDED);
             IPaymentRepository.save(payment);
-        }
+        });
         return true;
     }
 
     public Tip addTip(AddTipDTO request) {
-        Tip tipPayment = new Tip();
-        tipPayment.setOrderId(request.getOrderId());
-        tipPayment.setEmployeeId(request.getEmployeeId());
-        tipPayment.setAmount(request.getAmount());
-        tipPayment.setCurrency(request.getCurrency());
+        Tip tipPayment = Mappers.toTip(request);
         ITipRepository.save(tipPayment);
         return tipPayment;
-    }
-
-    public PaymentService(IOrderItemPaymentRepository IOrderItemPaymentRepository) {
-        this.IOrderItemPaymentRepository = IOrderItemPaymentRepository;
     }
 
     public Page<Tip> getOrderTips(UUID orderId, int page, int pageSize) {
@@ -143,11 +93,5 @@ public class PaymentService {
         return ITipRepository.findByOrderId(orderId, pageable);
     }
 
-
-    public List<Map<String, Object>> getPaymentStatus(UUID orderId) {
-        List<Payment> payments = IPaymentRepository.findByOrderId(orderId);
-        return payments.stream()
-                .map(Mappers::toPaymentStatusResponse)
-                .collect(Collectors.toList());
-    }
 }
+
