@@ -1,0 +1,20 @@
+.loginH {
+  margin-bottom: 30px;
+  font-family: "Tahoma";
+  font-size: 50px;
+  font-weight: 550;
+}
+
+.loginPage {
+  width: 40%;
+  margin: 200px auto;
+  display: flex;            
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+}
+
+.small {
+  align-self: flex-start;
+  color: #e20000;
+}

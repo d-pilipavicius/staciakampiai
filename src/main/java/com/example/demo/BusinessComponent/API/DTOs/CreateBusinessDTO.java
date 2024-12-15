@@ -12,15 +12,20 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class CreateBusinessDTO {
+
   @NotNull
-  private String name;
+  private final String name;
+
   @NotNull
-  private UUID ownerId;
+  private final UUID ownerId;
+
   @NotNull
-  private String address;
+  private final String address;
+
   @NotNull
-  private String phoneNumber;
+  private final String phoneNumber;
+  
   @NotNull
   @Email
-  private String emailAddress;
+  private final String emailAddress;
 }

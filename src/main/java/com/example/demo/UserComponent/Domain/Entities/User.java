@@ -1,8 +1,9 @@
-package com.example.demo.BusinessComponent.Domain.Entities;
+package com.example.demo.UserComponent.Domain.Entities;
 
 import java.util.UUID;
 
-import com.example.demo.BusinessComponent.Domain.Entities.Enums.RoleType;
+import com.example.demo.BusinessComponent.Domain.Entities.Business;
+import com.example.demo.UserComponent.Domain.Entities.Enums.RoleType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -38,7 +39,7 @@ public class User {
   @Column(name = "full_name", nullable = false)
   private String fullName;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "business_id", referencedColumnName = "id", nullable = true)
   private Business business;
 
@@ -49,7 +50,7 @@ public class User {
   @Pattern(regexp = "\\+\\d{3,30}")
   @Column(name = "phone_number", nullable = false)
   private String phoneNumber;
-  
+
   @Email
   @Column(name = "email_address", nullable = false)
   private String emailAddress;

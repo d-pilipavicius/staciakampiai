@@ -1,4 +1,4 @@
-package com.example.demo.BusinessComponent.Domain.Entities.Enums;
+package com.example.demo.UserComponent.Domain.Entities.Enums;
 
 public enum RoleType {
   Employee,
