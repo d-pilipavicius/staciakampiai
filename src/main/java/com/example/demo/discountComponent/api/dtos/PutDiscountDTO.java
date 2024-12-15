@@ -1,9 +1,9 @@
 package com.example.demo.discountComponent.api.dtos;
 
+import com.example.demo.CommonHelper.enums.DiscountTarget;
+import com.example.demo.CommonHelper.enums.PricingStrategy;
+import com.example.demo.CommonHelper.enums.Currency;
 
-import com.example.demo.helper.enums.Currency;
-import com.example.demo.helper.enums.DiscountTarget;
-import com.example.demo.helper.enums.PricingStrategy;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -15,8 +15,10 @@ import java.util.UUID;
 
 @Getter
 @Builder
-//No usageCountLimit and businessId field, by documentation that can't be updated
-//If optional fields are missed/explicitly set to null, they will be set to null
+// No usageCountLimit and businessId field, by documentation that can't be
+// updated
+// If optional fields are missed/explicitly set to null, they will be set to
+// null
 public class PutDiscountDTO {
 
     private final Optional<String> code = Optional.empty();

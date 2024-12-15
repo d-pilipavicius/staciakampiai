@@ -1,7 +1,7 @@
 package com.example.demo.productComponent.domain.services;
 
-import com.example.demo.helper.ErrorHandling.CustomExceptions.NotFoundException;
-import com.example.demo.helper.mapper.base.Mapper;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
+import com.example.demo.CommonHelper.mapper.base.Mapper;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
@@ -49,7 +49,8 @@ public class ProductModifierService {
         List<ProductModifier> productModifiers = productModifierRepository.findAllById(modifierIds);
 
         // Map the modifiers to DTOs
-        List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers, ProductModifierMapper.TO_DTO);
+        List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers,
+                ProductModifierMapper.TO_DTO);
 
         // build and return the DTO
         return Mapper.mapToDTO(productModifierDTOS, ProductModifierMapper.LIST_TO_GET_MODIFIERS_DTO);
@@ -60,28 +61,30 @@ public class ProductModifierService {
         List<ProductModifier> productModifiers = productModifierRepository.findAllById(modifierIds);
 
         // Map the modifiers to DTOs
-        List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers, ProductModifierMapper.TO_DTO);
+        List<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOList(productModifiers,
+                ProductModifierMapper.TO_DTO);
 
         return Mapper.mapToDTO(productModifierDTOS, ProductModifierMapper.LIST_TO_GET_MODIFIERS_DTO);
     }
 
     public GetModifiersDTO getModifiersByBusinessId(int page, int size, UUID businessId) {
         // Fetch modifiers
-        Page<ProductModifier> productModifiers = productModifierRepository.findAllByBusinessId(PageRequest.of(page, size), businessId);
+        Page<ProductModifier> productModifiers = productModifierRepository
+                .findAllByBusinessId(PageRequest.of(page, size), businessId);
 
         // Map the modifiers to DTOs
-        Page<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOPage(productModifiers, ProductModifierMapper.TO_DTO);
+        Page<ProductModifierDTO> productModifierDTOS = Mapper.mapToDTOPage(productModifiers,
+                ProductModifierMapper.TO_DTO);
 
         return Mapper.mapToDTO(productModifierDTOS, ProductModifierMapper.PAGE_TO_GET_MODIFIERS_DTO);
     }
 
     @Transactional
-    public ProductModifierDTO updateModifier(PutModifierDTO putModifierDTO, UUID id){
+    public ProductModifierDTO updateModifier(PutModifierDTO putModifierDTO, UUID id) {
         // Fetch the product modifier
         ProductModifier productModifier = productModifierRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
-                        "Modifier with id " + id + " not found"
-                ));
+                        "Modifier with id " + id + " not found"));
 
         // Apply updates to the product modifier
         applyModifierUpdates(putModifierDTO, productModifier);

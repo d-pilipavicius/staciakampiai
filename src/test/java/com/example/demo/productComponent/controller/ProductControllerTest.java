@@ -1,6 +1,6 @@
 package com.example.demo.productComponent.controller;
 
-import com.example.demo.helper.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.productComponent.api.dtos.GetProductsDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
 import com.example.demo.productComponent.api.dtos.PutProductDTO;
@@ -37,212 +37,212 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ProductsControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockBean
-    private ProductApplicationService productApplicationService;
+        @MockBean
+        private ProductApplicationService productApplicationService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    private PostProductDTO postProductDTO;
-    private PostModifierDTO postModifierDTO;
+        private PostProductDTO postProductDTO;
+        private PostModifierDTO postModifierDTO;
 
-    @BeforeEach
-    void setup() {
-        postProductDTO = PostProductDTO.builder()
-                .title("Test Product")
-                .quantityInStock(100)
-                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(29.99)).currency(Currency.USD).build())
-                .businessId(UUID.randomUUID())
-                .build();
-
-        postModifierDTO = PostModifierDTO.builder()
-                .title("Test Modifier")
-                .quantityInStock(50)
-                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(5.99)).currency(Currency.USD).build())
-                .businessId(UUID.randomUUID())
-                .build();
-    }
-
-
-    @Test
-    void shouldCreateProductSuccessfully() throws Exception {
-        // Arrange
-        ProductDTO productDTO = ProductDTO.builder()
-                .id(UUID.randomUUID())
-                .title(postProductDTO.getTitle())
-                .quantityInStock(postProductDTO.getQuantityInStock())
-                .price(postProductDTO.getPrice())
-                .businessId(postProductDTO.getBusinessId())
-                .build();
-
-        when(productApplicationService.createProduct(any(PostProductDTO.class))).thenReturn(productDTO);
-
-        // Act & Assert
-        mockMvc.perform(post("/v1/products")
-                        .param("employeeId", UUID.randomUUID().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postProductDTO)))
-                .andExpect(status().isCreated());
-
-        verify(productApplicationService, times(1)).createProduct(any(PostProductDTO.class));
-    }
-
-    @Test
-    void shouldReturnNotFoundWhenProductCreationFails() throws Exception {
-        // Arrange
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).createProduct(any(PostProductDTO.class));
-
-        // Act & Assert
-        mockMvc.perform(post("/v1/products")
-                        .param("employeeId", UUID.randomUUID().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postProductDTO)))
-                .andDo(result -> System.out.println(result.getResponse().getContentAsString()))
-                .andExpect(status().isNotFound());
-
-        verify(productApplicationService, times(1)).createProduct(any(PostProductDTO.class));
-    }
-
-    @Test
-    void shouldGetProductsSuccessfully() throws Exception {
-        // Arrange
-        UUID businessId = UUID.randomUUID();
-        GetProductsDTO productsDTO = GetProductsDTO.builder()
-                .items(List.of(
-                        ProductDTO.builder()
-                                .id(UUID.randomUUID())
-                                .title("Product 1")
-                                .quantityInStock(50)
-                                .price(postProductDTO.getPrice())
-                                .businessId(businessId)
-                                .build(),
-                        ProductDTO.builder()
-                                .id(UUID.randomUUID())
-                                .title("Product 2")
+        @BeforeEach
+        void setup() {
+                postProductDTO = PostProductDTO.builder()
+                                .title("Test Product")
                                 .quantityInStock(100)
+                                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(29.99)).currency(Currency.USD)
+                                                .build())
+                                .businessId(UUID.randomUUID())
+                                .build();
+
+                postModifierDTO = PostModifierDTO.builder()
+                                .title("Test Modifier")
+                                .quantityInStock(50)
+                                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(5.99)).currency(Currency.USD)
+                                                .build())
+                                .businessId(UUID.randomUUID())
+                                .build();
+        }
+
+        @Test
+        void shouldCreateProductSuccessfully() throws Exception {
+                // Arrange
+                ProductDTO productDTO = ProductDTO.builder()
+                                .id(UUID.randomUUID())
+                                .title(postProductDTO.getTitle())
+                                .quantityInStock(postProductDTO.getQuantityInStock())
                                 .price(postProductDTO.getPrice())
-                                .businessId(businessId)
-                                .build()
-                ))
-                .build();
+                                .businessId(postProductDTO.getBusinessId())
+                                .build();
 
-        when(productApplicationService.getProductsByBusinessId(anyInt(), anyInt(), eq(businessId)))
-                .thenReturn(productsDTO);
+                when(productApplicationService.createProduct(any(PostProductDTO.class))).thenReturn(productDTO);
 
-        // Act & Assert
-        mockMvc.perform(get("/v1/products")
-                        .param("pageNumber", "0")
-                        .param("pageSize", "10")
-                        .param("businessId", businessId.toString())
-                        .param("employeeId", UUID.randomUUID().toString()))
-                .andExpect(status().isOk());
+                // Act & Assert
+                mockMvc.perform(post("/v1/products")
+                                .param("employeeId", UUID.randomUUID().toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(postProductDTO)))
+                                .andExpect(status().isCreated());
 
-        verify(productApplicationService, times(1))
-                .getProductsByBusinessId(anyInt(), anyInt(), eq(businessId));
-    }
+                verify(productApplicationService, times(1)).createProduct(any(PostProductDTO.class));
+        }
 
-    @Test
-    void shouldReturnNotFoundWhenRetrievingProductsFails() throws Exception {
-        // Arrange
-        UUID businessId = UUID.randomUUID();
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).getProductsByBusinessId(anyInt(), anyInt(), eq(businessId));
+        @Test
+        void shouldReturnNotFoundWhenProductCreationFails() throws Exception {
+                // Arrange
+                doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .when(productApplicationService).createProduct(any(PostProductDTO.class));
 
-        // Act & Assert
-        mockMvc.perform(get("/v1/products")
-                        .param("pageNumber", "0")
-                        .param("pageSize", "10")
-                        .param("businessId", businessId.toString())
-                        .param("employeeId", UUID.randomUUID().toString()))
-                .andExpect(status().isNotFound());
+                // Act & Assert
+                mockMvc.perform(post("/v1/products")
+                                .param("employeeId", UUID.randomUUID().toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(postProductDTO)))
+                                .andDo(result -> System.out.println(result.getResponse().getContentAsString()))
+                                .andExpect(status().isNotFound());
 
-        verify(productApplicationService, times(1))
-                .getProductsByBusinessId(anyInt(), anyInt(), eq(businessId));
-    }
+                verify(productApplicationService, times(1)).createProduct(any(PostProductDTO.class));
+        }
 
-    @Test
-    void shouldUpdateProductSuccessfully() throws Exception {
-        // Arrange
-        PutProductDTO putProductDTO = PutProductDTO.builder()
-                .title("Updated Product")
-                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(39.99)).currency(Currency.USD).build())
-                .quantityInStock(150)
-                .build();
+        @Test
+        void shouldGetProductsSuccessfully() throws Exception {
+                // Arrange
+                UUID businessId = UUID.randomUUID();
+                GetProductsDTO productsDTO = GetProductsDTO.builder()
+                                .items(List.of(
+                                                ProductDTO.builder()
+                                                                .id(UUID.randomUUID())
+                                                                .title("Product 1")
+                                                                .quantityInStock(50)
+                                                                .price(postProductDTO.getPrice())
+                                                                .businessId(businessId)
+                                                                .build(),
+                                                ProductDTO.builder()
+                                                                .id(UUID.randomUUID())
+                                                                .title("Product 2")
+                                                                .quantityInStock(100)
+                                                                .price(postProductDTO.getPrice())
+                                                                .businessId(businessId)
+                                                                .build()))
+                                .build();
 
-        ProductDTO responseProductDTO = ProductDTO.builder()
-                        .id(UUID.randomUUID())
-                        .title("Updated Product")
-                        .quantityInStock(150)
-                        .price(postProductDTO.getPrice())
-                        .businessId(postProductDTO.getBusinessId())
-                        .build();
+                when(productApplicationService.getProductsByBusinessId(anyInt(), anyInt(), eq(businessId)))
+                                .thenReturn(productsDTO);
 
-        when(productApplicationService.updateProduct(any(PutProductDTO.class), any(UUID.class)))
-                .thenReturn(responseProductDTO);
+                // Act & Assert
+                mockMvc.perform(get("/v1/products")
+                                .param("pageNumber", "0")
+                                .param("pageSize", "10")
+                                .param("businessId", businessId.toString())
+                                .param("employeeId", UUID.randomUUID().toString()))
+                                .andExpect(status().isOk());
 
-        // Act & Assert
-        mockMvc.perform(put("/v1/products/{productId}", UUID.randomUUID())
-                        .param("employeeId", UUID.randomUUID().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(putProductDTO)))
-                .andExpect(status().isOk());
+                verify(productApplicationService, times(1))
+                                .getProductsByBusinessId(anyInt(), anyInt(), eq(businessId));
+        }
 
-        verify(productApplicationService, times(1))
-                .updateProduct(any(PutProductDTO.class), any(UUID.class));
-    }
+        @Test
+        void shouldReturnNotFoundWhenRetrievingProductsFails() throws Exception {
+                // Arrange
+                UUID businessId = UUID.randomUUID();
+                doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .when(productApplicationService)
+                                .getProductsByBusinessId(anyInt(), anyInt(), eq(businessId));
 
-    @Test
-    void shouldReturnNotFoundWhenUpdatingNonexistentProduct() throws Exception {
-        // Arrange
-        PutProductDTO putProductDTO = PutProductDTO.builder()
-                .title("Nonexistent Product")
-                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(39.99)).currency(Currency.USD).build())
-                .build();
+                // Act & Assert
+                mockMvc.perform(get("/v1/products")
+                                .param("pageNumber", "0")
+                                .param("pageSize", "10")
+                                .param("businessId", businessId.toString())
+                                .param("employeeId", UUID.randomUUID().toString()))
+                                .andExpect(status().isNotFound());
 
-        UUID productId = UUID.randomUUID();
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).updateProduct(any(PutProductDTO.class), eq(productId));
+                verify(productApplicationService, times(1))
+                                .getProductsByBusinessId(anyInt(), anyInt(), eq(businessId));
+        }
 
-        // Act & Assert
-        mockMvc.perform(put("/v1/products/{productId}", productId)
-                        .param("employeeId", UUID.randomUUID().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(putProductDTO)))
-                .andExpect(status().isNotFound());
+        @Test
+        void shouldUpdateProductSuccessfully() throws Exception {
+                // Arrange
+                PutProductDTO putProductDTO = PutProductDTO.builder()
+                                .title("Updated Product")
+                                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(39.99)).currency(Currency.USD)
+                                                .build())
+                                .quantityInStock(150)
+                                .build();
 
-        verify(productApplicationService, times(1)).updateProduct(any(PutProductDTO.class), eq(productId));
-    }
+                ProductDTO responseProductDTO = ProductDTO.builder()
+                                .id(UUID.randomUUID())
+                                .title("Updated Product")
+                                .quantityInStock(150)
+                                .price(postProductDTO.getPrice())
+                                .businessId(postProductDTO.getBusinessId())
+                                .build();
 
-    @Test
-    void shouldDeleteProductSuccessfully() throws Exception {
-        // Act & Assert
-        mockMvc.perform(delete("/v1/products/{productId}", UUID.randomUUID())
-                        .param("employeeId", UUID.randomUUID().toString()))
-                .andExpect(status().isNoContent());
+                when(productApplicationService.updateProduct(any(PutProductDTO.class), any(UUID.class)))
+                                .thenReturn(responseProductDTO);
 
-        verify(productApplicationService, times(1)).deleteProduct(any(UUID.class));
-    }
+                // Act & Assert
+                mockMvc.perform(put("/v1/products/{productId}", UUID.randomUUID())
+                                .param("employeeId", UUID.randomUUID().toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(putProductDTO)))
+                                .andExpect(status().isOk());
 
-    @Test
-    void shouldReturnNotFoundWhenDeletingNonexistentProduct() throws Exception {
-        // Arrange
-        UUID productId = UUID.randomUUID();
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).deleteProduct(eq(productId));
+                verify(productApplicationService, times(1))
+                                .updateProduct(any(PutProductDTO.class), any(UUID.class));
+        }
 
-        // Act & Assert
-        mockMvc.perform(delete("/v1/products/{productId}", productId)
-                        .param("employeeId", UUID.randomUUID().toString()))
-                .andExpect(status().isNotFound());
+        @Test
+        void shouldReturnNotFoundWhenUpdatingNonexistentProduct() throws Exception {
+                // Arrange
+                PutProductDTO putProductDTO = PutProductDTO.builder()
+                                .title("Nonexistent Product")
+                                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(39.99)).currency(Currency.USD)
+                                                .build())
+                                .build();
 
-        verify(productApplicationService, times(1)).deleteProduct(eq(productId));
-    }
+                UUID productId = UUID.randomUUID();
+                doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .when(productApplicationService).updateProduct(any(PutProductDTO.class), eq(productId));
+
+                // Act & Assert
+                mockMvc.perform(put("/v1/products/{productId}", productId)
+                                .param("employeeId", UUID.randomUUID().toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(putProductDTO)))
+                                .andExpect(status().isNotFound());
+
+                verify(productApplicationService, times(1)).updateProduct(any(PutProductDTO.class), eq(productId));
+        }
+
+        @Test
+        void shouldDeleteProductSuccessfully() throws Exception {
+                // Act & Assert
+                mockMvc.perform(delete("/v1/products/{productId}", UUID.randomUUID())
+                                .param("employeeId", UUID.randomUUID().toString()))
+                                .andExpect(status().isNoContent());
+
+                verify(productApplicationService, times(1)).deleteProduct(any(UUID.class));
+        }
+
+        @Test
+        void shouldReturnNotFoundWhenDeletingNonexistentProduct() throws Exception {
+                // Arrange
+                UUID productId = UUID.randomUUID();
+                doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .when(productApplicationService).deleteProduct(eq(productId));
+
+                // Act & Assert
+                mockMvc.perform(delete("/v1/products/{productId}", productId)
+                                .param("employeeId", UUID.randomUUID().toString()))
+                                .andExpect(status().isNotFound());
+
+                verify(productApplicationService, times(1)).deleteProduct(eq(productId));
+        }
 
 }
-
-
-

@@ -1,8 +1,9 @@
 package com.example.demo.discountComponent.api.dtos;
 
-import com.example.demo.helper.enums.Currency;
-import com.example.demo.helper.enums.DiscountTarget;
-import com.example.demo.helper.enums.PricingStrategy;
+import com.example.demo.CommonHelper.enums.DiscountTarget;
+import com.example.demo.CommonHelper.enums.PricingStrategy;
+import com.example.demo.CommonHelper.enums.Currency;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
