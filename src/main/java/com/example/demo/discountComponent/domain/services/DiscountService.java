@@ -39,13 +39,21 @@ public class DiscountService {
     }
 
     @Transactional
-    public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId, int page, int size) {
+    public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId, int page, int size, boolean giftcards){
         Page<DiscountDTO> discountDTOS;
+        int usageCountLimit = 1;
 
-        discountDTOS = discountRepository.findByBusinessId(businessId, PageRequest.of(page, size))
-                .map(DiscountMapper.TO_DiscountDTO::map);
+        if(giftcards){
+            discountDTOS = discountRepository.findByBusinessIdAndUsageCountLimit(businessId, usageCountLimit, PageRequest.of(page, size))
+                    .map(DiscountMapper.TO_DiscountDTO::map);
+            discountsValidator.checkIfBusinessHadGiftcards((int) discountDTOS.getTotalElements(), businessId);
 
-        discountsValidator.checkIfBusinessHadDiscounts((int) discountDTOS.getTotalElements(), businessId);
+        } else{
+            discountDTOS = discountRepository.findByBusinessIdAndUsageCountLimitGreaterThan(businessId, usageCountLimit, PageRequest.of(page, size))
+                    .map(DiscountMapper.TO_DiscountDTO::map);
+            discountsValidator.checkIfBusinessHadDiscounts((int) discountDTOS.getTotalElements(), businessId);
+        }
+
         discountsValidator.checkIfDiscountPageExceeded(page, discountDTOS.getTotalPages());
 
         return Mapper.mapToDTO(discountDTOS, DiscountMapper.TO_GetDiscountsModel);
@@ -70,7 +78,19 @@ public class DiscountService {
     }
 
     @Transactional
-    public void deleteDiscountById(UUID discountId, UUID employeeId) {
+    public DiscountDTO updateUsage(UUID discountId){
+        Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new NotFoundException(
+                "The given discount id wasn't associated with any discount inside the database for increasing usage count."
+        ));
+        discount.setUsageCount(discount.getUsageCount() + 1);
+        discountsValidator.checkIfUsageLimitExceeded(discount);
+
+        Discount savedDiscount = discountRepository.save(discount);
+        return Mapper.mapToDTO(savedDiscount,  DiscountMapper.TO_DiscountDTO);
+    }
+
+    @Transactional
+    public void deleteDiscountById(UUID discountId, UUID employeeId){
         discountsValidator.checkIfAuthorized(employeeId);
         discountsValidator.checkIfDiscountExists(discountId);
         discountRepository.deleteById(discountId);

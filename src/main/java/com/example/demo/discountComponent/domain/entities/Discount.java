@@ -65,6 +65,9 @@ public class Discount {
         @Column(nullable = false, name = "valid_until")
         private Timestamp validUntil;
 
-        @Column(nullable = true, name = "usage_count_limit")
-        private Integer usageCountLimit;
+    @Column(nullable = true, name = "usage_count_limit")
+    private Integer usageCountLimit;
+
+    @Column(nullable = false, name = "usage_count")
+    private int usageCount = 0;
 }

@@ -23,20 +23,21 @@ public class DiscountMapper {
                         .usageCountLimit(dto.getUsageCountLimit())
                         .build();
 
-        public static final StaticMapper<Discount, DiscountDTO> TO_DiscountDTO = entity -> DiscountDTO
-                        .builder()
-                        .id(entity.getId())
-                        .businessId(entity.getBusinessId())
-                        .entitledProductIds(entity.getProductIds())
-                        .code(entity.getCode())
-                        .amount(entity.getAmount())
-                        .valueType(entity.getValueType())
-                        .currency(entity.getCurrency())
-                        .target(entity.getTarget())
-                        .validFrom(entity.getValidFrom())
-                        .validUntil(entity.getValidUntil())
-                        .usageCountLimit(entity.getUsageCountLimit())
-                        .build();
+    public static final StaticMapper<Discount, DiscountDTO> TO_DiscountDTO = entity -> DiscountDTO
+            .builder()
+            .id(entity.getId())
+            .businessId(entity.getBusinessId())
+            .entitledProductIds(entity.getProductIds())
+            .code(entity.getCode())
+            .amount(entity.getAmount())
+            .valueType(entity.getValueType())
+            .currency(entity.getCurrency())
+            .target(entity.getTarget())
+            .validFrom(entity.getValidFrom())
+            .validUntil(entity.getValidUntil())
+            .usageCountLimit(entity.getUsageCountLimit())
+            .usageCount(entity.getUsageCount())
+            .build();
 
         public static final StaticMapper<Page<DiscountDTO>, GetDiscountsDTO> TO_GetDiscountsModel = page -> GetDiscountsDTO
                         .builder()
