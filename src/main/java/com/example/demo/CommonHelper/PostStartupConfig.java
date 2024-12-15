@@ -27,6 +27,8 @@ public class PostStartupConfig {
         .emailAddress("example@example.com")
         .phoneNumber("+37061122334")
         .role(RoleType.BusinessOwner)
+                    .username("Tomas")
+                    .password("Bruh")
         .build());
     BusinessDTO newBusiness = businessService.createBusiness(CreateBusinessDTO.builder()
         .name("First Business Inc.")
@@ -40,6 +42,8 @@ public class PostStartupConfig {
         .businessId(newBusiness.getId())
         .phoneNumber(newUser.getPhoneNumber())
         .emailAddress(newUser.getEmailAddress())
+                    .username(newUser.getUsername())
+                    .password("wutdafuk")
         .role(newUser.getRole())
         .build());
     System.out.println("User id: " + newUser.getId());

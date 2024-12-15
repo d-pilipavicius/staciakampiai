@@ -1,4 +1,4 @@
-package com.example.demo.BusinessComponent.API.DTOs;
+package com.example.demo.UserComponent.API.DTOs;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

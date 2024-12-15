@@ -1,14 +1,10 @@
 package com.example.demo.BusinessComponent.Helpers.Mappers;
 
-<<<<<<< HEAD
-import com.example.demo.BusinessComponent.API.DTOs.PostUserDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-=======
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
->>>>>>> e953f891b51777082b9fa4db964c3ea718ef8a2c
 import org.springframework.stereotype.Component;
 
 import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;

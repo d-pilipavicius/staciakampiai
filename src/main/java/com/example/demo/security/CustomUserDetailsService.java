@@ -1,8 +1,8 @@
 package com.example.demo.security;
 
-import com.example.demo.BusinessComponent.Domain.Entities.Enums.RoleType;
-import com.example.demo.BusinessComponent.Domain.Entities.User;
-import com.example.demo.BusinessComponent.Repositories.IUserRepository;
+import com.example.demo.UserComponent.Domain.Entities.Enums.RoleType;
+import com.example.demo.UserComponent.Domain.Entities.User;
+import com.example.demo.UserComponent.Repositories.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

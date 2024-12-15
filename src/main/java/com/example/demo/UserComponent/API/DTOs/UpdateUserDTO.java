@@ -7,6 +7,7 @@ import com.example.demo.UserComponent.Domain.Entities.Enums.RoleType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,4 +30,8 @@ public class UpdateUserDTO {
 
   @Enumerated(EnumType.STRING)
   private final RoleType role;
+
+  private final String username;
+  private final String password;
+
 }

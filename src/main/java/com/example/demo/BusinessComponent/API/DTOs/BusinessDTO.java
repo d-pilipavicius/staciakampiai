@@ -2,7 +2,6 @@ package com.example.demo.BusinessComponent.API.DTOs;
 
 import java.util.UUID;
 
-import com.example.demo.BusinessComponent.Domain.Entities.Enums.RoleType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

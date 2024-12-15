@@ -34,4 +34,10 @@ public class CreateUserDTO {
   @Enumerated(EnumType.STRING)
   @NotNull
   private final RoleType role;
+
+  @NotNull
+  private final String username;
+
+  @NotNull
+  private final String password;
 }

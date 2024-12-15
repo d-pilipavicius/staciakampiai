@@ -1,11 +1,14 @@
 package com.example.demo.UserComponent.API.Endpoints;
 
+import com.example.demo.UserComponent.API.DTOs.*;
+import com.example.demo.security.JWTUtils;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.UserComponent.API.DTOs.CreateUserDTO;
-import com.example.demo.UserComponent.API.DTOs.UpdateUserDTO;
-import com.example.demo.UserComponent.API.DTOs.UserDTO;
 import com.example.demo.UserComponent.ApplicationServices.UserApplicationService;
 
 import jakarta.validation.Valid;
@@ -30,6 +33,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class UserController {
   private final UserApplicationService userApplicationService;
 
+  private final JWTUtils jwtUtils;
+
+  private final AuthenticationManager authenticationManager;
+
   @PostMapping
   public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
     UserDTO createdUser = userApplicationService.createUser(createUserDTO);
@@ -52,6 +59,17 @@ public class UserController {
   public ResponseEntity<Void> deleteUser(@NotNull @PathVariable UUID userId) {
     userApplicationService.deleteUser(userId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponseDTO> loginUser(@Valid @RequestBody LoginDTO loginDTO){
+    Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
+    );
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    String token = jwtUtils.generateToken(authentication);
+
+    return new ResponseEntity<>(LoginResponseDTO.builder().accessToken(token).build(), HttpStatus.OK);
   }
 
 }
