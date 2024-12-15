@@ -44,6 +44,7 @@ public class JWTUtils {
                     .getPayload();
 
         } catch(Exception e){
+            //errro suuuuuuuure but wont happen
             System.out.println("something went wrong with parsing!!!!");
             return null;
         }
@@ -51,6 +52,7 @@ public class JWTUtils {
     }
 
     public boolean validateToken(String token){
+        //error here!!!!!!!!!
         try{
             Jwts.parser().verifyWith(generateKey()).build().parseSignedClaims(token);
             return true;
