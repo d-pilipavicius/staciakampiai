@@ -63,4 +63,7 @@ public class Discount {
 
     @Column(nullable = true, name = "usage_count_limit")
     private Integer usageCountLimit;
+
+    @Column(nullable = false, name = "usage_count")
+    private int usageCount = 0;
 }

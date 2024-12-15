@@ -36,6 +36,7 @@ public class DiscountMapper {
             .validFrom(entity.getValidFrom())
             .validUntil(entity.getValidUntil())
             .usageCountLimit(entity.getUsageCountLimit())
+            .usageCount(entity.getUsageCount())
             .build();
 
     public static final StaticMapper<Page<DiscountDTO>, GetDiscountsDTO> TO_GetDiscountsModel = page -> GetDiscountsDTO

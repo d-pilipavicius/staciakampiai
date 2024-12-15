@@ -28,8 +28,13 @@ public class DiscountApplicationService {
     }
 
     @Transactional
-    public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId, int page, int size){
-        return discountService.getDiscountsByBusinessId(businessId, page, size);
+    public GetDiscountsDTO getDiscountsByBusinessId(UUID businessId, int page, int size, boolean giftcards){
+        return discountService.getDiscountsByBusinessId(businessId, page, size, giftcards);
+    }
+
+    @Transactional
+    public DiscountDTO updateUsage(UUID discountId){
+        return discountService.updateUsage(discountId);
     }
 
     @Transactional

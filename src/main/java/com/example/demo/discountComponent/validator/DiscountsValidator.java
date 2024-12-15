@@ -1,5 +1,6 @@
 package com.example.demo.discountComponent.validator;
 
+import com.example.demo.discountComponent.domain.entities.Discount;
 import com.example.demo.helper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.helper.ErrorHandling.CustomExceptions.UnauthorizedException;
 import com.example.demo.helper.ErrorHandling.CustomExceptions.UnprocessableException;
@@ -66,6 +67,22 @@ public final class DiscountsValidator {
         if(totalDiscountsOfBusiness == 0){
             throw new NotFoundException(
                     "The provided business id " + businessId + ", had no discounts associated with it."
+            );
+        }
+    }
+
+    public void checkIfBusinessHadGiftcards(int totalGiftcardsOfBusiness, UUID businessId){
+        if(totalGiftcardsOfBusiness == 0){
+            throw new NotFoundException(
+                    "The provided business id " + businessId + ", had no giftcards associated with it."
+            );
+        }
+    }
+
+    public void checkIfUsageLimitExceeded(Discount discount){
+        if(discount.getUsageCount() > discount.getUsageCountLimit()){
+            throw  new UnprocessableException(
+                    "The provided discount has already reached its usage count limit, which was: " + discount.getUsageCountLimit()
             );
         }
     }
