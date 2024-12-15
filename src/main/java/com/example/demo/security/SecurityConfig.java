@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.UUID;
 
@@ -30,52 +33,43 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
-    private CustomUserDetailsService userDetailsService;
     private JwtAuthEntryPoint entryPoint;
+
+    private JWTUtils jwtUtils;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.POST, "/v1/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/users/login").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll() //used for h2 to be accessible
+                        .requestMatchers(HttpMethod.POST, "v1/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "v1/products").hasAuthority("ITAdministrator")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(entryPoint))
-                .headers(HeadersConfigurer::disable)
-                .httpBasic(Customizer.withDefaults());
-
+                .headers(HeadersConfigurer::disable); //used for h2, after real database delete!!!!
+        http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-//    @Bean
-//    public UserDetailsService inMemoryUsers(){
-//        UserDetails superAdmin = User.builder()
-//                .username("rara")
-//                .password("password")
-//                .authorities("ITAdministrator")
-//                .build();
-//        UserDetails employee = User.builder()
-//                .username("rarara")
-//                .password("password")
-//                .authorities("Employee")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(superAdmin, employee);
-//
-//    }
-
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception{
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(provider);
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    public JwtFilter jwtFilter(){
+        return new JwtFilter(jwtUtils);
     }
 }

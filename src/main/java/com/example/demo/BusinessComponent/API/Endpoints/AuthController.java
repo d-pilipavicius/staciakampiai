@@ -1,10 +1,12 @@
 package com.example.demo.BusinessComponent.API.Endpoints;
 
 import com.example.demo.BusinessComponent.API.DTOs.LoginDTO;
+import com.example.demo.BusinessComponent.API.DTOs.LoginResponseDTO;
 import com.example.demo.BusinessComponent.API.DTOs.PostUserDTO;
 import com.example.demo.BusinessComponent.API.DTOs.UserDTO;
 import com.example.demo.BusinessComponent.ApplicationServices.BusinessApplicationService;
 import com.example.demo.BusinessComponent.Repositories.IUserRepository;
+import com.example.demo.security.JWTUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private AuthenticationManager authenticationManager;
     private BusinessApplicationService businessApplicationService;
+    private JWTUtils jwtUtils;
 
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody PostUserDTO postUserDTO){
@@ -34,14 +37,13 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody LoginDTO loginDTO){
-        System.out.println("hello???");
+    public ResponseEntity<LoginResponseDTO> loginUser(@Valid @RequestBody LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
         );
-        System.out.println("hello222");
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println("helllo3333");
-        return new ResponseEntity<>("yay", HttpStatus.OK);
+        String token = jwtUtils.generateToken(authentication);
+
+        return new ResponseEntity<>(LoginResponseDTO.builder().accessToken(token).build(), HttpStatus.OK);
     }
 }

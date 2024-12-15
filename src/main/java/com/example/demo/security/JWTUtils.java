@@ -1,33 +1,32 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecureDigestAlgorithm;
-import lombok.AllArgsConstructor;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.crypto.SecretKey;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
+import java.util.*;
 
 @Component
 public class JWTUtils {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String generateToken(Authentication authentication) throws UnsupportedEncodingException {
+    public String generateToken(Authentication authentication) {
         String username = authentication.getName();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
+        List<String> roles = authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
 
         return Jwts.builder()
+                .claim("roles", roles)
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(expireDate)
@@ -35,9 +34,33 @@ public class JWTUtils {
                 .compact();
     }
 
-    public String getClaimsFromToken(String){
-        Claims claims = Jwts.parser()
-                .sf
+    public Claims getPayloadOfToken(String token){
+        Claims claims;
+        try{
+            claims = Jwts.parser()
+                    .verifyWith(generateKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+        } catch(Exception e){
+            System.out.println("something went wrong with parsing!!!!");
+            return null;
+        }
+        return claims;
+    }
+
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser().verifyWith(generateKey()).build().parseSignedClaims(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            System.out.println("lalaalla");;
+            return false;
+        } catch (SignatureException e) {
+            System.out.println("gagaga");;
+            return false;
+        }
     }
 
     private SecretKey generateKey(){
