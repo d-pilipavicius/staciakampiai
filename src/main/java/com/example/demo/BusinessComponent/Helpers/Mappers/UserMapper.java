@@ -19,8 +19,9 @@ public class UserMapper {
                 .password(passwordEncoder.encode(postUserDTO.getPassword()))
                 .emailAddress(postUserDTO.getEmailAddress())
                 .phoneNumber(postUserDTO.getPhoneNumber())
-                .business(Business.builder().id(postUserDTO.getBusinessId()).build())
+                .business(postUserDTO.getBusinessId())
                 .fullName(postUserDTO.getFullName())
+                .role(postUserDTO.getRole())
                 .build();
     }
 

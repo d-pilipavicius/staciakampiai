@@ -1,5 +1,6 @@
 package com.example.demo.BusinessComponent.API.Endpoints;
 
+import com.example.demo.BusinessComponent.API.DTOs.LoginDTO;
 import com.example.demo.BusinessComponent.API.DTOs.PostUserDTO;
 import com.example.demo.BusinessComponent.API.DTOs.UserDTO;
 import com.example.demo.BusinessComponent.ApplicationServices.BusinessApplicationService;
@@ -9,6 +10,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,5 +31,17 @@ public class AuthController {
         //HCECK IF USERNAME ALREADY EXISTS!!!!!
         UserDTO createdUserDTO = businessApplicationService.createUser(postUserDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDTO);
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<String> loginUser(@Valid @RequestBody LoginDTO loginDTO){
+        System.out.println("hello???");
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
+        );
+        System.out.println("hello222");
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println("helllo3333");
+        return new ResponseEntity<>("yay", HttpStatus.OK);
     }
 }

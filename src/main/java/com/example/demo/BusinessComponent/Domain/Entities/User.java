@@ -38,9 +38,9 @@ public class User {
   @Column(name = "full_name", nullable = false)
   private String fullName;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "business_id", referencedColumnName = "id", nullable = true)
-  private Business business;
+//  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "business_id"/* referencedColumnName = "id"*/, nullable = true)
+  private UUID business;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "role", nullable = false)
