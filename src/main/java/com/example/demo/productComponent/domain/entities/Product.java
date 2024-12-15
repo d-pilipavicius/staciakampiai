@@ -1,11 +1,12 @@
 package com.example.demo.productComponent.domain.entities;
 
-import com.example.demo.helper.enums.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+
+import com.example.demo.CommonHelper.enums.Currency;
 
 @Entity
 @NoArgsConstructor
@@ -13,12 +14,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Table(
-        name = "product",
-        indexes = {
-            @Index(name = "idx_product_business_id", columnList = "business_id")
-        }
-)
+@Table(name = "product", indexes = {
+        @Index(name = "idx_product_business_id", columnList = "business_id")
+})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

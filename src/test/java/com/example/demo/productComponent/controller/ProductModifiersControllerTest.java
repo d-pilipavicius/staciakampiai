@@ -1,6 +1,6 @@
 package com.example.demo.productComponent.controller;
 
-import com.example.demo.helper.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
@@ -38,194 +38,197 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ProductModifiersControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockBean
-    private ProductApplicationService productApplicationService;
+        @MockBean
+        private ProductApplicationService productApplicationService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    private PostModifierDTO validPostModifierDTO;
-    private PutModifierDTO validPutModifierDTO;
-    private UUID modifierId;
-    private UUID businessId;
+        private PostModifierDTO validPostModifierDTO;
+        private PutModifierDTO validPutModifierDTO;
+        private UUID modifierId;
+        private UUID businessId;
 
-    @BeforeEach
-    void setUp() {
-        businessId = UUID.randomUUID();
-        modifierId = UUID.randomUUID();
+        @BeforeEach
+        void setUp() {
+                businessId = UUID.randomUUID();
+                modifierId = UUID.randomUUID();
 
-        validPostModifierDTO = PostModifierDTO.builder()
-                .title("Test Modifier")
-                .quantityInStock(100)
-                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(9.99)).currency(Currency.USD).build())
-                .businessId(businessId)
-                .build();
-
-        validPutModifierDTO = PutModifierDTO
-                .builder()
-                .title("Updated Modifier")
-                .quantityInStock(200)
-                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(19.99)).currency(Currency.USD).build())
-                .build();
-    }
-
-    @Test
-    void shouldCreateModifierSuccessfully() throws Exception {
-        // Arrange
-        ProductModifierDTO modifierDTO = ProductModifierDTO.builder()
-                .id(modifierId)
-                .title(validPostModifierDTO.getTitle())
-                .quantityInStock(validPostModifierDTO.getQuantityInStock())
-                .price(validPostModifierDTO.getPrice())
-                .businessId(validPostModifierDTO.getBusinessId())
-                .build();
-
-        when(productApplicationService.createModifier(any(PostModifierDTO.class))).thenReturn(modifierDTO);
-
-        // Act & Assert
-        mockMvc.perform(post("/v1/products/modifiers")
-                        .param("employeeId", UUID.randomUUID().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validPostModifierDTO)))
-                .andExpect(status().isCreated());
-
-        verify(productApplicationService, times(1)).createModifier(any(PostModifierDTO.class));
-    }
-
-    @Test
-    void shouldReturnNotFoundWhenModifierCreationFails() throws Exception {
-        // Arrange
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).createModifier(any(PostModifierDTO.class));
-
-        // Act & Assert
-        mockMvc.perform(post("/v1/products/modifiers")
-                        .param("employeeId", UUID.randomUUID().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validPostModifierDTO)))
-                .andExpect(status().isNotFound());
-
-        verify(productApplicationService, times(1)).createModifier(any(PostModifierDTO.class));
-    }
-
-    @Test
-    void shouldGetModifiersByBusinessIdSuccessfully() throws Exception {
-        // Arrange
-        GetModifiersDTO modifiersDTO = GetModifiersDTO.builder()
-                .items(List.of(
-                        ProductModifierDTO.builder()
-                                .id(UUID.randomUUID())
-                                .title("Modifier 1")
-                                .quantityInStock(50)
-                                .price(validPostModifierDTO.getPrice())
-                                .businessId(businessId)
-                                .build(),
-                        ProductModifierDTO.builder()
-                                .id(UUID.randomUUID())
-                                .title("Modifier 2")
+                validPostModifierDTO = PostModifierDTO.builder()
+                                .title("Test Modifier")
                                 .quantityInStock(100)
-                                .price(validPostModifierDTO.getPrice())
+                                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(9.99)).currency(Currency.USD)
+                                                .build())
                                 .businessId(businessId)
-                                .build()
-                ))
-                .build();
+                                .build();
 
-        when(productApplicationService.getModifiersByBusinessId(0, 10, businessId))
-                .thenReturn(modifiersDTO);
+                validPutModifierDTO = PutModifierDTO
+                                .builder()
+                                .title("Updated Modifier")
+                                .quantityInStock(200)
+                                .price(MoneyDTO.builder().amount(BigDecimal.valueOf(19.99)).currency(Currency.USD)
+                                                .build())
+                                .build();
+        }
 
-        // Act & Assert
-        mockMvc.perform(get("/v1/products/modifiers")
-                        .param("pageNumber", "0")
-                        .param("pageSize", "10")
-                        .param("businessId", businessId.toString())
-                        .param("employeeId", UUID.randomUUID().toString()))
-                .andExpect(status().isOk());
+        @Test
+        void shouldCreateModifierSuccessfully() throws Exception {
+                // Arrange
+                ProductModifierDTO modifierDTO = ProductModifierDTO.builder()
+                                .id(modifierId)
+                                .title(validPostModifierDTO.getTitle())
+                                .quantityInStock(validPostModifierDTO.getQuantityInStock())
+                                .price(validPostModifierDTO.getPrice())
+                                .businessId(validPostModifierDTO.getBusinessId())
+                                .build();
 
-        verify(productApplicationService, times(1)).getModifiersByBusinessId(0, 10, businessId);
-    }
+                when(productApplicationService.createModifier(any(PostModifierDTO.class))).thenReturn(modifierDTO);
 
-    @Test
-    void shouldReturnNotFoundWhenGettingModifiersFails() throws Exception {
-        // Arrange
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).getModifiersByBusinessId(0, 10, businessId);
+                // Act & Assert
+                mockMvc.perform(post("/v1/products/modifiers")
+                                .param("employeeId", UUID.randomUUID().toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(validPostModifierDTO)))
+                                .andExpect(status().isCreated());
 
-        // Act & Assert
-        mockMvc.perform(get("/v1/products/modifiers")
-                        .param("pageNumber", "0")
-                        .param("pageSize", "10")
-                        .param("businessId", businessId.toString())
-                        .param("employeeId", UUID.randomUUID().toString()))
-                .andExpect(status().isNotFound());
+                verify(productApplicationService, times(1)).createModifier(any(PostModifierDTO.class));
+        }
 
-        verify(productApplicationService, times(1)).getModifiersByBusinessId(0, 10, businessId);
-    }
+        @Test
+        void shouldReturnNotFoundWhenModifierCreationFails() throws Exception {
+                // Arrange
+                doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .when(productApplicationService).createModifier(any(PostModifierDTO.class));
 
-    @Test
-    void shouldUpdateModifierSuccessfully() throws Exception {
-        // Arrange
-        ProductModifierDTO responseModifierDTO = ProductModifierDTO.builder()
-                        .id(modifierId)
-                        .title("Updated Modifier")
-                        .quantityInStock(200)
-                        .price(validPutModifierDTO.getPrice())
-                        .businessId(businessId)
-                        .build();
+                // Act & Assert
+                mockMvc.perform(post("/v1/products/modifiers")
+                                .param("employeeId", UUID.randomUUID().toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(validPostModifierDTO)))
+                                .andExpect(status().isNotFound());
 
-        when(productApplicationService.updateProductModifier(any(PutModifierDTO.class), eq(modifierId)))
-                .thenReturn(responseModifierDTO);
+                verify(productApplicationService, times(1)).createModifier(any(PostModifierDTO.class));
+        }
 
-        // Act & Assert
-        mockMvc.perform(put("/v1/products/modifiers/{modifierId}", modifierId)
-                        .param("employeeId", UUID.randomUUID().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validPutModifierDTO)))
-                .andExpect(status().isOk());
+        @Test
+        void shouldGetModifiersByBusinessIdSuccessfully() throws Exception {
+                // Arrange
+                GetModifiersDTO modifiersDTO = GetModifiersDTO.builder()
+                                .items(List.of(
+                                                ProductModifierDTO.builder()
+                                                                .id(UUID.randomUUID())
+                                                                .title("Modifier 1")
+                                                                .quantityInStock(50)
+                                                                .price(validPostModifierDTO.getPrice())
+                                                                .businessId(businessId)
+                                                                .build(),
+                                                ProductModifierDTO.builder()
+                                                                .id(UUID.randomUUID())
+                                                                .title("Modifier 2")
+                                                                .quantityInStock(100)
+                                                                .price(validPostModifierDTO.getPrice())
+                                                                .businessId(businessId)
+                                                                .build()))
+                                .build();
 
-        verify(productApplicationService, times(1)).updateProductModifier(any(PutModifierDTO.class), eq(modifierId));
-    }
+                when(productApplicationService.getModifiersByBusinessId(0, 10, businessId))
+                                .thenReturn(modifiersDTO);
 
-    @Test
-    void shouldReturnNotFoundWhenUpdatingNonexistentModifier() throws Exception {
-        // Arrange
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).updateProductModifier(any(PutModifierDTO.class), eq(modifierId));
+                // Act & Assert
+                mockMvc.perform(get("/v1/products/modifiers")
+                                .param("pageNumber", "0")
+                                .param("pageSize", "10")
+                                .param("businessId", businessId.toString())
+                                .param("employeeId", UUID.randomUUID().toString()))
+                                .andExpect(status().isOk());
 
-        // Act & Assert
-        mockMvc.perform(put("/v1/products/modifiers/{modifierId}", modifierId)
-                        .param("employeeId", UUID.randomUUID().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validPutModifierDTO)))
-                .andExpect(status().isNotFound());
+                verify(productApplicationService, times(1)).getModifiersByBusinessId(0, 10, businessId);
+        }
 
-        verify(productApplicationService, times(1)).updateProductModifier(any(PutModifierDTO.class), eq(modifierId));
-    }
+        @Test
+        void shouldReturnNotFoundWhenGettingModifiersFails() throws Exception {
+                // Arrange
+                doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .when(productApplicationService).getModifiersByBusinessId(0, 10, businessId);
 
-    @Test
-    void shouldDeleteModifierSuccessfully() throws Exception {
-        // Act & Assert
-        mockMvc.perform(delete("/v1/products/modifiers/{modifierId}", modifierId)
-                        .param("employeeId", UUID.randomUUID().toString()))
-                .andExpect(status().isNoContent());
+                // Act & Assert
+                mockMvc.perform(get("/v1/products/modifiers")
+                                .param("pageNumber", "0")
+                                .param("pageSize", "10")
+                                .param("businessId", businessId.toString())
+                                .param("employeeId", UUID.randomUUID().toString()))
+                                .andExpect(status().isNotFound());
 
-        verify(productApplicationService, times(1)).deleteProductModifier(modifierId);
-    }
+                verify(productApplicationService, times(1)).getModifiersByBusinessId(0, 10, businessId);
+        }
 
-    @Test
-    void shouldReturnNotFoundWhenDeletingNonexistentModifier() throws Exception {
-        // Arrange
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .when(productApplicationService).deleteProductModifier(eq(modifierId));
+        @Test
+        void shouldUpdateModifierSuccessfully() throws Exception {
+                // Arrange
+                ProductModifierDTO responseModifierDTO = ProductModifierDTO.builder()
+                                .id(modifierId)
+                                .title("Updated Modifier")
+                                .quantityInStock(200)
+                                .price(validPutModifierDTO.getPrice())
+                                .businessId(businessId)
+                                .build();
 
-        // Act & Assert
-        mockMvc.perform(delete("/v1/products/modifiers/{modifierId}", modifierId)
-                        .param("employeeId", UUID.randomUUID().toString()))
-                .andExpect(status().isNotFound());
+                when(productApplicationService.updateProductModifier(any(PutModifierDTO.class), eq(modifierId)))
+                                .thenReturn(responseModifierDTO);
 
-        verify(productApplicationService, times(1)).deleteProductModifier(eq(modifierId));
-    }
+                // Act & Assert
+                mockMvc.perform(put("/v1/products/modifiers/{modifierId}", modifierId)
+                                .param("employeeId", UUID.randomUUID().toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(validPutModifierDTO)))
+                                .andExpect(status().isOk());
+
+                verify(productApplicationService, times(1)).updateProductModifier(any(PutModifierDTO.class),
+                                eq(modifierId));
+        }
+
+        @Test
+        void shouldReturnNotFoundWhenUpdatingNonexistentModifier() throws Exception {
+                // Arrange
+                doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .when(productApplicationService)
+                                .updateProductModifier(any(PutModifierDTO.class), eq(modifierId));
+
+                // Act & Assert
+                mockMvc.perform(put("/v1/products/modifiers/{modifierId}", modifierId)
+                                .param("employeeId", UUID.randomUUID().toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(validPutModifierDTO)))
+                                .andExpect(status().isNotFound());
+
+                verify(productApplicationService, times(1)).updateProductModifier(any(PutModifierDTO.class),
+                                eq(modifierId));
+        }
+
+        @Test
+        void shouldDeleteModifierSuccessfully() throws Exception {
+                // Act & Assert
+                mockMvc.perform(delete("/v1/products/modifiers/{modifierId}", modifierId)
+                                .param("employeeId", UUID.randomUUID().toString()))
+                                .andExpect(status().isNoContent());
+
+                verify(productApplicationService, times(1)).deleteProductModifier(modifierId);
+        }
+
+        @Test
+        void shouldReturnNotFoundWhenDeletingNonexistentModifier() throws Exception {
+                // Arrange
+                doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .when(productApplicationService).deleteProductModifier(eq(modifierId));
+
+                // Act & Assert
+                mockMvc.perform(delete("/v1/products/modifiers/{modifierId}", modifierId)
+                                .param("employeeId", UUID.randomUUID().toString()))
+                                .andExpect(status().isNotFound());
+
+                verify(productApplicationService, times(1)).deleteProductModifier(eq(modifierId));
+        }
 }
-

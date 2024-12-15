@@ -1,0 +1,25 @@
+.productCard {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.productCard .buttonSlot {
+  display: flex;
+  flex-direction: column;  
+}
+
+.productModifierCard {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  width: 90% !important;
+}
+
+.productModifierCard p {
+  font-size: 12;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
