@@ -27,7 +27,7 @@ public class ReservationsController {
     public ResponseEntity<Object> createReservation(
             @RequestParam UUID employeeId,
             @Valid @RequestBody PostReservationDTO postReservationDTO
-            ) {
+    ) {
 
         ReservationDTO reservationDTO = reservationApplicationService.createReservation(postReservationDTO, employeeId);
 
@@ -41,8 +41,7 @@ public class ReservationsController {
     public ResponseEntity<Object> getReservations(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam UUID businessId,
-            @RequestParam UUID employeeId
+            @RequestParam UUID businessId
     ){
 
         GetReservationsDTO reservationsDTO = reservationApplicationService.getReservationsByBusinessId(businessId, pageNumber, pageSize);
@@ -55,7 +54,6 @@ public class ReservationsController {
     @PutMapping("/{reservationId}")
     public ResponseEntity<Object> updateReservation(
             @PathVariable UUID reservationId,
-            @RequestParam UUID employeeId,
             @Valid @RequestBody PutReservationDTO putReservationDTO
     ){
 
@@ -68,8 +66,7 @@ public class ReservationsController {
 
     @DeleteMapping("/{reservationId}")
     public ResponseEntity<Object> deleteReservation(
-            @PathVariable UUID reservationId,
-            @RequestParam UUID employeeId
+            @PathVariable UUID reservationId
     ){
         reservationApplicationService.deleteReservation(reservationId);
 

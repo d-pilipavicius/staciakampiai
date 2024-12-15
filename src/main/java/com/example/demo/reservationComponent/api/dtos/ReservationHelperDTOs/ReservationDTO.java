@@ -3,6 +3,7 @@ package com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -15,4 +16,5 @@ public class ReservationDTO {
     private final Timestamp reservationStartAt;
     private final Timestamp reservationEndAt;
     private final UUID businessId;
+    private final List<UUID> serviceChargeIds;
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @AllArgsConstructor
 @Component
@@ -22,6 +23,7 @@ public class ReservationValidator {
     public void validatePostReservationDTO(PostReservationDTO dto){
         // Validate if end and start time are correct
         validateDates(dto.getReservationStartAt(), dto.getReservationEndAt());
+        validatePhoneNumber(dto.getCustomer().getPhoneNumber());
     }
 
     private void validateDates(Timestamp start, Timestamp end){
@@ -33,6 +35,17 @@ public class ReservationValidator {
     public void validateReservationExists(UUID reservationId) {
         if(!reservationRepository.existsById(reservationId)){
             throw new IllegalArgumentException("Reservation not found");
+        }
+    }
+
+    public void validatePutReservationDTO(PutReservationDTO putReservationDTO) {
+        validateDates(putReservationDTO.getReservationStartAt(), putReservationDTO.getReservationEndAt());
+        validatePhoneNumber(putReservationDTO.getCustomer().getPhoneNumber());
+    }
+
+    private void validatePhoneNumber(String phoneNumber){
+        if(!Pattern.matches("^[+]{1}(?:[0-9\\-()/.]\\s?){6,15}[0-9]{1}$", phoneNumber)){
+            throw new IllegalArgumentException("Phone number is not valid");
         }
     }
 }

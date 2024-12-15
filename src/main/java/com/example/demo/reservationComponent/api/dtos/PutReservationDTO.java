@@ -12,11 +12,11 @@ import java.util.Optional;
 @Builder
 public class PutReservationDTO {
     @NotNull
-    private final Optional<Timestamp> reservationStartAt;
+    private final Timestamp reservationStartAt;
 
     @NotNull
-    private final Optional<Timestamp> reservationEndAt;
+    private final Timestamp reservationEndAt;
 
     @NotNull
-    private final Optional<CustomerDTO> customer;
+    private final CustomerDTO customer;
 }

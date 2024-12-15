@@ -59,6 +59,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>sns</artifactId>
+			<version>2.29.30</version>
+		</dependency>
 	</dependencies>
 
 	<build>

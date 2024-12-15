@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -44,4 +46,12 @@ public class Reservation {
 
     @Column(nullable = false)
     private Timestamp reservationEndAt;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "reservation_service_charge_ids",
+            joinColumns = @JoinColumn(name = "reservation_id")
+    )
+    @Column(name = "service_charge_id", nullable = false)
+    private List<UUID> serviceChargeIds = new ArrayList<>();
 }

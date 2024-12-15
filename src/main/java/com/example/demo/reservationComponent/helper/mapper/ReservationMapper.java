@@ -17,6 +17,7 @@ public class ReservationMapper {
             .reservationEndAt(dto.getReservationEndAt())
             .businessId(dto.getBusinessId())
             .createdAt(new Timestamp(System.currentTimeMillis()))
+            .serviceChargeIds(dto.getServiceChargeIds())
             .customer(Mapper.mapToModel(dto.getCustomer(), CustomerMapper.TO_MODEL))
             .build();
 
@@ -28,6 +29,7 @@ public class ReservationMapper {
             .reservationEndAt(entity.getReservationEndAt())
             .createdAt(entity.getCreatedAt())
             .businessId(entity.getBusinessId())
+            .serviceChargeIds(entity.getServiceChargeIds())
             .build();
 
     public static final StaticMapper<Page<Reservation>, GetReservationsDTO> PAGE_TO_DTO = reservations -> GetReservationsDTO.builder()

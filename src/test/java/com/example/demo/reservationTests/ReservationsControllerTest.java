@@ -53,6 +53,8 @@ class ReservationsControllerTest {
     private UUID businessId;
     private UUID employeeId;
 
+    private String phoneNumber = "+37061773903";
+
     @BeforeEach
     void setup() {
         employeeId = UUID.randomUUID();
@@ -60,7 +62,7 @@ class ReservationsControllerTest {
         reservationId = UUID.randomUUID();
 
         validPostReservationDTO = PostReservationDTO.builder()
-                .customer(CustomerDTO.builder().firstName("John").lastName("Bush").phoneNumber("+370111111111111").build())
+                .customer(CustomerDTO.builder().firstName("John").lastName("Bush").phoneNumber(phoneNumber).build())
                 .reservationStartAt(Timestamp.valueOf("2024-12-01 10:00:00"))
                 .reservationEndAt(Timestamp.valueOf("2024-12-01 11:00:00"))
                 .serviceChargeIds(Collections.singletonList(UUID.randomUUID()))
@@ -68,9 +70,9 @@ class ReservationsControllerTest {
                 .build();
 
         validPutReservationDTO = PutReservationDTO.builder()
-                .customer(Optional.ofNullable(CustomerDTO.builder().firstName("John").lastName("Bush").phoneNumber("+370111111111111").build()))
-                .reservationStartAt(Optional.of(Timestamp.valueOf("2024-12-01 12:00:00")))
-                .reservationEndAt(Optional.of(Timestamp.valueOf("2024-12-01 13:00:00")))
+                .customer(CustomerDTO.builder().firstName("John").lastName("Bush").phoneNumber(phoneNumber).build())
+                .reservationStartAt(Timestamp.valueOf("2024-12-01 12:00:00"))
+                .reservationEndAt(Timestamp.valueOf("2024-12-01 13:00:00"))
                 .build();
     }
 
@@ -95,7 +97,7 @@ class ReservationsControllerTest {
                         .content(objectMapper.writeValueAsString(validPostReservationDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(reservationId.toString()))
-                .andExpect(jsonPath("$.customer.name").value("John Doe"));
+                .andExpect(jsonPath("$.customer.firstName").value("John"));
 
         verify(reservationApplicationService, times(1))
                 .createReservation(any(PostReservationDTO.class), eq(employeeId));
@@ -174,9 +176,9 @@ class ReservationsControllerTest {
         // Arrange
         ReservationDTO updatedReservation = ReservationDTO.builder()
                 .id(reservationId)
-                .customer(validPutReservationDTO.getCustomer().orElse(null))
-                .reservationStartAt(validPutReservationDTO.getReservationStartAt().orElse(null))
-                .reservationEndAt(validPutReservationDTO.getReservationEndAt().orElse(null))
+                .customer(validPutReservationDTO.getCustomer())
+                .reservationStartAt(validPutReservationDTO.getReservationStartAt())
+                .reservationEndAt(validPutReservationDTO.getReservationEndAt())
                 .build();
 
         when(reservationApplicationService.updateReservation(any(PutReservationDTO.class), eq(reservationId)))
@@ -189,7 +191,7 @@ class ReservationsControllerTest {
                         .content(objectMapper.writeValueAsString(validPutReservationDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(reservationId.toString()))
-                .andExpect(jsonPath("$.customer.name").value("Jane Doe"));
+                .andExpect(jsonPath("$.customer.firstName").value("John"));
 
         verify(reservationApplicationService, times(1))
                 .updateReservation(any(PutReservationDTO.class), eq(reservationId));

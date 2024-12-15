@@ -1,5 +1,6 @@
 package com.example.demo.reservationComponent.domain.services;
 
+import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.FullNameDTO;
 import com.example.demo.reservationComponent.helper.mapper.CustomerMapper;
 import com.example.demo.reservationComponent.helper.mapper.ReservationMapper;
 import com.example.demo.helper.mapper.base.Mapper;
@@ -10,6 +11,7 @@ import com.example.demo.reservationComponent.api.dtos.PostReservationDTO;
 import com.example.demo.reservationComponent.domain.entities.Reservation;
 import com.example.demo.reservationComponent.helper.validator.ReservationValidator;
 import com.example.demo.reservationComponent.repository.ReservationRepository;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -17,8 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
+@AllArgsConstructor
 @Service
 public class ReservationService {
 
@@ -26,13 +30,6 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationValidator reservationValidator;
-
-    public ReservationService(
-            ReservationRepository reservationRepository,
-            ReservationValidator reservationValidator) {
-        this.reservationRepository = reservationRepository;
-        this.reservationValidator = reservationValidator;
-    }
 
     @Transactional
     public ReservationDTO createReservation(PostReservationDTO postReservationDTO, UUID employeeId) {
@@ -53,10 +50,21 @@ public class ReservationService {
         return Mapper.mapToDTO(reservations, ReservationMapper.PAGE_TO_DTO);
     }
 
+    public GetReservationsDTO getActiveReservationsByFullName(FullNameDTO fullNameDTO, int page, int size) {
+        Page<Reservation> reservations = reservationRepository.findAllByCustomerFullName(
+                fullNameDTO.getFirstName(),
+                fullNameDTO.getLastName(),
+                PageRequest.of(page, size)
+        );
+        return Mapper.mapToDTO(reservations, ReservationMapper.PAGE_TO_DTO);
+    }
+
     @Transactional
     public ReservationDTO updateReservation(PutReservationDTO putReservationDTO, UUID reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+
+        reservationValidator.validatePutReservationDTO(putReservationDTO);
 
         applyReservationUpdates(putReservationDTO, reservation);
 
@@ -72,11 +80,9 @@ public class ReservationService {
     }
 
     private void applyReservationUpdates(PutReservationDTO putReservationDTO, Reservation reservation) {
-        putReservationDTO.getReservationStartAt().ifPresent(reservation::setReservationStartAt);
-        putReservationDTO.getReservationEndAt().ifPresent(reservation::setReservationEndAt);
-        putReservationDTO.getCustomer()
-                .ifPresent(customerDTO -> reservation.setCustomer(
-                        Mapper.mapToModel(customerDTO, CustomerMapper.TO_MODEL)
-                ));
+        reservation.setReservationEndAt(putReservationDTO.getReservationEndAt());
+        reservation.setReservationStartAt(putReservationDTO.getReservationStartAt());
+        reservation.setCustomer(Mapper.mapToModel(putReservationDTO.getCustomer(), CustomerMapper.TO_MODEL));
+        reservation.setCreatedAt(new Timestamp(System.currentTimeMillis()));
     }
 }

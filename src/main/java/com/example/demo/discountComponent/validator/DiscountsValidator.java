@@ -1,12 +1,12 @@
 package com.example.demo.discountComponent.validator;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnauthorizedException;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnprocessableException;
+import com.example.demo.CommonHelper.enums.Currency;
+import com.example.demo.CommonHelper.enums.DiscountTarget;
+import com.example.demo.CommonHelper.enums.PricingStrategy;
 import com.example.demo.discountComponent.domain.entities.Discount;
-import com.example.demo.helper.ErrorHandling.CustomExceptions.NotFoundException;
-import com.example.demo.helper.ErrorHandling.CustomExceptions.UnauthorizedException;
-import com.example.demo.helper.ErrorHandling.CustomExceptions.UnprocessableException;
-import com.example.demo.helper.enums.Currency;
-import com.example.demo.helper.enums.DiscountTarget;
-import com.example.demo.helper.enums.PricingStrategy;
 import com.example.demo.discountComponent.repository.DiscountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
