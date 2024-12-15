@@ -1,10 +1,8 @@
 package com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs;
 
 import com.example.demo.CommonHelper.enums.Currency;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 import java.math.BigDecimal;

@@ -1,7 +1,7 @@
 package com.example.demo.reservationComponent.helper.mapper;
 
-import com.example.demo.helper.mapper.base.Mapper;
-import com.example.demo.helper.mapper.base.StaticMapper;
+import com.example.demo.CommonHelper.mapper.base.Mapper;
+import com.example.demo.CommonHelper.mapper.base.StaticMapper;
 import com.example.demo.reservationComponent.api.dtos.GetReservationsDTO;
 import com.example.demo.reservationComponent.api.dtos.PostReservationDTO;
 import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.ReservationDTO;

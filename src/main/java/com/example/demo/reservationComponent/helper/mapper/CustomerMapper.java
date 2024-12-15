@@ -1,6 +1,6 @@
 package com.example.demo.reservationComponent.helper.mapper;
 
-import com.example.demo.helper.mapper.base.StaticMapper;
+import com.example.demo.CommonHelper.mapper.base.StaticMapper;
 import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.CustomerDTO;
 import com.example.demo.reservationComponent.domain.entities.Customer;
 

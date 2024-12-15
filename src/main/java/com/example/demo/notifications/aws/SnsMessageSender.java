@@ -25,7 +25,6 @@ public class SnsMessageSender {
             PublishResponse response = snsClient.publish(request);
 
             if (response == null) {
-                System.err.println("Debug: PublishResponse is null. The request may not have reached AWS.");
                 throw new RuntimeException("SNS Publish returned null response");
             }
 
@@ -39,5 +38,4 @@ public class SnsMessageSender {
             throw new RuntimeException("Unexpected exception occurred", ex);
         }
     }
-
 }

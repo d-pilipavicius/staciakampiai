@@ -1,6 +1,6 @@
 package com.example.demo.reservationComponent.api.endpoints;
 
-import com.example.demo.helper.validator.ValidationForDifferentHTTPCodes;
+import com.example.demo.CommonHelper.validator.ValidationForDifferentHTTPCodes;
 import com.example.demo.reservationComponent.api.dtos.GetReservationsDTO;
 import com.example.demo.reservationComponent.api.dtos.PostReservationDTO;
 import com.example.demo.reservationComponent.api.dtos.PutReservationDTO;

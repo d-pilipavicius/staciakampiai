@@ -3,7 +3,7 @@ package com.example.demo.reservationComponent.domain.services;
 import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.FullNameDTO;
 import com.example.demo.reservationComponent.helper.mapper.CustomerMapper;
 import com.example.demo.reservationComponent.helper.mapper.ReservationMapper;
-import com.example.demo.helper.mapper.base.Mapper;
+import com.example.demo.CommonHelper.mapper.base.Mapper;
 import com.example.demo.reservationComponent.api.dtos.GetReservationsDTO;
 import com.example.demo.reservationComponent.api.dtos.PutReservationDTO;
 import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.ReservationDTO;

@@ -48,7 +48,7 @@ public class ReservationApplicationService {
                 new Timestamp(System.currentTimeMillis())
         );
 
-        // todo: Send notification
+        // Send notification, (works if needed)
         // notificationService.sendReservationCreatedNotification(reservationDto);
 
         // Save notification
@@ -77,7 +77,7 @@ public class ReservationApplicationService {
                 new Timestamp(System.currentTimeMillis())
         );
 
-        // todo: Send notification
+        // Send notification, (works if needed)
         // notificationService.sendReservationCreatedNotification(reservationDTO);
 
         // Save notification
