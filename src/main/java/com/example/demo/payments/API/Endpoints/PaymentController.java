@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.payments.Domain.Entities.Tip;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,9 +21,9 @@ public class PaymentController {
     private PaymentApplicationService paymentApplicationService;
 
     @PostMapping("/tips")
-    public ResponseEntity<?> addTip(@RequestBody AddTipDTO request) {
+    public ResponseEntity<Tip> addTip(@RequestBody AddTipDTO request) {
         Tip createdTip = paymentApplicationService.addTip(request);
-        return ResponseEntity.status(201).body(Map.of("tip", createdTip));
+        return ResponseEntity.ok(createdTip);
     }
 
     @GetMapping("/tips")
@@ -41,20 +40,20 @@ public class PaymentController {
     @PostMapping("/card")
     public ResponseEntity<Object> createCardPayment(@RequestBody CreatePaymentDTO request) {
         Object paymentResponse = paymentApplicationService.createPayment(request, PaymentMethod.CARD);
-        return ResponseEntity.status(201).body(Map.of("checkoutSession", paymentResponse));
+        return ResponseEntity.ok(paymentResponse);
     }
 
     @PostMapping("/cash")
     public ResponseEntity<Object> createCashPayment(@RequestBody CreatePaymentDTO request) {
         Object paymentResponse = paymentApplicationService.createPayment(request, PaymentMethod.CASH);
-        return ResponseEntity.status(201).body(Map.of("payment", paymentResponse));
+        return ResponseEntity.ok(paymentResponse);
     }
 
     @PostMapping("/{paymentId}/refund")
-    public ResponseEntity<?> initiateRefund(@PathVariable UUID paymentId) {
+    public ResponseEntity<Map<String, Object>> initiateRefund(@PathVariable UUID paymentId) {
         Refund refund = paymentApplicationService.initiateRefund(paymentId);
         Map<String, Object> refundResponse = Mappers.toRefundResponse(refund);
-        return ResponseEntity.status(201).body(Map.of("refund", refundResponse));
+        return ResponseEntity.ok(refundResponse);
     }
 
     @PostMapping("/complete")
