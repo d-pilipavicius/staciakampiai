@@ -193,4 +193,13 @@ public class ProductService {
             return false;
         }
     }
+
+    public ProductDTO getProductById(UUID productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Product with id " + productId + " not found"
+                ));
+
+        return Mapper.mapToDTO(product, ProductMapper.TO_DTO);
+    }
 }
