@@ -2,6 +2,7 @@ package com.example.demo.UserComponent.Domain.Services;
 
 import java.util.UUID;
 
+import com.example.demo.UserComponent.validator.UserValidator;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.UserComponent.API.DTOs.CreateUserDTO;
@@ -20,9 +21,13 @@ import lombok.AllArgsConstructor;
 // TODO: Add exception handling
 public class UserService {
   private final IUserRepository userRepository;
+
   private final UserMapper userMapper;
 
-  public UserDTO createUser(@NotNull @Valid CreateUserDTO createUserDTO) {
+  private final UserValidator userValidator;
+
+  public UserDTO createUser(CreateUserDTO createUserDTO) {
+    userValidator.checkIfUsernameExists(createUserDTO.getUsername());
     User user = userMapper.toUser(createUserDTO);
     User savedUser = userRepository.save(user);
     return userMapper.toUserDTO(savedUser);

@@ -1,5 +1,6 @@
 package com.example.demo.CommonHelper.ErrorHandling;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.ForbiddenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,5 +32,13 @@ public class GlobalExceptionHandler {
         ErrorResponse response = ErrorResponse.builder().errorCode("Id not found").errorMessage(ex.getErrorMsg())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> forbiddenException(ForbiddenException ex){
+        ErrorResponse response = ErrorResponse.builder().errorCode("Forbidden").errorMessage(ex.getErrorMsg())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+
     }
 }

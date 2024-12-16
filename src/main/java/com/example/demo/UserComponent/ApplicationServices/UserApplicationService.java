@@ -2,11 +2,9 @@ package com.example.demo.UserComponent.ApplicationServices;
 
 import java.util.UUID;
 
+import com.example.demo.UserComponent.API.DTOs.*;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.UserComponent.API.DTOs.CreateUserDTO;
-import com.example.demo.UserComponent.API.DTOs.UpdateUserDTO;
-import com.example.demo.UserComponent.API.DTOs.UserDTO;
 import com.example.demo.UserComponent.Domain.Services.UserService;
 
 import jakarta.validation.Valid;
@@ -18,7 +16,7 @@ import lombok.AllArgsConstructor;
 public class UserApplicationService {
   private final UserService userService;
 
-  public UserDTO createUser(@NotNull @Valid CreateUserDTO createUserDTO) {
+  public UserDTO createUser(CreateUserDTO createUserDTO) {
     return userService.createUser(createUserDTO);
   }
 
@@ -33,4 +31,5 @@ public class UserApplicationService {
   public void deleteUser(@NotNull UUID userId) {
     userService.deleteUser(userId);
   }
+
 }

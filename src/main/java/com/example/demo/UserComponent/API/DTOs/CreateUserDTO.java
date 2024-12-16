@@ -35,9 +35,8 @@ public class CreateUserDTO {
   @NotNull
   private final RoleType role;
 
-  @NotNull
-  private final String username;
 
-  @NotNull
-  private final String password;
+  private String username;
+
+  private String password;
 }

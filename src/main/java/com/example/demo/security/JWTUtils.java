@@ -1,8 +1,11 @@
 package com.example.demo.security;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.JwtExpiredException;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.JwtInvalidSigException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -44,7 +47,6 @@ public class JWTUtils {
                     .getPayload();
 
         } catch(Exception e){
-            //errro suuuuuuuure but wont happen
             System.out.println("something went wrong with parsing!!!!");
             return null;
         }
@@ -52,16 +54,13 @@ public class JWTUtils {
     }
 
     public boolean validateToken(String token){
-        //error here!!!!!!!!!
         try{
             Jwts.parser().verifyWith(generateKey()).build().parseSignedClaims(token);
             return true;
         } catch (ExpiredJwtException e) {
-            System.out.println("lalaalla");;
-            return false;
+            throw new JwtExpiredException("The token has expired.");
         } catch (SignatureException e) {
-            System.out.println("gagaga");;
-            return false;
+            throw new JwtInvalidSigException("The token signature is invalid.");
         }
     }
 

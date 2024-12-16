@@ -20,11 +20,11 @@ public class DiscountApplicationService {
     private final ProductApplicationService productApplicationService;
 
     @Transactional
-    public DiscountDTO createDiscount(UUID employeeId, PostDiscountDTO postDiscountDTO){
+    public DiscountDTO createDiscount(PostDiscountDTO postDiscountDTO){
         if(postDiscountDTO.getEntitledProductIds() != null){
             productApplicationService.validateProductIds(postDiscountDTO.getEntitledProductIds());
         }
-        return discountService.createDiscount(employeeId, postDiscountDTO);
+        return discountService.createDiscount(postDiscountDTO);
     }
 
     @Transactional
@@ -38,16 +38,16 @@ public class DiscountApplicationService {
     }
 
     @Transactional
-    public DiscountDTO updateDiscount(UUID discountId, UUID employeeId, PutDiscountDTO putDiscountDTO) {
+    public DiscountDTO updateDiscount(UUID discountId, PutDiscountDTO putDiscountDTO) {
         if(putDiscountDTO.getEntitledProductIds() != null){
             productApplicationService.validateProductIds(putDiscountDTO.getEntitledProductIds());
         }
-        return discountService.updateDiscount(discountId, employeeId, putDiscountDTO);
+        return discountService.updateDiscount(discountId, putDiscountDTO);
     }
 
     @Transactional
-    public boolean deleteDiscountById(UUID discountId, UUID employeeId) {
-        discountService.deleteDiscountById(discountId, employeeId);
+    public boolean deleteDiscountById(UUID discountId) {
+        discountService.deleteDiscountById(discountId);
         return true;
     }
 }

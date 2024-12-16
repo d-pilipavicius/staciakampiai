@@ -1,11 +1,15 @@
 package com.example.demo.UserComponent.API.Endpoints;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnauthorizedException;
 import com.example.demo.UserComponent.API.DTOs.*;
 import com.example.demo.security.JWTUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +42,7 @@ public class UserController {
   private final AuthenticationManager authenticationManager;
 
   @PostMapping
-  public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
+  public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserDTO createUserDTO) {
     UserDTO createdUser = userApplicationService.createUser(createUserDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
@@ -62,11 +66,15 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<LoginResponseDTO> loginUser(@Valid @RequestBody LoginDTO loginDTO){
-    //can happen error!!!!!!!!!!!
-    Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
-    );
+  public ResponseEntity<LoginResponseDTO> loginUser(@NotNull @Valid @RequestBody LoginDTO loginDTO){
+    Authentication authentication;
+    try{
+      authentication = authenticationManager.authenticate(
+              new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
+      );
+    } catch (AuthenticationException ex){
+      throw new UnauthorizedException("The inputted user credentials were incorrect.");
+    }
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String token = jwtUtils.generateToken(authentication);
 

@@ -27,8 +27,8 @@ public class UserMapper {
         : Business.builder().id(createUserDTO.getBusinessId()).build();
     return User
         .builder()
-            .username(createUserDTO.getUsername())
-            .password(passwordEncoder.encode(createUserDTO.getPassword()))
+        .username(createUserDTO.getUsername())
+        .password(passwordEncoder.encode(createUserDTO.getPassword()))
         .fullName(createUserDTO.getFullName())
         .phoneNumber(createUserDTO.getPhoneNumber())
         .emailAddress(createUserDTO.getEmailAddress())
@@ -47,8 +47,8 @@ public class UserMapper {
         .fullName(updateUserDTO.getFullName())
         .phoneNumber(updateUserDTO.getPhoneNumber())
         .emailAddress(updateUserDTO.getEmailAddress())
-            .username(updateUserDTO.getUsername())
-            .password(passwordEncoder.encode(updateUserDTO.getPassword()))
+        .username(updateUserDTO.getUsername())
+        .password(passwordEncoder.encode(updateUserDTO.getPassword()))
         .business(business)
         .role(updateUserDTO.getRole())
         .build();
@@ -59,7 +59,7 @@ public class UserMapper {
     return UserDTO
         .builder()
         .id(user.getId())
-            .username(user.getUsername())
+        .username(user.getUsername())
         .fullName(user.getFullName())
         .phoneNumber(user.getPhoneNumber())
         .emailAddress(user.getEmailAddress())

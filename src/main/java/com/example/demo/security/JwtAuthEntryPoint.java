@@ -12,8 +12,13 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
+
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,authException.getMessage());
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+            throws IOException, ServletException {
+        CustomJwtExceptionFilter.setErrorResponse(
+                HttpServletResponse.SC_FORBIDDEN,
+                response,
+                "The user does not have access to this resource.");
     }
 }
