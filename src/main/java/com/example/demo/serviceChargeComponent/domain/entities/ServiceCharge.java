@@ -1,6 +1,6 @@
 package com.example.demo.serviceChargeComponent.domain.entities;
 
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
+import com.example.demo.helper.enums.Currency;
 import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -35,4 +35,8 @@ public class ServiceChargeApplicationService {
     public void deleteServiceCharge(UUID id) {
         serviceChargeService.deleteServiceCharge(id);
     }
+
+    public ServiceChargeDTO getServiceChargeById(UUID id) {
+        return serviceChargeService.getServiceChargeById(id);
+    }
 }

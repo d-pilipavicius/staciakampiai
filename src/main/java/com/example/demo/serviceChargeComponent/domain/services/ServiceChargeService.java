@@ -61,5 +61,11 @@ public class ServiceChargeService {
         putServiceChargeDTO.getValueType().ifPresent(serviceCharge::setValueType);
         putServiceChargeDTO.getCurrency().ifPresent(serviceCharge::setCurrency);
     }
+
+    public ServiceChargeDTO getServiceChargeById(UUID id) {
+        ServiceCharge serviceCharge = serviceChargeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ServiceCharge with id " + id + " not found"));
+        return serviceChargeMapper.toServiceChargeDTO(serviceCharge);
+    }
 }
 
