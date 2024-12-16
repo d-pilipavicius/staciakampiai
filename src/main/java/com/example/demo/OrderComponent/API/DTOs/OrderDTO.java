@@ -1,11 +1,12 @@
 package com.example.demo.OrderComponent.API.DTOs;
 
 
-import com.example.demo.helper.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.OrderComponent.Domain.Entities.Enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Setter
 @Getter
+@NonNull
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDTO {

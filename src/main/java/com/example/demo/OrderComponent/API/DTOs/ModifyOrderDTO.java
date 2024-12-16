@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NonNull
 @Builder
 public class ModifyOrderDTO {
     private final UUID reservationId;

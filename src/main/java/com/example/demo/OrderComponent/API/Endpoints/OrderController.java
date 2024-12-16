@@ -19,7 +19,6 @@ import java.util.UUID;
 public class OrderController {
     private final OrderApplicationService orderApplicationService;
 
-    @NotNull
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderDTO createOrderDTO) {
         OrderDTO response = orderApplicationService.createOrder(createOrderDTO);
@@ -47,7 +46,6 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("order", orderDTO));
     }
 
-    @NotNull
     @PutMapping("/{orderId}")
     public ResponseEntity<?> modifyOrder(@PathVariable UUID orderId, @RequestBody ModifyOrderDTO modifyOrderRequest) {
         OrderDTO updatedOrder = orderApplicationService.modifyOrder(orderId, modifyOrderRequest);

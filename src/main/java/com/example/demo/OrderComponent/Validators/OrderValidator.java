@@ -3,7 +3,7 @@ package com.example.demo.OrderComponent.Validators;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.Domain.Entities.Enums.OrderStatus;
 import com.example.demo.OrderComponent.Domain.Entities.Order;
-import com.example.demo.helper.ErrorHandling.CustomExceptions.UnprocessableException;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnprocessableException;
 import org.springframework.stereotype.Service;
 
 @Service

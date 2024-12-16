@@ -3,7 +3,7 @@ package com.example.demo.OrderComponent.Helpers.Mappers;
 import com.example.demo.OrderComponent.API.DTOs.AppliedServiceChargeDTO;
 import com.example.demo.OrderComponent.Domain.Entities.AppliedServiceCharge;
 import com.example.demo.OrderComponent.Domain.Entities.Enums.OrderStatus;
-import com.example.demo.helper.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemModifierDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;

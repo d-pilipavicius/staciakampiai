@@ -1,7 +1,7 @@
 package com.example.demo.OrderComponent.Helpers;
 
 import com.example.demo.OrderComponent.Domain.Entities.AppliedServiceCharge;
-import com.example.demo.helper.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItemModifier;
 import com.example.demo.OrderComponent.Repositories.IOrderItemModifierRepository;

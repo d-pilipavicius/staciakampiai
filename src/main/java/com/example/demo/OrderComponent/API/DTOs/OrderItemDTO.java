@@ -1,6 +1,6 @@
 package com.example.demo.OrderComponent.API.DTOs;
 
-import com.example.demo.helper.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
