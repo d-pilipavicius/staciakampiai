@@ -3,13 +3,11 @@ package com.example.demo.UserComponent.API.Endpoints;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnauthorizedException;
 import com.example.demo.UserComponent.API.DTOs.*;
 import com.example.demo.security.JWTUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,7 +40,7 @@ public class UserController {
   private final AuthenticationManager authenticationManager;
 
   @PostMapping
-  public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserDTO createUserDTO) {
+  public ResponseEntity<UserDTO> createUser(@NotNull @Valid @RequestBody CreateUserDTO createUserDTO) {
     UserDTO createdUser = userApplicationService.createUser(createUserDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
@@ -57,6 +55,12 @@ public class UserController {
   public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @RequestBody UpdateUserDTO updateUserDTO) {
     UserDTO updatedUserDTO = userApplicationService.updateUser(userId, updateUserDTO);
     return ResponseEntity.ok().body(updatedUserDTO);
+  }
+
+  @PutMapping("/{userId}/updateCredentials")
+  public ResponseEntity<UserDTO> updatePassword(@PathVariable UUID userId, @NotNull @Valid @RequestBody PutUserCredentialsDTO passwordDTO){
+    UserDTO updatedPasswordUserDTO = userApplicationService.updatePassword(userId, passwordDTO);
+    return ResponseEntity.status(HttpStatus.OK).body(updatedPasswordUserDTO);
   }
 
   @DeleteMapping("/{userId}")

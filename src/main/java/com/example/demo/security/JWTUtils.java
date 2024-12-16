@@ -2,10 +2,10 @@ package com.example.demo.security;
 
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.JwtExpiredException;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.JwtInvalidSigException;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.JwtMalformedException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -61,6 +61,8 @@ public class JWTUtils {
             throw new JwtExpiredException("The token has expired.");
         } catch (SignatureException e) {
             throw new JwtInvalidSigException("The token signature is invalid.");
+        } catch (MalformedJwtException e){
+            throw new JwtMalformedException("The provided token is malformed.");
         }
     }
 

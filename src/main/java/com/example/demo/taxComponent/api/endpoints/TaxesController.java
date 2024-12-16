@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/v1/taxes")
+@RequestMapping("/v1/taxes/{businessId}")
 public class TaxesController {
 
     private final TaxApplicationService taxApplicationService;

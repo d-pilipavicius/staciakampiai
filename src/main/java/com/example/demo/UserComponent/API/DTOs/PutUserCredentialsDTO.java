@@ -1,16 +1,14 @@
 package com.example.demo.UserComponent.API.DTOs;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @Getter
-public class LoginDTO {
+@Builder
+public class PutUserCredentialsDTO {
     @NotNull
     private final String username;
-
     @NotNull
     private final String password;
 }

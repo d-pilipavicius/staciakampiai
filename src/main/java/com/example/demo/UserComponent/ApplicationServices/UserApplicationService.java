@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 public class UserApplicationService {
   private final UserService userService;
 
-  public UserDTO createUser(CreateUserDTO createUserDTO) {
+  public UserDTO createUser(@NotNull @Valid CreateUserDTO createUserDTO) {
     return userService.createUser(createUserDTO);
   }
 
@@ -26,6 +26,10 @@ public class UserApplicationService {
 
   public UserDTO updateUser(@NotNull UUID userId, @NotNull @Valid UpdateUserDTO updateUserDTO) {
     return userService.updateUser(userId, updateUserDTO);
+  }
+
+  public UserDTO updatePassword(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){
+    return userService.updatePassword(userId, putUserCredentialsDTO);
   }
 
   public void deleteUser(@NotNull UUID userId) {

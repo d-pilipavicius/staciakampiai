@@ -2,7 +2,11 @@ package com.example.demo.UserComponent.Domain.Services;
 
 import java.util.UUID;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
+import com.example.demo.UserComponent.API.DTOs.PutUserCredentialsDTO;
 import com.example.demo.UserComponent.validator.UserValidator;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.UserComponent.API.DTOs.CreateUserDTO;
@@ -26,7 +30,9 @@ public class UserService {
 
   private final UserValidator userValidator;
 
-  public UserDTO createUser(CreateUserDTO createUserDTO) {
+  private final PasswordEncoder passwordEncoder;
+
+  public UserDTO createUser(@NotNull @Valid CreateUserDTO createUserDTO) {
     userValidator.checkIfUsernameExists(createUserDTO.getUsername());
     User user = userMapper.toUser(createUserDTO);
     User savedUser = userRepository.save(user);
@@ -39,7 +45,23 @@ public class UserService {
   }
 
   public UserDTO updateUser(@NotNull UUID userId, @NotNull @Valid UpdateUserDTO updateUserDTO) {
-    User user = userMapper.toUser(updateUserDTO, userId);
+    User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(
+            "The given user id was not found."
+    ));
+    User updatedUser = userMapper.toUser(updateUserDTO, userId);
+    updatedUser.setUsername(user.getUsername());
+    updatedUser.setPassword(user.getPassword());
+    User savedUser = userRepository.save(updatedUser);
+    return userMapper.toUserDTO(savedUser);
+  }
+
+  public UserDTO updatePassword(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){
+    userValidator.checkIfUsernameExists(putUserCredentialsDTO.getUsername());
+    User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(
+            "The given user id was not found."
+    ));
+    user.setUsername(putUserCredentialsDTO.getUsername());
+    user.setPassword(passwordEncoder.encode(putUserCredentialsDTO.getPassword()));
     User savedUser = userRepository.save(user);
     return userMapper.toUserDTO(savedUser);
   }

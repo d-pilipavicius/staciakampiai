@@ -1,5 +1,6 @@
-package com.example.demo.security;
+package com.example.demo.security.interceptors;
 
+import com.example.demo.security.filters.CustomJwtExceptionFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;

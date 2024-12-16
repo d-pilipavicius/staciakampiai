@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/products")
+@RequestMapping("/v1/products/{businessId}")
 @AllArgsConstructor
 public class ProductsController {
 
@@ -45,7 +45,7 @@ public class ProductsController {
     public ResponseEntity<Object> getProducts(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam UUID businessId,
+            @PathVariable UUID businessId,
             @RequestParam UUID employeeId) {
 
         GetProductsDTO products = productApplicationService.getProductsByBusinessId(pageNumber, pageSize, businessId);
@@ -93,7 +93,7 @@ public class ProductsController {
     public ResponseEntity<GetModifiersDTO> getProductModifiers(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam UUID businessId,
+            @PathVariable UUID businessId,
             @RequestParam UUID employeeId) {
 
         GetModifiersDTO modifiers = productApplicationService.getModifiersByBusinessId(pageNumber, pageSize,

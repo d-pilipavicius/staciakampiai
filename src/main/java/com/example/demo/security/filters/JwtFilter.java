@@ -1,5 +1,6 @@
-package com.example.demo.security;
+package com.example.demo.security.filters;
 
+import com.example.demo.security.JWTUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

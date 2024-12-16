@@ -18,20 +18,21 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UpdateUserDTO {
 
+  @NotNull
   private final String fullName;
 
+  @NotNull
   @Pattern(regexp = "\\+\\d{3,30}")
   private final String phoneNumber;
 
+  @NotNull
   @Email
   private final String emailAddress;
 
   private final UUID businessId;
 
+  @NotNull
   @Enumerated(EnumType.STRING)
   private final RoleType role;
-
-  private final String username;
-  private final String password;
 
 }

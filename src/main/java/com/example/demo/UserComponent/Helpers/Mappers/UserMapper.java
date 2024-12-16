@@ -47,8 +47,6 @@ public class UserMapper {
         .fullName(updateUserDTO.getFullName())
         .phoneNumber(updateUserDTO.getPhoneNumber())
         .emailAddress(updateUserDTO.getEmailAddress())
-        .username(updateUserDTO.getUsername())
-        .password(passwordEncoder.encode(updateUserDTO.getPassword()))
         .business(business)
         .role(updateUserDTO.getRole())
         .build();

@@ -1,21 +1,22 @@
 package com.example.demo.security;
 
 
+import com.example.demo.security.filters.CustomJwtExceptionFilter;
+import com.example.demo.security.filters.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,14 +24,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfig {
     private JwtAuthEntryPoint entryPoint;
 
-    private CustomUserDetailsService customUserDetailsService;
+    private CustomAccessHandler customAccessHandler;
 
     private JWTUtils jwtUtils;
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/error/**");
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -38,7 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/h2-console/**").permitAll() //used for h2 to be accessible
                         .requestMatchers(HttpMethod.POST, "/v1/user/login").permitAll()
-                        .requestMatchers( "v1/user/**").permitAll() //for now to test, later on make only Admin
+                        .requestMatchers( "v1/user/**").permitAll() //for now to test allow everyone, later on make only Admin
                         .requestMatchers("v1/business/**").hasAuthority("ITAdministrator")
                         .requestMatchers(HttpMethod.GET, "v1/**").hasAnyAuthority("BusinessOwner", "Employee")
                         .requestMatchers(HttpMethod.DELETE, "v1/**").hasAuthority("BusinessOwner")
@@ -49,8 +55,10 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(entryPoint))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(entryPoint)
+                        .accessDeniedHandler(customAccessHandler)
+                )
                 .headers(HeadersConfigurer::disable); //used for h2, after real database delete!!!!
         http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtExceptionFilter(), JwtFilter.class);
@@ -58,11 +66,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(CustomUserDetailsService customUserDetailsService) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return new ProviderManager(provider);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean

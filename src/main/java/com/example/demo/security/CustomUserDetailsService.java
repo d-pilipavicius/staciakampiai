@@ -24,15 +24,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username invalid"));
-        Collection<GrantedAuthority> grantedAuthorities = mapRoleToAuthority(user.getRole(), user.getBusiness().getId());
+        Collection<GrantedAuthority> grantedAuthorities = mapRoleToAuthority(user);
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
     }
 
-    private Collection<GrantedAuthority> mapRoleToAuthority(RoleType role, UUID businessId){
+    private Collection<GrantedAuthority> mapRoleToAuthority(User user){
         Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(new SimpleGrantedAuthority(role.name()));
-        if(businessId != null){
-            collection.add(new SimpleGrantedAuthority("BUSINESS_" + businessId));
+        collection.add(new SimpleGrantedAuthority(user.getRole().name()));
+        if(user.getBusiness() != null && user.getBusiness().getId() != null){
+            collection.add(new SimpleGrantedAuthority("BUSINESS_" + user.getBusiness().getId()));
         }
         return collection;
     }

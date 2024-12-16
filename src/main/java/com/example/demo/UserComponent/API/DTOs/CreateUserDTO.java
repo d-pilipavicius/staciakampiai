@@ -15,8 +15,13 @@ import lombok.Getter;
 
 @Getter
 @Builder
-@AllArgsConstructor
 public class CreateUserDTO {
+
+  @NotNull
+  private final String username;
+
+  @NotNull
+  private final String password;
 
   @NotNull
   private final String fullName;
@@ -34,9 +39,4 @@ public class CreateUserDTO {
   @Enumerated(EnumType.STRING)
   @NotNull
   private final RoleType role;
-
-
-  private String username;
-
-  private String password;
 }

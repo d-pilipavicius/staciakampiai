@@ -1,7 +1,8 @@
-package com.example.demo.security;
+package com.example.demo.security.filters;
 
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.JwtExpiredException;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.JwtInvalidSigException;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.JwtMalformedException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
@@ -22,9 +23,10 @@ public class CustomJwtExceptionFilter extends OncePerRequestFilter {
             setErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, response, ex.getErrorMsg());
         } catch (JwtInvalidSigException ex) {
             setErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, response, ex.getErrorMsg());
-//        } catch (Exception ex) {
-//            setErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response, "An unexpected error occurred");
-//        }
+        } catch (JwtMalformedException ex) {
+            setErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, response, ex.getErrorMsg());
+        } catch (Exception ex){
+            setErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, response, ex.getMessage());
         }
     }
 
