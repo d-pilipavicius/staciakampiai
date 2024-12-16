@@ -1,0 +1,3381 @@
+openapi: 3.0.3
+info:
+  title: Point of Sale API
+  description: |-
+    API for a Point of Sale system.
+  version: 1.0.0
+tags:
+  - name: Taxes
+    description: Tax management
+  - name: ServiceCharges
+    description: Service Charge management
+  - name: Discounts
+    description: Discount management
+  - name: Products
+    description: Product management
+  - name: Reservations
+    description: Reservation management
+  - name: Orders
+    description: Order management
+  - name: Payments
+    description: Payment management
+  - name: Users
+    description: User management
+  - name: Businesses
+    description: Business Management
+
+security:
+  - oauth2Auth:
+      - employee
+
+paths:
+  /v1/taxes:
+    post:
+      tags:
+        - Taxes
+      summary: Create Tax
+      operationId: createTax
+      security:
+        - oauth2Auth:
+            - businessOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaxRequest"
+        required: true
+      responses:
+        "201":
+          description: Tax created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tax:
+                    $ref: "#/components/schemas/Tax"
+                required:
+                  - tax
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - Taxes
+      summary: Get Taxes
+      operationId: getTaxes
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns taxes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Tax"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+
+  /v1/taxes/{taxId}:
+    patch:
+      tags:
+        - Taxes
+      summary: Update Tax
+      operationId: updateTax
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: taxId
+          in: path
+          description: Id of the Tax to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaxRequest"
+        required: true
+      responses:
+        "200":
+          description: Tax updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tax:
+                    $ref: "#/components/schemas/Tax"
+                required:
+                  - tax
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Tax not  found
+        "422":
+          description: Validation exception
+
+    delete:
+      tags:
+        - Taxes
+      summary: Delete Tax
+      operationId: deleteTax
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: taxId
+          in: path
+          description: Id of the Tax to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Tax deleted successfully
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Tax not found
+
+  /v1/service-charges:
+    post:
+      tags:
+        - ServiceCharges
+      summary: Create Service Charge
+      operationId: createServiceCharge
+      security:
+        - oauth2Auth:
+            - businessOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateServiceChargeRequest"
+        required: true
+      responses:
+        "201":
+          description: Service Charge created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  serviceCharge:
+                    $ref: "#/components/schemas/ServiceCharge"
+                required:
+                  - serviceCharge
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - ServiceCharges
+      summary: Get Service Charges
+      operationId: getServiceCharges
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns Service Charges
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ServiceCharge"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+
+  /v1/service-charges/{serviceChargeId}:
+    patch:
+      tags:
+        - ServiceCharges
+      summary: Update Service Charge
+      operationId: updateServiceCharge
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: serviceChargeId
+          in: path
+          description: Id of the Service Charge to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateServiceChargeRequest"
+        required: true
+      responses:
+        "200":
+          description: Service Charge updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  serviceCharge:
+                    $ref: "#/components/schemas/ServiceCharge"
+                required:
+                  - serviceCharge
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Service Charge not found
+        "422":
+          description: Validation exception
+
+    delete:
+      tags:
+        - ServiceCharges
+      summary: Delete Service Charge
+      operationId: deleteServiceCharge
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: serviceChargeId
+          in: path
+          description: Id of the Service Charge to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Service Charge deleted successfully
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Service Charge not found
+
+  /v1/discounts:
+    post:
+      tags:
+        - Discounts
+      summary: Create Discounts
+      operationId: createDiscount
+      security:
+        - oauth2Auth:
+            - businessOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDiscountRequest"
+        required: true
+      responses:
+        "201":
+          description: Discount created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  discount:
+                    $ref: "#/components/schemas/Discount"
+                required:
+                  - discount
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Product not found
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - Discounts
+      summary: Get Discounts
+      operationId: getDiscounts
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns Service Charges
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Discount"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+
+  /v1/discounts/{discountId}:
+    patch:
+      tags:
+        - Discounts
+      summary: Update Discount
+      operationId: updateDiscount
+      security:
+        - oauth2Auth:
+            - businessOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDiscountRequest"
+        required: true
+      parameters:
+        - name: discountId
+          in: path
+          description: Id of the Discount to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Discount updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  discount:
+                    $ref: "#/components/schemas/Discount"
+                required:
+                  - discount
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Discount not found
+        "422":
+          description: Validation exception
+
+    delete:
+      tags:
+        - Discounts
+      summary: Delete Discount
+      operationId: deleteDiscount
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: discountId
+          in: path
+          description: Id of the Discount to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Discount deleted successfully
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Discount not found
+
+  /v1/products:
+    post:
+      tags:
+        - Products
+      summary: Create a Product
+      operationId: createProduct
+      security:
+        - oauth2Auth:
+            - businessOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+        required: true
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product:
+                    $ref: "#/components/schemas/Product"
+                required:
+                  - product
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Related entity not found
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - Products
+      summary: Get Products
+      operationId: getProducts
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns Products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+
+  /v1/products/{productId}:
+    patch:
+      tags:
+        - Products
+      summary: Update Product
+      operationId: updateProduct
+      security:
+        - oauth2Auth:
+            - businessOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductRequest"
+        required: true
+      parameters:
+        - name: productId
+          in: path
+          description: Id of the Product to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product:
+                    $ref: "#/components/schemas/Product"
+                required:
+                  - product
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Product not found
+        "422":
+          description: Validation exception
+
+    delete:
+      tags:
+        - Products
+      summary: Delete Product
+      operationId: deleteProduct
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: productId
+          in: path
+          description: Id of the Product to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Product deleted successfully
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Product not found
+
+  /v1/products/modifiers:
+    post:
+      tags:
+        - Products
+      summary: Create a Product Modifier
+      operationId: createProductModifier
+      security:
+        - oauth2Auth:
+            - businessOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductModifierRequest"
+        required: true
+      responses:
+        "201":
+          description: Product Modifier created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  productModifier:
+                    $ref: "#/components/schemas/ProductModifier"
+                required:
+                  - productModifier
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - Products
+      summary: Get Product Modifiers
+      operationId: getProductModifiers
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns Product Modifiers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProductModifier"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+
+  /v1/products/modifiers/{productModifierId}:
+    patch:
+      tags:
+        - Products
+      summary: Update a Product Modifier
+      operationId: updateProductModifier
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: productModifierId
+          in: path
+          description: Id of the Product Modifier to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductModifierRequest"
+        required: true
+      responses:
+        "200":
+          description: Product Modifier updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  productModifier:
+                    $ref: "#/components/schemas/ProductModifier"
+                required:
+                  - productModifier
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Product Modifier not found
+
+    delete:
+      tags:
+        - Products
+      summary: Delete Product Modifier
+      operationId: deleteProductModifier
+      security:
+        - oauth2Auth:
+            - businessOwner
+      parameters:
+        - name: productModifierId
+          in: path
+          description: Id of the Product Modifier to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Product Modifier deleted successfully
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Product Modifier not found
+
+  /v1/orders:
+    post:
+      tags:
+        - Orders
+      summary: Create an Order
+      operationId: createOrder
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+        required: true
+      responses:
+        "201":
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+                required:
+                  - order
+        "404":
+          description: Related entity not found
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - Orders
+      summary: Get Orders
+      operationId: getOrders
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns Orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Order"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+
+  /v1/orders/{orderId}:
+    get:
+      tags:
+        - Orders
+      summary: Get Order
+      operationId: getOrder
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: orderId
+          in: path
+          description: Id of Order to get
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Returns Order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+                required:
+                  - order
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Order not found
+
+    patch:
+      tags:
+        - Orders
+      summary: Modify non-closed an Order
+      operationId: modifyOrder
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: orderId
+          in: path
+          description: Id of the Order to modify
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModifyOrderRequest"
+        required: true
+      responses:
+        "200":
+          description: Order modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+                required:
+                  - order
+        "400":
+          description: Order is already closed
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Order or related entity not found
+        "422":
+          description: Validation exception
+
+  /v1/orders/{orderId}/receipt:
+    get:
+      tags:
+        - Orders
+      summary: Get Order Receipt
+      operationId: getOrderReceipt
+      parameters:
+        - name: orderId
+          in: path
+          description: Id of Order to get Receipt for
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Returns Order Receipt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderReceipt:
+                    $ref: "#/components/schemas/OrderReceipt"
+                required:
+                  - orderReceipt
+        "404":
+          description: Order not found
+
+  /v1/payments/tips:
+    post:
+      tags:
+        - Payments
+      summary: Add Tip to an Order using cash
+      operationId: addTipToOrder
+      security:
+        - oauth2Auth:
+            - employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTipRequest"
+        required: true
+      responses:
+        "201":
+          description: Tip added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tip:
+                    $ref: "#/components/schemas/Tip"
+                required:
+                  - tip
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Related entity not found
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - Payments
+      summary: Get Order Tips
+      operationId: getOrderTips
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - in: query
+          name: orderId
+          required: true
+          schema:
+            type: string
+            format: UUID
+          description: Order Id to get Tips for
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns Order Tips
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Tip"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Order not found
+        "422":
+          description: Validation exception
+
+  /v1/payments/cash:
+    post:
+      tags:
+        - Payments
+      summary: Create a Payment for an Order by cash
+      operationId: createOfflinePayment
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOfflinePaymentRequest"
+      responses:
+        "201":
+          description: Payment created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payment:
+                    $ref: "#/components/schemas/Payment"
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Order or Order Item not found
+        "422":
+          description: Validation exception
+
+  /v1/payments/card:
+    post:
+      tags:
+        - Payments
+      summary: Create a Payment for an Order by card
+      operationId: createOnlinePayment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOnlinePaymentRequest"
+      responses:
+        "201":
+          description: Payment created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checkoutSession:
+                    $ref: "#/components/schemas/OnlinePaymentCheckoutSession"
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Order or Order Item not found
+        "422":
+          description: Validation exception
+
+  /v1/payments/{paymentId}/refund:
+    post:
+      tags:
+        - Payments
+      summary: Initiate refund for a payment
+      operationId: refundPayment
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "201":
+          description: Refund processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refund:
+                    $ref: "#/components/schemas/Refund"
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Payment not found
+        "422":
+          description: Validation error
+
+  /v1/payments/complete:
+    post:
+      tags:
+        - Payments
+      summary: Completes payments for an order and marks it as closed. Should be called when all payments are made to close the order.
+      operationId: completePayments
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                  format: uuid
+              required:
+                - orderId
+      responses:
+        "200":
+          description: Order closed successfully
+        "400":
+          description: Failed to close the order
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Payment not found
+
+  /v1/payments/status:
+    get:
+      tags:
+        - Payments
+      summary: Get payment status for all order items.
+      operationId: getOrderPaymentsStatus
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: orderId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Returns Payments status for an Order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentStatus:
+                    $ref: "#/components/schemas/OrderPaymentStatus"
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Order not found
+
+  /v1/payments/webhooks/checkout-session-completed:
+    post:
+      tags:
+        - Payments
+      summary: Webhook that is called by PSP when Customer completes checkout session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionId:
+                  type: string
+                amount:
+                  type: number
+                  format: float
+                  example: 5.99
+                currency:
+                  $ref: "#/components/schemas/Currency"
+      responses:
+        "200":
+          description: Event received successfully
+
+  /v1/users:
+    post:
+      tags:
+        - Users
+      summary: Create new User
+      operationId: createUser
+      security:
+        - oauth2Auth:
+            - itAdministrator
+            - businessOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+        required: true
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid input
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+  /v1/users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get User Details
+      operationId: getUser
+      security:
+        - oauth2Auth:
+            - itAdministrator
+            - businessOwner
+      parameters:
+        - name: userId
+          in: path
+          description: Id of the User to retrieve
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: User with the provided userId exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+        "404":
+          description: User with the provided userId does not exist
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+    patch:
+      tags:
+        - Users
+      summary: Update User Details
+      operationId: updateUser
+      security:
+        - oauth2Auth:
+            - itAdministrator
+            - businessOwner
+      parameters:
+        - name: userId
+          in: path
+          description: Id of the User to modify
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModifyUserRequest"
+        required: true
+      responses:
+        "200":
+          description: User modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid input
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+    delete:
+      tags:
+        - Users
+      summary: Delete User
+      operationId: deleteUser
+      security:
+        - oauth2Auth:
+            - itAdministrator
+            - businessOwner
+      parameters:
+        - name: userId
+          in: path
+          description: Id of the User to modify
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: User deleted successfully
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+  /v1/reservations:
+    post:
+      tags:
+        - Reservations
+      summary: Create new reservation
+      operationId: createReservation
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReservationRequest"
+        required: true
+      responses:
+        "201":
+          description: Reservation created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reservation:
+                    $ref: "#/components/schemas/Reservation"
+                required:
+                  - reservation
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Related entity not found
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - Reservations
+      summary: Get reservations
+      operationId: getReservations
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns Reservations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Reservation"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Related entity not found
+        "422":
+          description: Validation exception
+
+  /v1/reservations/{reservationId}:
+    patch:
+      tags:
+        - Reservations
+      summary: Modify active reservation
+      operationId: modifyReservation
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: reservationId
+          in: path
+          description: Id of the Reservation to modify
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModifyReservationRequest"
+        required: true
+      responses:
+        "200":
+          description: Reservation modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reservation:
+                    $ref: "#/components/schemas/Reservation"
+                required:
+                  - reservation
+        "400":
+          description: Reservation is inactive as the event has already occurred
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "404":
+          description: Reservation or related entity not found
+        "422":
+          description: Validation exception
+
+    delete:
+      tags:
+        - Reservations
+      summary: Delete reservation
+      operationId: deleteReservation
+      security:
+        - oauth2Auth:
+            - businessOwner
+            - employee
+      parameters:
+        - name: reservationId
+          in: path
+          description: Id of the Reservation to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Reservation deleted successfully
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+  /v1/businesses:
+    post:
+      tags:
+        - Businesses
+      summary: Create new Business
+      operationId: createBusiness
+      security:
+        - oauth2Auth:
+            - itAdministrator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBusinessRequest"
+        required: true
+      responses:
+        "201":
+          description: Business
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  business:
+                    $ref: "#/components/schemas/Business"
+        "400":
+          description: Invalid input
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+    get:
+      tags:
+        - Businesses
+      summary: Get Businesses
+      operationId: get-businesses
+      security:
+        - oauth2Auth:
+            - itAdministrator
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Returns Businesses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: number
+                    format: integer
+                    example: 1
+                  totalPages:
+                    type: number
+                    format: integer
+                    example: 1
+                  currentPage:
+                    type: number
+                    format: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Business"
+                required:
+                  - totalItems
+                  - totalPages
+                  - currentPage
+                  - items
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+
+  /v1/businesses/{businessId}:
+    get:
+      tags:
+        - Businesses
+      summary: Get Business Details
+      operationId: getBusiness
+      security:
+        - oauth2Auth:
+            - itAdministrator
+            - businessOwner
+      parameters:
+        - name: businessId
+          in: path
+          description: Id of the Business to retrieve
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: User with the provided userId exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  business:
+                    $ref: "#/components/schemas/Business"
+        "404":
+          description: User with the provided userId does not exist
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+    patch:
+      tags:
+        - Businesses
+      summary: Update Business Details
+      operationId: updateBusiness
+      security:
+        - oauth2Auth:
+            - itAdministrator
+            - businessOwner
+      parameters:
+        - name: businessId
+          in: path
+          description: Id of the Business to modify
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModifyBusinessRequest"
+        required: true
+      responses:
+        "200":
+          description: Business modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  business:
+                    $ref: "#/components/schemas/Business"
+        "400":
+          description: Invalid input
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+    delete:
+      tags:
+        - Businesses
+      summary: Delete Business
+      operationId: deleteBusiness
+      security:
+        - oauth2Auth:
+            - itAdministrator
+            - businessOwner
+      parameters:
+        - name: businessId
+          in: path
+          description: Id of the Business to modify
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Business deleted successfully
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationErrorResponse"
+        "422":
+          description: Validation exception
+
+components:
+  securitySchemes:
+    oauth2Auth:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            employee: "Basic rights for employees."
+            businessOwner: "All rights of employee, plus additional business management privileges."
+            itAdministrator: "All rights of businessowner and employee, plus IT administration privileges."
+
+  schemas:
+    CreateTaxRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Groceries"
+        ratePercentage:
+          type: number
+          format: double
+          example: 1.5
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - title
+        - ratePercentage
+        - businessId
+
+    UpdateTaxRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: null
+        ratePercentage:
+          type: number
+          format: double
+          example: 2
+
+    Tax:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "483a699d-19e8-4da2-b364-b4817fd15824"
+        title:
+          type: string
+          example: "Groceries"
+        ratePercentage:
+          type: number
+          format: double
+          example: 1.5
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - id
+        - title
+        - ratePercentage
+        - businessId
+
+    PricingStrategy:
+      type: string
+      enum:
+        - percentage
+        - fixedAmount
+      example: percentage
+
+    Currency:
+      type: string
+      enum:
+        - EUR
+      example: EUR
+
+    CreateServiceChargeRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Mandatory customer service fee"
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        value:
+          type: number
+          format: double
+          example: 10
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/Currency"
+          example: null
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - title
+        - valueType
+        - value
+        - businessId
+
+    UpdateServiceChargeRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: null
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        value:
+          type: number
+          format: double
+          example: 30
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/Currency"
+          example: null
+
+    ServiceCharge:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "de86cc92-8807-4a72-84d5-c6f5fdb6e5fe"
+        title:
+          type: string
+          example: "Mandatory customer service fee"
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        value:
+          type: number
+          format: double
+          example: 10
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/Currency"
+          example: null
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - id
+        - title
+        - valueType
+        - value
+        - businessId
+
+    DiscountTarget:
+      type: string
+      enum:
+        - all
+        - entitled
+      example: entitled
+
+    DiscountType:
+      type: string
+      enum:
+        - predefined
+        - flexible
+      example: flexible
+
+    CreateDiscountRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "Autumn30"
+        value:
+          type: number
+          format: double
+          example: 30
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/Currency"
+          example: null
+        validFrom:
+          type: string
+          format: date-time
+          example: "2024-09-26T00:00:00Z"
+        validUntil:
+          type: string
+          format: date-time
+          example: "2024-10-01T00:00:00Z"
+        target:
+          $ref: "#/components/schemas/DiscountTarget"
+        entitledProductIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: "65ac4bb5-37f6-4858-b88d-8a7bf7ff8d32"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+        usageCountLimit:
+          type: number
+          format: integer
+          example: null
+      required:
+        - valueType
+        - value
+        - validFrom
+        - validUntil
+        - target
+        - businessId
+
+    UpdateDiscountRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          example: null
+        value:
+          type: number
+          format: double
+          example: 20
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/Currency"
+          example: null
+        validFrom:
+          type: string
+          format: date-time
+          example: null
+        validUntil:
+          type: string
+          format: date-time
+          example: null
+        target:
+          $ref: "#/components/schemas/DiscountTarget"
+        entitledProductIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: null
+
+    Discount:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "03b10a97-825b-483d-93d0-9c4e59ce6e92"
+        code:
+          type: string
+          example: "Autumn30"
+        value:
+          type: number
+          format: double
+          example: 30
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/Currency"
+          example: null
+        validFrom:
+          type: string
+          format: date-time
+          example: "2024-09-26T00:00:00Z"
+        validUntil:
+          type: string
+          format: date-time
+          example: "2024-10-01T00:00:00Z"
+        target:
+          $ref: "#/components/schemas/DiscountTarget"
+        entitledProductIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: "65ac4bb5-37f6-4858-b88d-8a7bf7ff8d32"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+        usageCount:
+          type: number
+          format: integer
+          example: 0
+        usageCountLimit:
+          type: number
+          format: integer
+          example: null
+      required:
+        - id
+        - valueType
+        - value
+        - validFrom
+        - validUntil
+        - target
+        - businessId
+        - usageCount
+
+    SelectedDiscount:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/DiscountType"
+        code:
+          type: string
+          example: null
+        value:
+          type: number
+          format: double
+          example: 10
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/Currency"
+          example: null
+      required:
+        - type
+        - value
+        - valueType
+
+    SelectedProduct:
+      type: object
+      properties:
+        productId:
+          type: string
+          format: uuid
+          example: "a059f4ab-0e1c-41e1-ac6f-ca87ebe8cc71"
+        quantity:
+          type: integer
+          format: int32
+          example: 2
+        selectedModifierIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: "1ccaada4-2808-46fb-b810-68ebf7c0c901"
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SelectedDiscount"
+
+      required:
+        - productId
+        - quantity
+        - selectedModifierIds
+        - discounts
+
+    CreateOrderRequest:
+      type: object
+      properties:
+        reservationId:
+          type: string
+          format: uuid
+          example: null
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SelectedProduct"
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SelectedDiscount"
+          example: []
+        serviceChargeIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: "7eb4d7a4-8c93-4050-88d4-8011a4e8633c"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - items
+        - discounts
+        - serviceChargeIds
+        - businessId
+
+    ModifyOrderRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SelectedProduct"
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SelectedDiscount"
+          example: null
+        serviceChargeIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: null
+        status:
+          allOf:
+            - $ref: "#/components/schemas/ModifiedOrderStatus"
+          example: null
+
+    AppliedDiscount:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "9ab5fef2-c4c5-4fcf-8dab-d9d327a9e0ef"
+        appliedByEmployeeId:
+          type: string
+          format: uuid
+          example: "3296eee3-8f7d-4d59-80dc-86faccc90e81"
+        type:
+          $ref: "#/components/schemas/DiscountType"
+        code:
+          type: string
+          example: null
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        value:
+          type: number
+          format: double
+          example: 10
+        savings:
+          type: number
+          format: double
+          example: 0.56
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/Currency"
+      required:
+        - id
+        - appliedByEmployeeId
+        - type
+        - value
+        - valueType
+        - currency
+        - savings
+
+    TaxLine:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "fc1b0f18-58b0-4a0e-bee1-288dff2301a7"
+        title:
+          type: string
+          example: "Grocery tax"
+        ratePercentage:
+          type: number
+          format: double
+          example: 1.5
+        amount:
+          type: number
+          format: double
+          example: 0.08
+        currency:
+          $ref: "#/components/schemas/Currency"
+      required:
+        - id
+        - title
+        - ratePercentage
+        - amount
+        - currency
+
+    Money:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 2.99
+        currency:
+          $ref: "#/components/schemas/Currency"
+      required:
+        - amount
+        - currency
+
+    CreateProductRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Black Coffee"
+        quantityInStock:
+          type: number
+          format: integer
+          example: 50
+        price:
+          $ref: "#/components/schemas/Money"
+        compatibleModifierIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: "d7a17341-b825-4677-9fb2-66a18f4a701e"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - title
+        - quantityInStock
+        - price
+        - compatibleModifierIds
+        - businessId
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: null
+        quantityInStock:
+          type: number
+          format: integer
+          example: null
+        price:
+          $ref: "#/components/schemas/Money"
+        compatibleModifierIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: null
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "5b104512-8875-40bd-b986-c848486b53aa"
+        title:
+          type: string
+          example: "Black Coffee"
+        quantityInStock:
+          type: number
+          format: integer
+          example: 50
+        price:
+          $ref: "#/components/schemas/Money"
+        compatibleModifiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductModifier"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - id
+        - title
+        - quantityInStock
+        - price
+        - compatibleModifiers
+        - businessId
+
+    CreateProductModifierRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Vegan milk"
+        quantityInStock:
+          type: number
+          format: integer
+          example: 23
+        price:
+          $ref: "#/components/schemas/Money"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - title
+        - quantityInStock
+        - price
+        - businessId
+
+    UpdateProductModifierRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: null
+        quantityInStock:
+          type: number
+          format: integer
+          example: null
+        price:
+          $ref: "#/components/schemas/Money"
+
+    ProductModifier:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "d7a17341-b825-4677-9fb2-66a18f4a701e"
+        title:
+          type: string
+          example: "Vegan milk"
+        quantityInStock:
+          type: number
+          format: integer
+          example: 23
+        price:
+          $ref: "#/components/schemas/Money"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - id
+        - title
+        - quantityInStock
+        - price
+        - businessId
+
+    OrderItemModifier:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "1ccaada4-2808-46fb-b810-68ebf7c0c901"
+        title:
+          type: string
+          example: "Vegan milk"
+        price:
+          type: number
+          format: double
+          example: 0.3
+        currency:
+          $ref: "#/components/schemas/Currency"
+      required:
+        - id
+        - title
+        - price
+        - currency
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "60212318-5a29-45c9-b394-91164ce8149d"
+        productId:
+          type: string
+          format: uuid
+          example: "1d1e1447-46c7-49b3-beb5-62f590aceca5"
+        title:
+          type: string
+          example: "Coffee"
+        quantity:
+          type: integer
+          format: int32
+          example: 2
+        unitPrice:
+          type: object
+          properties:
+            base:
+              type: number
+              format: double
+              example: 2.5
+            withModifiers:
+              type: number
+              format: double
+              example: 2.8
+          required:
+            - base
+            - withModifiers
+        originalPrice:
+          type: number
+          format: double
+          example: 5.6
+        discountsTotal:
+          type: number
+          format: double
+          example: 0.56
+        subtotalPrice:
+          type: number
+          format: double
+          example: 5.04
+        taxTotal:
+          type: number
+          format: double
+          example: 0.08
+        finalPrice:
+          type: number
+          format: double
+          example: 5.12
+        currency:
+          type: string
+          enum:
+            - EUR
+          example: EUR
+        modifiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemModifier"
+        taxLines:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaxLine"
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppliedDiscount"
+      required:
+        - id
+        - productId
+        - title
+        - quantity
+        - unitPrice
+        - originalPrice
+        - discountsTotal
+        - subtotalPrice
+        - taxTotal
+        - finalPrice
+        - currency
+        - modifiers
+        - taxLines
+        - discounts
+
+    AppliedServiceCharge:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "30613e1d-d6ed-4fd2-9cca-80b186d46079"
+        chargedByEmployeeId:
+          type: string
+          format: uuid
+          example: "3296eee3-8f7d-4d59-80dc-86faccc90e81"
+        title:
+          type: string
+          example: "Mandatory service charge"
+        valueType:
+          $ref: "#/components/schemas/PricingStrategy"
+        value:
+          type: number
+          format: double
+          example: 10
+        amount:
+          type: number
+          format: double
+          example: 0.51
+        currency:
+          $ref: "#/components/schemas/Currency"
+      required:
+        - id
+        - chargedByEmployeeId
+        - title
+        - valueType
+        - value
+        - currency
+        - amount
+
+    OrderStatus:
+      type: string
+      enum:
+        - new
+        - inProgress
+        - closed
+        - canceled
+        - returned
+      example: new
+
+    ModifiedOrderStatus:
+      type: string
+      enum:
+        - new
+        - inProgress
+        - canceled
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "04f618e3-fdb6-490e-ba00-52fd5db4a5f0"
+        employeeId:
+          type: string
+          format: uuid
+          example: "3296eee3-8f7d-4d59-80dc-86faccc90e81"
+        reservationId:
+          type: string
+          format: uuid
+          example: null
+        status:
+          $ref: "#/components/schemas/OrderStatus"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-09-28T12:54:02Z"
+        closedAt:
+          type: string
+          format: date-time
+          example: null
+        originalPrice:
+          type: number
+          format: double
+          example: 5.6
+        discountsTotal:
+          type: number
+          format: double
+          example: 0.56
+        subtotalPrice:
+          type: number
+          format: double
+          example: 5.04
+        taxTotal:
+          type: number
+          format: double
+          example: 0.08
+        serviceChargesTotal:
+          type: number
+          format: double
+          example: 0.51
+        finalPrice:
+          type: number
+          format: double
+          example: 5.63
+        currency:
+          $ref: "#/components/schemas/Currency"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppliedDiscount"
+          example: []
+        serviceCharges:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppliedServiceCharge"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - id
+        - employeeId
+        - status
+        - createdAt
+        - originalPrice
+        - discountsTotal
+        - subtotalPrice
+        - taxTotal
+        - serviceChargesTotal
+        - finalPrice
+        - currency
+        - items
+        - discounts
+        - serviceCharges
+        - businessId
+
+    OrderReceipt:
+      type: object
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          example: "04f618e3-fdb6-490e-ba00-52fd5db4a5f0"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-09-28T12:54:02Z"
+        originalPrice:
+          type: number
+          format: double
+          example: 5.6
+        discountsTotal:
+          type: number
+          format: double
+          example: 0.56
+        subtotalPrice:
+          type: number
+          format: double
+          example: 5.04
+        taxTotal:
+          type: number
+          format: double
+          example: 0.08
+        serviceChargesTotal:
+          type: number
+          format: double
+          example: 0.51
+        finalPrice:
+          type: number
+          format: double
+          example: 5.63
+        currency:
+          $ref: "#/components/schemas/Currency"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppliedDiscount"
+          example: []
+        serviceCharges:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppliedServiceCharge"
+      required:
+        - orderId
+        - createdAt
+        - originalPrice
+        - discountsTotal
+        - subtotalPrice
+        - taxTotal
+        - serviceChargesTotal
+        - finalPrice
+        - currency
+        - items
+        - discounts
+        - serviceCharges
+
+    ModifyReservationRequest:
+      type: object
+      properties:
+        reservationStartAt:
+          type: string
+          format: date-time
+          example: "2024-09-28T12:00:00Z"
+        reservationEndAt:
+          type: string
+          format: date-time
+          example: "2024-09-28T14:00:00Z"
+        customer:
+          $ref: "#/components/schemas/Customer"
+
+    Customer:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        phoneNumber:
+          type: string
+          pattern: "^\\+[1-9]\\d{1,14}$"
+          example: "+37012345678"
+      required:
+        - firstName
+        - lastName
+        - phoneNumber
+
+    CreateReservationRequest:
+      type: object
+      properties:
+        customer:
+          $ref: "#/components/schemas/Customer"
+        reservationStartAt:
+          type: string
+          format: date-time
+          example: "2024-09-28T12:00:00Z"
+        reservationEndAt:
+          type: string
+          format: date-time
+          example: "2024-09-28T14:00:00Z"
+        serviceChargeIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: "7eb4d7a4-8c93-4050-88d4-8011a4e8633c"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - id
+        - customer
+        - createdByEmployeeId
+        - createdAt
+        - reservationStartAt
+        - reservationEndAt
+        - businessId
+    Reservation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "5dc70220-c65c-4f4b-a348-e22353310c00"
+        customer:
+          $ref: "#/components/schemas/Customer"
+        createdByEmployeeId:
+          type: string
+          format: uuid
+          example: "952f3fb7-4736-4342-8bfc-c6ac9721d749"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-08-28T12:54:02Z"
+        reservationStartAt:
+          type: string
+          format: date-time
+          example: "2024-09-28T12:00:00Z"
+        reservationEndAt:
+          type: string
+          format: date-time
+          example: "2024-09-28T14:00:00Z"
+        businessId:
+          type: string
+          format: uuid
+          example: "73c70f19-3e2a-4f43-a26e-cc3bd4b05867"
+      required:
+        - id
+        - customer
+        - createdByEmployeeId
+        - createdAt
+        - reservationStartAt
+        - reservationEndAt
+        - businessId
+
+    CreateTipRequest:
+      type: object
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          example: "5dc70220-c65c-4f4b-a348-e22353310c00"
+        money:
+          $ref: "#/components/schemas/Money"
+      required:
+        - orderId
+        - money
+
+    Tip:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3ae12dfb-3a49-4d92-9202-d555678e3c99"
+        orderId:
+          type: string
+          format: uuid
+          example: "5dc70220-c65c-4f4b-a348-e22353310c00"
+        employeeId:
+          type: string
+          format: uuid
+          example: "952f3fb7-4736-4342-8bfc-c6ac9721d749"
+        money:
+          $ref: "#/components/schemas/Money"
+      required:
+        - id
+        - orderId
+        - employeeId
+        - money
+
+    UserRole:
+      type: string
+      description: "The role assigned to a user"
+      enum:
+        - Employee
+        - BusinessOwner
+        - ITAdministrator
+      example: "Employee"
+
+    CreateUserRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+          example: "Kanye West"
+        phoneNumber:
+          type: string
+          pattern: "^\\+[1-9]\\d{1,14}$"
+          example: "+37012345678"
+        emailAddress:
+          type: string
+          format: email
+          example: "kanye@west.com"
+        businessId:
+          type: string
+          format: uuid
+          example: "1d03a4fa-a24d-42d7-b678-c962da98bac7"
+        role:
+          $ref: "#/components/schemas/UserRole"
+      required:
+        - fullName
+        - phoneNumber
+        - emailAddress
+        - role
+
+    CreateBusinessRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Busy business"
+        ownerId:
+          type: string
+          format: uuid
+          example: "5dc70220-c65c-4f4b-a348-e22353310c00"
+        address:
+          type: string
+          example: "Didlaukio g. 47, Vilnius, 08303 Vilniaus m. sav."
+        phoneNumber:
+          type: string
+          pattern: "^\\+[1-9]\\d{1,14}$"
+          example: "+37012345678"
+        emailAddress:
+          type: string
+          format: email
+          example: "kanye@west.com"
+      required:
+        - name
+        - ownerId
+        - address
+        - phoneNumber
+        - emailAddress
+
+    Business:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "1d03a4fa-a24d-42d7-b678-c962da98bac7"
+        name:
+          type: string
+          example: "Busy business"
+        address:
+          type: string
+          example: "Didlaukio g. 47, Vilnius, 08303 Vilniaus m. sav."
+        phoneNumber:
+          type: string
+          pattern: "^\\+[1-9]\\d{1,14}$"
+          example: "+37012345678"
+        emailAddress:
+          type: string
+          format: email
+          example: "kanye@west.com"
+        ownerId:
+          type: string
+          format: uuid
+          example: "1d03a4fa-a24d-42d7-b678-c962da98bac7"
+      required:
+        - id
+        - name
+        - address
+        - phoneNumber
+        - email
+        - ownerId
+
+    ModifyUserRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+          example: "Kanye West"
+        phoneNumber:
+          type: string
+          pattern: "^\\+[1-9]\\d{1,14}$"
+          example: "+37012345678"
+        email:
+          type: string
+          format: email
+          example: "kanye@west.com"
+        role:
+          $ref: "#/components/schemas/UserRole"
+
+    ModifyBusinessRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Busy Business"
+        address:
+          type: string
+          example: "Didlaukio g. 47, Vilnius, 08303 Vilniaus m. sav."
+        phoneNumber:
+          type: string
+          pattern: "^\\+[1-9]\\d{1,14}$"
+          example: "+37012345678"
+        email:
+          type: string
+          format: email
+          example: "kanye@west.com"
+        ownerId:
+          type: string
+          format: uuid
+          example: "1d03a4fa-a24d-42d7-b678-c962da98bac7"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "1d03a4fa-a24d-42d7-b678-c962da98bac7"
+        fullName:
+          type: string
+          example: "Kanye West"
+        phoneNumber:
+          type: string
+          pattern: "^\\+[1-9]\\d{1,14}$"
+          example: "+37012345678"
+        email:
+          type: string
+          format: email
+          example: "kanye@west.com"
+        businessId:
+          type: string
+          format: uuid
+          example: "1d03a4fa-a24d-42d7-b678-c962da98bac7"
+        role:
+          $ref: "#/components/schemas/UserRole"
+      required:
+        - id
+        - fullName
+        - phoneNumber
+        - email
+        - role
+
+    AuthorizationErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          example: "Unauthorized"
+        errorMessage:
+          type: string
+          example: "You are not authorized to perform this action. Please contact your IT administrator for the necessary permissions."
+
+    PaymentOrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "5dc70220-c65c-4f4b-a348-e22353310c00"
+        quantity:
+          type: number
+          format: integer
+          example: 2
+      required:
+        - id
+        - quantity
+
+    CreateOfflinePaymentRequest:
+      type: object
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          example: 89d794df-6bfb-480c-95f3-427941d9b5e8
+        orderItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentOrderItem"
+      required:
+        - orderId
+        - orderItems
+
+    CreateOnlinePaymentRequest:
+      type: object
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          example: "89d794df-6bfb-480c-95f3-427941d9b5e8"
+        orderItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentOrderItem"
+      required:
+        - orderId
+        - orderItems
+
+    OnlinePaymentCheckoutSession:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+          example: "020c58f6-1f8d-4873-aacb-4d20607f8be5"
+        checkoutUrl:
+          type: string
+          example: "https://www.clickheretocompletecheckout.com/020c58f6-1f8d-4873-aacb-4d20607f8be5"
+      required:
+        - paymentId
+        - checkoutUrl
+
+    OrderPaymentStatus:
+      type: object
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          example: "020c58f6-1f8d-4873-aacb-4d20607f8be5"
+        orderItems:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: "5dc70220-c65c-4f4b-a348-e22353310c00"
+              quantity:
+                type: number
+                format: integer
+                example: 2
+              paymentId:
+                type: string
+                format: uuid
+                example: null
+              paymentStatus:
+                allOf:
+                  - $ref: "#/components/schemas/PaymentStatus"
+                example: null
+            required:
+              - id
+              - quantity
+      required:
+        - orderId
+        - orderItems
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "89d794df-6bfb-480c-95f3-427941d9b5e0"
+        orderId:
+          type: string
+          format: uuid
+          example: "89d794df-6bfb-480c-95f3-427941d9b5e8"
+        orderItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentOrderItem"
+        amount:
+          type: number
+          format: float
+          example: 20.00
+        currency:
+          $ref: "#/components/schemas/Currency"
+        paymentMethod:
+          $ref: "#/components/schemas/PaymentMethod"
+        paymentStatus:
+          allOf:
+            - $ref: "#/components/schemas/PaymentStatus"
+          example: succeeded
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp of when the payment was made
+      required:
+        - orderId
+        - amount
+        - paymentMethod
+
+    Refund:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Refund ID
+        paymentId:
+          type: string
+          format: uuid
+          description: The ID of the payment being refunded
+        amount:
+          type: number
+          format: float
+          description: Amount to be refunded
+          example: 5.99
+        currency:
+          $ref: "#/components/schemas/Currency"
+        refundStatus:
+          $ref: "#/components/schemas/RefundStatus"
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the refund was created
+      required:
+        - id
+        - paymentId
+        - amount
+        - currency
+        - refundStatus
+        - createdAt
+
+    PaymentMethod:
+      type: string
+      enum:
+        - cash
+        - card
+      example: cash
+
+    PaymentStatus:
+      type: string
+      enum:
+        - pending
+        - succeeded
+        - failed
+        - refunded
+        - canceled
+      example: pending
+
+    RefundStatus:
+      type: string
+      enum:
+        - pending
+        - succeeded
+        - failed
+      example: pending

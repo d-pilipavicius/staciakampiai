@@ -27,7 +27,13 @@ public class DiscountsController {
 
     @GetMapping
     public ResponseEntity<GetDiscountsDTO> getDiscounts (@NotNull @RequestParam int pageNumber, @NotNull @RequestParam int pageSize, @NotNull @RequestParam UUID businessId){
-        GetDiscountsDTO discountsDTO = discountAppService.getDiscountsByBusinessId(businessId, pageNumber, pageSize);
+        GetDiscountsDTO discountsDTO = discountAppService.getDiscountsByBusinessId(businessId, pageNumber, pageSize, false);
+        return ResponseEntity.status(HttpStatus.CREATED).body(discountsDTO);
+    }
+
+    @GetMapping("/giftcards")
+    public ResponseEntity<GetDiscountsDTO> getGiftcards(@NotNull @RequestParam int pageNumber, @NotNull @RequestParam int pageSize, @NotNull @RequestParam UUID businessId){
+        GetDiscountsDTO discountsDTO = discountAppService.getDiscountsByBusinessId(businessId, pageNumber, pageSize, true);
         return ResponseEntity.status(HttpStatus.CREATED).body(discountsDTO);
     }
 
@@ -36,6 +42,12 @@ public class DiscountsController {
                                                        @NotNull @Valid @RequestBody PutDiscountDTO putDiscountDTO){
         DiscountDTO updatedDiscountDTO = discountAppService.updateDiscount(discountId, employeeId, putDiscountDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedDiscountDTO);
+    }
+
+    @PutMapping("/{discountId}/increaseUsage")
+    public ResponseEntity<DiscountDTO> increaseUsageCount(@NotNull @PathVariable UUID discountId){
+        DiscountDTO increasedUsageDiscountDTO = discountAppService.updateUsage(discountId);
+        return ResponseEntity.status(HttpStatus.OK).body(increasedUsageDiscountDTO);
     }
 
     @DeleteMapping("/{discountId}")
