@@ -125,10 +125,10 @@ public class OrderService {
         orderItems.forEach(orderItem -> orderValidator.isValidOrderItem(orderId, orderItem.getOrderItemId()));
     }
 
-    public BigDecimal calculateTotalPrice(UUID orderId) {
-        List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
-        return orderItems.stream()
-                .map(OrderItem::getUnitPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    public BigDecimal calculateItemPrice(UUID orderItemId, int quantity) {
+        OrderItem item = orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new NotFoundException("Order item not found"));
+        return item.getUnitPrice().multiply(BigDecimal.valueOf(quantity));
     }
+
 }

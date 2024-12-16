@@ -1,6 +1,7 @@
 package com.example.demo.payments.API.Endpoints;
 
 import com.example.demo.payments.API.DTOs.*;
+import com.example.demo.payments.Domain.Entities.Enums.PaymentMethod;
 import com.example.demo.payments.Helpers.Mappers;
 import com.example.demo.payments.Domain.Entities.Refund;
 import com.example.demo.payments.ApplicationServices.PaymentApplicationService;
@@ -39,13 +40,13 @@ public class PaymentController {
 
     @PostMapping("/card")
     public ResponseEntity<Object> createCardPayment(@RequestBody CreatePaymentDTO request) {
-        Object paymentResponse = paymentApplicationService.createCardPayment(request);
+        Object paymentResponse = paymentApplicationService.createPayment(request, PaymentMethod.CARD);
         return ResponseEntity.status(201).body(Map.of("checkoutSession", paymentResponse));
     }
 
     @PostMapping("/cash")
     public ResponseEntity<Object> createCashPayment(@RequestBody CreatePaymentDTO request) {
-        Object paymentResponse = paymentApplicationService.createCashPayment(request);
+        Object paymentResponse = paymentApplicationService.createPayment(request, PaymentMethod.CASH);
         return ResponseEntity.status(201).body(Map.of("payment", paymentResponse));
     }
 

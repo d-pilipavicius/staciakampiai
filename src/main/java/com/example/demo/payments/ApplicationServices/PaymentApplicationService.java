@@ -1,10 +1,6 @@
 package com.example.demo.payments.ApplicationServices;
 
 import com.example.demo.OrderComponent.ApplicationServices.OrderApplicationService;
-import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
-import com.example.demo.OrderComponent.Helpers.OrderHelper;
-import com.example.demo.OrderComponent.Repositories.IOrderItemModifierRepository;
-import com.example.demo.OrderComponent.Repositories.IOrderItemRepository;
 import com.example.demo.payments.API.DTOs.*;
 import com.example.demo.payments.Domain.Entities.Refund;
 import com.example.demo.payments.Domain.Entities.Tip;
@@ -24,24 +20,18 @@ public class PaymentApplicationService {
     private final OrderApplicationService orderApplicationService;
     private PaymentService paymentService;
 
-    public Object createCardPayment(CreatePaymentDTO request) {
+    public Object createPayment(CreatePaymentDTO request, PaymentMethod paymentMethod) {
         orderApplicationService.validateOrder(request.getOrderId());
-        orderApplicationService.validateOrderItems(request.getOrderId(), request.getOrderItems());
 
-        BigDecimal totalPrice = orderApplicationService.calculateTotalPrice(request.getOrderId());
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (OrderItemPaymentDTO orderItem : request.getOrderItems()) {
+            BigDecimal itemPrice = orderApplicationService.calculateItemPrice(orderItem.getOrderItemId(), orderItem.getQuantity());
+            totalPrice = totalPrice.add(itemPrice);
+        }
+
         request.setAmount(totalPrice);
 
-        return paymentService.createPaymentsForOrderItems(request, PaymentMethod.CARD);
-    }
-
-    public Object createCashPayment(CreatePaymentDTO request) {
-        orderApplicationService.validateOrder(request.getOrderId());
-        orderApplicationService.validateOrderItems(request.getOrderId(), request.getOrderItems());
-
-        BigDecimal totalPrice = orderApplicationService.calculateTotalPrice(request.getOrderId());
-        request.setAmount(totalPrice);
-
-        return paymentService.createPaymentsForOrderItems(request, PaymentMethod.CASH);
+        return paymentService.createPaymentsForOrderItems(request, paymentMethod);
     }
 
     public Refund initiateRefund(UUID paymentId) {

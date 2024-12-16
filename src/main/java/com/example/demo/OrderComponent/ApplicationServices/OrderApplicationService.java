@@ -89,7 +89,7 @@ public class OrderApplicationService {
         orderService.validateOrderItems(orderId, orderItems);
     }
 
-    public BigDecimal calculateTotalPrice(UUID orderId) {
-        return orderService.calculateTotalPrice(orderId);
+    public BigDecimal calculateItemPrice(UUID orderItemId, Integer quantity) {
+        return orderService.calculateItemPrice(orderItemId, quantity);
     }
 }
