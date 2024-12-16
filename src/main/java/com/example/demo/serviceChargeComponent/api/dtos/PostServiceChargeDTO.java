@@ -1,6 +1,6 @@
 package com.example.demo.serviceChargeComponent.api.dtos;
 
-import com.example.demo.helper.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +24,6 @@ public class PostServiceChargeDTO {
 
     @NotNull
     private final BigDecimal serviceChargeValue;
-
 
     private final Optional<Currency> currency;
 
