@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductDTO, ProductModifierDTO, PutProductDTO } from "../../../data/Responses";
+import { Currency, ProductDTO, ProductModifierDTO, PutProductDTO } from "../../../data/Responses";
 import CardComponent from "../../CardComponent";
 import DialogBox from "../../DialogBox";
 import { deleteProductAPI, deleteProductModifierAPI, getProductModifierAPI, postProductModifierAPI, putProductAPI } from "../../../data/APICalls";
@@ -51,7 +51,7 @@ function ProductCard({product, updatePage}: Props) {
       "title": title,
       "price": {
         "amount": Number(price),
-        "currency": "USD"
+        "currency": Currency.USD
       },
       "quantityInStock": Number(stock),
       "businessId": product.businessId

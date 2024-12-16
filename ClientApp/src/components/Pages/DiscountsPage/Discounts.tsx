@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
-import { Currency, DiscountTarget, GetDiscountsDTO, PricingStrategy } from "../../../data/Responses";
+import { Currency, DiscountTarget, GetDiscountsDTO, GetProductsDTO, PricingStrategy } from "../../../data/Responses";
 import DiscountCard from "./DiscountCard";
 import Pageination from "../../Pageination";
 import CardComponent from "../../CardComponent";
 import Popup from "../../Popup";
 
+const pageSize = 20;
+
 function Discounts() {
   const [page, setPage] = useState(1);
   const [discounts, setDiscounts] = useState<GetDiscountsDTO | null>(null);
+
   
   const[trigger, setTrigger] = useState(0);
   const[isVisible, setVisibility] = useState(false);
+  const[isProductsVisible, setProductsVisibility] = useState(false);
 
   //As a field add: usageCount      
   const[code, setCode] = useState("");
@@ -51,8 +55,19 @@ function Discounts() {
   }, [trigger]);
 
   const createDiscount = async () => {
+    //Add API
     setVisibility(false);
   }
+
+  const onPressCreate = () => {
+    setCode("");
+    setAmount("");
+    setValueType(PricingStrategy.FIXED_AMOUNT);
+    setValidFrom(""); setValidUntil("");
+    setTarget(DiscountTarget.All);
+    entitledProducts.length = 0;
+    setUsageCountLimit("");
+  } 
 
   /* 
   const entitledProducts = [];
@@ -85,8 +100,9 @@ function Discounts() {
           <input value={validUntil} onChange={(event) => setValidUntil(event.target.value)} type="date" id="dateTo"/>
         </div>
         <div className="form-check">
-          <label className="form-check-label" htmlFor="checkAll">Discount for all products:</label>
-          <input className="form-check-input" type="checkbox" id="checkAll" checked={target==DiscountTarget.All} onClick={() => target == DiscountTarget.All ? DiscountTarget.Entitled : DiscountTarget.All}/>
+          <label className="form-check-label" htmlFor="checkAll">Discount all products</label>
+          <input className="form-check-input" type="checkbox" id="checkAll" checked={target==DiscountTarget.All} onClick={() => setTarget(target == DiscountTarget.All ? DiscountTarget.Entitled : DiscountTarget.All)}/>
+          <button type="button" onClick={() => setProductsVisibility(true)} className="btn btn-primary" disabled={target==DiscountTarget.All}>Add Products</button>
         </div>
       </form>
       <button type="button" onClick={createDiscount} className="btn btn-success">Submit</button>
