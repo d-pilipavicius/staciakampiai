@@ -16,13 +16,13 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 public class PaymentResponseDTO {
-    private UUID id;
-    private UUID orderId;
-    private List<OrderItemPaymentDTO> orderItems;
-    private BigDecimal amount;
-    private Currency currency;
-    private PaymentMethod paymentMethod;
-    private PaymentStatus paymentStatus;
-    private LocalDateTime createdAt;
+    private final UUID id;
+    private final UUID orderId;
+    private final List<OrderItemPaymentDTO> orderItems;
+    private final BigDecimal amount;
+    private final Currency currency;
+    private final PaymentMethod paymentMethod;
+    private final PaymentStatus paymentStatus;
+    private final LocalDateTime createdAt;
 }
 

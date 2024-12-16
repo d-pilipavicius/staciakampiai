@@ -8,6 +8,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class CheckoutSessionDTO {
-    private UUID paymentId;
-    private String checkoutUrl;
+    private final UUID paymentId;
+    private final String checkoutUrl;
 }

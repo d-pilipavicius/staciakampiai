@@ -109,5 +109,14 @@ public class PaymentService {
         return ITipRepository.findByOrderId(orderId, pageable);
     }
 
+    public void processCheckoutSessionCompleted(CheckoutSessionCompletedDTO request) {
+        Payment payment = IPaymentRepository.findByTransactionId(request.getTransactionId())
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
+
+        payment.setStatus(PaymentStatus.SUCCEEDED);
+        IPaymentRepository.save(payment);
+    }
 }
 
