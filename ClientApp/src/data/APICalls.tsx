@@ -370,7 +370,7 @@ async function basicAPI(url: string, method: string, body: string | null) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: null
+    body: body
   })
 
   return response;
