@@ -35,9 +35,8 @@ public class PaymentService {
     private final StripeService stripeService;
 
     public Object createPaymentsForOrderItems(CreatePaymentDTO request, PaymentMethod paymentMethod) {
-        BigDecimal totalAmount = Helpers.calculateTotalAmount(request.getOrderItems());
-
-        long totalAmountInCents = totalAmount.multiply(BigDecimal.valueOf(100)).longValue();
+        BigDecimal totalAmount = request.getAmount();
+        long totalAmountInCents = request.getAmount().multiply(BigDecimal.valueOf(100)).longValue();
 
         Payment payment = Mappers.toPayment(request, totalAmount, paymentMethod);
         payment = IPaymentRepository.save(payment);
@@ -45,7 +44,7 @@ public class PaymentService {
         List<OrderItemPayment> orderItemPayments = Mappers.toOrderItemPayments(request, payment.getId());
         IOrderItemPaymentRepository.saveAll(orderItemPayments);
 
-        List<OrderItemPaymentDTO> orderItems = Mappers.mapToOrderItemPaymentDTOs(orderItemPayments, totalAmount);
+        List<OrderItemPaymentDTO> orderItems = Mappers.mapToOrderItemPaymentDTOs(orderItemPayments);
 
         if (paymentMethod == PaymentMethod.CASH) {
             return Mappers.toPaymentResponseDTO(payment, orderItems);

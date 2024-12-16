@@ -102,11 +102,10 @@ public class Mappers {
         return new CheckoutSessionDTO(payment.getId(), clientSecret);
     }
 
-    public static List<OrderItemPaymentDTO> mapToOrderItemPaymentDTOs(List<OrderItemPayment> orderItemPayments, BigDecimal totalAmount) {
+    public static List<OrderItemPaymentDTO> mapToOrderItemPaymentDTOs(List<OrderItemPayment> orderItemPayments) {
         return orderItemPayments.stream()
                 .map(item -> new OrderItemPaymentDTO(
                         item.getOrderItemId(),
-                        totalAmount,
                         item.getQuantity()))
                 .collect(Collectors.toList());
     }

@@ -14,7 +14,6 @@ import java.util.UUID;
 public class OrderItemPaymentDTO {
     @NotNull
     private UUID orderItemId;
-    private BigDecimal amount;
     @NotNull
     private Integer quantity;
 }

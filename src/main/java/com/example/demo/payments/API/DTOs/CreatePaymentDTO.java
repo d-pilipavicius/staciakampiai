@@ -5,12 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import com.example.demo.payments.Domain.Entities.Enums.Currency;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class CreatePaymentDTO {
@@ -20,6 +22,7 @@ public class CreatePaymentDTO {
     private UUID businessId;
     @NotNull
     private UUID employeeId;
+    @NotNull
     private BigDecimal amount;
     @NotNull
     private Currency currency;
