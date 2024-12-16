@@ -3,6 +3,8 @@ package com.example.demo.OrderComponent.API.Endpoints;
 import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.ApplicationServices.OrderApplicationService;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,7 @@ public class OrderController {
     private final OrderApplicationService orderApplicationService;
 
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO createOrderDTO) {
+    public ResponseEntity<OrderDTO> createOrder(@NotNull @RequestBody OrderDTO createOrderDTO) {
         OrderDTO response = orderApplicationService.createOrder(createOrderDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -39,20 +41,20 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDTO> getOrder(@PathVariable UUID orderId) {
+    public ResponseEntity<OrderDTO> getOrder(@NotNull @PathVariable UUID orderId) {
         OrderDTO orderDTO = orderApplicationService.getOrderById(orderId);
         return ResponseEntity.ok(orderDTO);
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<OrderDTO> modifyOrder(@PathVariable UUID orderId,
+    public ResponseEntity<OrderDTO> modifyOrder(@NotNull @PathVariable UUID orderId,
             @RequestBody ModifyOrderDTO modifyOrderRequest) {
         OrderDTO updatedOrder = orderApplicationService.modifyOrder(orderId, modifyOrderRequest);
         return ResponseEntity.ok(updatedOrder);
     }
 
     @GetMapping("/{orderId}/receipt")
-    public ResponseEntity<OrderDTO> getOrderReceipt(@PathVariable UUID orderId) {
+    public ResponseEntity<OrderDTO> getOrderReceipt(@NotNull @PathVariable UUID orderId) {
         OrderDTO orderReceipt = orderApplicationService.getOrderReceipt(orderId);
         return ResponseEntity.ok(orderReceipt);
     }
