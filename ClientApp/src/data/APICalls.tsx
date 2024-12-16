@@ -1,5 +1,5 @@
-import { BusinessDTO, GetProductModifiersDTO, GetProductsDTO, PostProductDTO, PostProductModifierDTO, ProductDTO, ProductModifierDTO, PutProductDTO, PutProductModifierDTO, UserDTO } from "./Responses";
-import { deleteProductLink, deleteProductModifierLink, getBusinessLink, getProductListLink, getProductModifierListLink, getUserLink, postProductLink, postProductModifierLink, putBusinessLink, putProductLink, putProductModifierLink } from "./Routes";
+import { BusinessDTO, DiscountDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
+import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
 
 export async function getMyBusiness(): Promise<BusinessDTO> {
   const businessId = localStorage.getItem("userBusinessId");
@@ -20,7 +20,11 @@ export async function getMyBusinessProducts(pageNumber: number, pageSize: number
 
 //Products
 export async function getBusinessProductsAPI(pageNumber: number, pageSize: number, businessId: string): Promise<GetProductsDTO> {
-  const response = await fetch(getProductListLink+`?pageNumber=${pageNumber-1}&pageSize=${pageSize}&businessId=${businessId}&employeeId=${localStorage.getItem("userId")}`);
+  const pageination = {
+    pageNumber: pageNumber,
+    pageSize: pageSize };
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await fetch(getProductListLink+addParam({pageination, employeeId, businessId}));
 
   if(!response.ok) {
     if(response.status == 500) {
@@ -41,18 +45,30 @@ export async function getBusinessProductsAPI(pageNumber: number, pageSize: numbe
 }
 
 export async function postProductAPI(product: PostProductDTO): Promise<ProductDTO> {
-  const response = await basicAPI(postProductLink+`?employeeId=${localStorage.getItem("userId")}`, "POST", JSON.stringify(product));
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(postProductLink+addParam({employeeId}), "POST", JSON.stringify(product));
 
-  return await response.json();
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+  
+  return response.json();
 }
 
 export async function putProductAPI(productId: string, product: PutProductDTO): Promise<ProductDTO> {
-  const response = await basicAPI(putProductLink(productId)+`?employeeId=${localStorage.getItem("userId")}`, "PUT", JSON.stringify(product));
-  return await response.json();
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(putProductLink(productId)+addParam({employeeId}), "PUT", JSON.stringify(product));
+  
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+  
+  return response.json();
 }
 
 export async function deleteProductAPI(productId: string) {
-  const response = await basicAPI(deleteProductLink(productId)+`?employeeId=${localStorage.getItem("userId")}`, "DELETE", "");
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(deleteProductLink(productId)+addParam({employeeId}), "DELETE", null);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -61,53 +77,267 @@ export async function deleteProductAPI(productId: string) {
 
 //Product modifiers
 export async function postProductModifierAPI(dto: PostProductModifierDTO): Promise<ProductModifierDTO> {
-  const response = await basicAPI(postProductModifierLink+`?employeeId=${localStorage.getItem("userId")}`, "POST", JSON.stringify(dto));
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(postProductModifierLink+addParam({employeeId}), "POST", JSON.stringify(dto));
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
   
-  return await response.json();
+  return response.json();
 }
 
 export async function getProductModifierAPI(pageNumber: number, pageSize: number, businessId: string): Promise<GetProductModifiersDTO> {
-  const response = await fetch(getProductModifierListLink+`?pageNumber=${pageNumber}&pageSize=${pageSize}&businessId=${businessId}&employeeId=${localStorage.getItem("userId")}`);
+  const pageination = {
+    pageNumber: pageNumber,
+    pageSize: pageSize };
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await fetch(getProductModifierListLink+addParam({businessId, employeeId, pageination}));
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
 
-  return await response.json();
+  return response.json();
 }
 
 export async function putProductModifierAPI(modifierId: string, dto: PutProductModifierDTO): Promise<ProductModifierDTO> {
-  const response = await basicAPI(putProductModifierLink(modifierId)+`?employeeId=${localStorage.getItem("userId")}`, "PUT", JSON.stringify(dto));
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(putProductModifierLink(modifierId)+addParam({employeeId}), "PUT", JSON.stringify(dto));
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
   
-  return await response.json();
+  return response.json();
 }
 
 export async function deleteProductModifierAPI(modifierId: string) {
-  const response = await basicAPI(deleteProductModifierLink(modifierId)+`?employeeId=${localStorage.getItem("userId")}`, "DELETE", "");
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(deleteProductModifierLink(modifierId)+addParam({employeeId}), "DELETE", null);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
 }
 
-//User
-export async function getUserAPI(id: string): Promise<UserDTO> {
-  const response = await fetch(getUserLink(id));
+//Discount / Giftcard
+export async function postDiscountAPI(dto: PostDiscountDTO): Promise<DiscountDTO> {
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(postDiscountLink+addParam({employeeId}), "POST", JSON.stringify(dto));
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
 
-  const data: UserDTO = await response.json();
-  return data;
+  return response.json();
+}
+
+export async function getDiscountsAPI(pageNumber: number, pageSize: number, businessId: string): Promise<DiscountDTO> {
+  const pageination = {
+    pageNumber: pageNumber,
+    pageSize: pageSize };
+  const response = await fetch(getDiscountsLink+addParam({pageination, businessId}));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function getGiftcardsAPI(pageNumber: number, pageSize: number, businessId: string): Promise<DiscountDTO> {
+  const pageination = {
+    pageNumber: pageNumber,
+    pageSize: pageSize };
+  const response = await fetch(getGiftcardsLink+addParam({pageination, businessId}));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function putDiscountAPI(discountId: string, dto: PutDiscountDTO): Promise<DiscountDTO>{
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(putDiscountLink(discountId)+addParam({employeeId}), "PUT", JSON.stringify(dto));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function useDiscountAPI(discountId: string): Promise<DiscountDTO> {
+  const response = await basicAPI(increaseDiscGiftUsageLink(discountId), "PUT", null);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function deleteDiscountAPI(discountId: string) {
+  const employeeId = localStorage.getItem("userId") ?? undefined;
+  const response = await basicAPI(deleteDiscountLink(discountId)+addParam({employeeId}), "DELETE", null);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+}
+
+//Tax
+export async function postTaxAPI(dto: PostTaxDTO): Promise<TaxDTO> {
+  const response = await basicAPI(postTaxLink, "POST", JSON.stringify(dto));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function getTaxesAPI(pageNumber: number, pageSize: number): Promise<GetTaxesDTO> {
+  const pageination = {
+    pageNumber: pageNumber,
+    pageSize: pageSize };
+  const response = await fetch(getTaxLink+addParam({pageination}));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function putTaxesAPI(taxId: string, dto: PutTaxDTO) {
+  const response = await basicAPI(putTaxLink(taxId), "PUT", JSON.stringify(dto));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function deleteTaxAPI(taxId: string) {
+  const response = await basicAPI(deleteTaxLink(taxId), "DELETE", null);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+}
+
+//Service charges
+export async function postServiceChargeAPI(dto: PostServiceChargeDTO): Promise<ServiceChargeDTO> {
+  const response = await basicAPI(postServiceChargeLink, "POST", JSON.stringify(dto));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function getServiceChargesAPI(pageNumber: number, pageSize: number): Promise<GetServiceChargeDTO> {
+  const pageination = {
+    pageNumber: pageNumber,
+    pageSize: pageSize
+  }
+  const response = await fetch(getServiceChargeLink+addParam({pageination}));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function putServiceChargeAPI(serviceChargeId: string, dto: PutServiceChargeDTO): Promise<ServiceChargeDTO> {
+  const response = await basicAPI(putServiceChargeLink(serviceChargeId), "PUT", JSON.stringify(dto));
+  
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function deleteServiceCharge(serviceChargeId: string) {
+  const response = await basicAPI(deleteServiceChargeLink(serviceChargeId), "DELETE", null);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+}
+
+//Order
+export async function postOrderAPI(dto: PostOrderDTO): Promise<OrderDTO> {
+  const response = await basicAPI(postOrderLink, "POST", JSON.stringify(dto));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function getOrdersAPI(pageNumber: number, pageSize: number): Promise<OrderDTO> {
+  const pageination = {
+    pageNumber: pageNumber+1,
+    pageSize: pageSize
+  };
+  const response = await fetch(getOrdersLink+addParam({pageination}));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function getOrderAPI(orderId: string): Promise<OrderDTO> {
+  const response = await fetch(getOrderLink(orderId));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function putOrderAPI(orderId: string, dto: PutOrderDTO): Promise<OrderDTO> {
+  const response = await basicAPI(putOrderLink(orderId), "PUT", JSON.stringify(dto));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function getOrderReceiptAPI(id: string): Promise<OrderDTO> {
+  const response = await fetch(getOrderReceiptLink(id));
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+
+//User
+export async function getUserAPI(userId: string): Promise<UserDTO> {
+  const response = await fetch(getUserLink(userId));
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
 }
 
 
@@ -119,27 +349,28 @@ export async function getBusinessAPI(id: string): Promise<BusinessDTO> {
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
 
-  const data: BusinessDTO = await response.json();
-  return data;
+  return response.json();
 }
 
 export async function putBusinessAPI(business: BusinessDTO): Promise<BusinessDTO> {
-  const link = putBusinessLink(business.id);
-  const response = await basicAPI(link, "PUT", JSON.stringify(business));
+  const response = await basicAPI(putBusinessLink(business.id), "PUT", JSON.stringify(business));
 
-  const data: BusinessDTO = await response.json();
-  return data;
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
 }
 
 
 //Custom API sending method
-async function basicAPI(url: string, method: string, body: string) {
-  const response = await fetch(url, {
+async function basicAPI(url: string, method: string, body: string | null) {
+  const response = fetch(url, {
     method: method,
     headers: {
       "Content-Type": "application/json",
     },
-    body: body
+    body: null
   })
 
   return response;

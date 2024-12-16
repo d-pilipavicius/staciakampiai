@@ -67,7 +67,7 @@ export interface DiscountDTO {
   code: string;
   amount: number;
   valueType: 'Percentage' | 'FixedAmount';
-  currency: 'EUR' | 'USD';
+  currency: Currency;
   validFrom: string;
   validUntil: string;
   target: 'Entitled' | 'All';
@@ -76,7 +76,7 @@ export interface DiscountDTO {
   usageCountLimit: number;
 }
 
-export interface PostDiscountDTO extends Omit<DiscountDTO, "id"> {
+export interface PostDiscountDTO extends Omit<DiscountDTO, "id" | "usageCount"> {
 }
 
 export interface GetDiscountsDTO extends PageinationDTO {
@@ -110,7 +110,7 @@ export interface ServiceChargeDTO {
   title: string;
   valueType: 'PERCENTAGE' | 'FIXED_AMOUNT';
   serviceChargeValue: number;
-  currency: 'EUR' | 'USD';
+  currency: Currency;
   businessId: string;
 }
 
@@ -124,6 +124,68 @@ export interface GetServiceChargeDTO extends PageinationDTO {
 export interface PutServiceChargeDTO extends Partial<Omit<ServiceChargeDTO, 'id' | 'businessId'>> {
 }
 
+//Order
+export interface OrderDTO {
+  id: string;
+  employeeId: string;
+  reservationId: string | null;
+  status: OrderStatus;
+  createdAt: string;
+  originalPrice: number;
+  finalPrice: number;
+  currency: Currency;
+  items: OrderItemDTO[];
+  serviceChargeIds: string[];
+  serviceCharges: AppliedServiceChargeDTO[];
+  businessId: string;
+}
+
+export interface PostOrderDTO extends Omit<OrderDTO, 'id' | 'createdAt' | 'status'> {
+
+}
+
+export interface GetOrdersDTO extends PageinationDTO {
+  orders: OrderDTO[];
+}
+
+export interface AppliedServiceChargeDTO {
+  id: string;
+  chargedByEmployeeId: string;
+  title: string;
+  valueType: "PERCENTAGE" | "FIXED_AMOUNT";
+  value: number;
+  amount: number;
+  currency: Currency;
+  businessId: string;
+}
+
+export interface PutOrderDTO {
+  reservationId: string;
+  status: OrderStatus;
+  items: OrderItemDTO[];
+  serviceChargeIds: string;
+  serviceCharges: AppliedServiceChargeDTO[];
+}
+
+export interface OrderItemDTO {
+  id: string;
+  productId: string;
+  title: string;
+  quantity: number;
+  unitPrice: UnitPrice;
+  originalPrice: number;
+  currency: Currency;
+  selectedModifierIds: string[];
+  modifiers: OrderItemModifierDTO[];
+}
+
+export interface OrderItemModifierDTO {
+  id: string;
+  title: string;
+  price: number;
+  currency: Currency;
+}
+
 //Pageination
 export interface PageinationDTO {
   totalItems: number;
@@ -134,5 +196,18 @@ export interface PageinationDTO {
 //General
 export interface MoneyDTO {
   amount: number;
-  currency: 'EUR' | 'USD';
+  currency: Currency;
+}
+
+export enum OrderStatus {
+  NEW, IN_PROGRESS, CLOSED, CANCELED, RETURNED
+}
+
+export enum Currency {
+  EUR, USD
+}
+
+export interface UnitPrice {
+  base: number;
+  withModifiers: number;
 }

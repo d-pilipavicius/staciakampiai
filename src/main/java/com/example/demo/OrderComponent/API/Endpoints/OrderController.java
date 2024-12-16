@@ -20,41 +20,41 @@ public class OrderController {
     private final OrderApplicationService orderApplicationService;
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody OrderDTO createOrderDTO) {
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO createOrderDTO) {
         OrderDTO response = orderApplicationService.createOrder(createOrderDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("order", response));
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getOrders(@RequestParam(defaultValue = "1") int page,
-                                                         @RequestParam(defaultValue = "10") int pageSize) {
-        Page<OrderDTO> ordersPage = orderApplicationService.getOrders(page, pageSize);
+    public ResponseEntity<Map<String, Object>> getOrders(@RequestParam(defaultValue = "1") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        Page<OrderDTO> ordersPage = orderApplicationService.getOrders(pageNumber, pageSize);
 
         Map<String, Object> response = Map.of(
                 "totalItems", ordersPage.getTotalElements(),
                 "totalPages", ordersPage.getTotalPages(),
-                "currentPage", page,
-                "orders", ordersPage.getContent()
-        );
+                "currentPage", pageNumber,
+                "orders", ordersPage.getContent());
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<?> getOrder(@PathVariable UUID orderId) {
+    public ResponseEntity<OrderDTO> getOrder(@PathVariable UUID orderId) {
         OrderDTO orderDTO = orderApplicationService.getOrderById(orderId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("order", orderDTO));
+        return ResponseEntity.ok(orderDTO);
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<?> modifyOrder(@PathVariable UUID orderId, @RequestBody ModifyOrderDTO modifyOrderRequest) {
+    public ResponseEntity<OrderDTO> modifyOrder(@PathVariable UUID orderId,
+            @RequestBody ModifyOrderDTO modifyOrderRequest) {
         OrderDTO updatedOrder = orderApplicationService.modifyOrder(orderId, modifyOrderRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("order", updatedOrder));
+        return ResponseEntity.ok(updatedOrder);
     }
 
     @GetMapping("/{orderId}/receipt")
-    public ResponseEntity<?> getOrderReceipt(@PathVariable UUID orderId) {
+    public ResponseEntity<OrderDTO> getOrderReceipt(@PathVariable UUID orderId) {
         OrderDTO orderReceipt = orderApplicationService.getOrderReceipt(orderId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("orderReceipt", orderReceipt));
+        return ResponseEntity.ok(orderReceipt);
     }
 }
