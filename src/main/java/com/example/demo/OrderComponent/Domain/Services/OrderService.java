@@ -14,6 +14,7 @@ import com.example.demo.OrderComponent.Repositories.IOrderItemModifierRepository
 import com.example.demo.OrderComponent.Repositories.IOrderRepository;
 import com.example.demo.OrderComponent.Repositories.IOrderItemRepository;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
+import com.example.demo.payments.API.DTOs.OrderItemPaymentDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -113,5 +114,21 @@ public class OrderService {
         }).collect(Collectors.toList());
 
         return OrderMapper.mapToOrderResponse(order, itemResponses, originalPrice, currency, appliedServiceChargeRepository.findByOrderId(order.getId()));
+    }
+
+    // Payment related methods
+    public void validateOrder(UUID orderId) {
+        orderValidator.isValidOrder(orderId);
+    }
+
+    public void validateOrderItems(UUID orderId, List<OrderItemPaymentDTO> orderItems) {
+        orderItems.forEach(orderItem -> orderValidator.isValidOrderItem(orderId, orderItem.getOrderItemId()));
+    }
+
+    public BigDecimal calculateTotalPrice(UUID orderId) {
+        List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
+        return orderItems.stream()
+                .map(OrderItem::getUnitPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
