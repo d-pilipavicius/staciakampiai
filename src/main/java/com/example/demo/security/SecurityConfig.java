@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
 
+import com.example.demo.security.ExceptionHandling.CustomAccessHandler;
 import com.example.demo.security.filters.CustomJwtExceptionFilter;
 import com.example.demo.security.filters.JwtFilter;
 import lombok.AllArgsConstructor;
@@ -9,9 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -44,11 +43,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/h2-console/**").permitAll() //used for h2 to be accessible
                         .requestMatchers(HttpMethod.POST, "/v1/user/login").permitAll()
-                        .requestMatchers( "v1/user/**").permitAll() //for now to test allow everyone, later on make only Admin
+                        .requestMatchers( "v1/user/**").hasAuthority("ITAdministrator")
                         .requestMatchers("v1/business/**").hasAuthority("ITAdministrator")
                         .requestMatchers(HttpMethod.GET, "v1/**").hasAnyAuthority("BusinessOwner", "Employee")
+                        //if need to add some DELETE method which needs to get accessed by Employee add below comment
                         .requestMatchers(HttpMethod.DELETE, "v1/**").hasAuthority("BusinessOwner")
+                        //if need to add some POST method which needs to get accessed by Employee add below comment
                         .requestMatchers(HttpMethod.POST, "v1/discounts/*").hasAuthority("BusinessOwner")
+                        //if need to add some Put method which needs to get accessed by Employee add below comment
                         .requestMatchers(HttpMethod.PUT, "v1/discounts/*/increaseUsage").hasAnyAuthority("BusinessOwner", "Employee")
                         .requestMatchers(HttpMethod.PUT, "v1/**").hasAuthority("BusinessOwner")
                         .anyRequest().authenticated()

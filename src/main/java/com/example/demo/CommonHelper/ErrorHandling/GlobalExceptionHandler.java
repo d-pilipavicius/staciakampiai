@@ -1,6 +1,7 @@
 package com.example.demo.CommonHelper.ErrorHandling;
 
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.ForbiddenException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnauthorizedException;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnprocessableException;
+
+import java.sql.SQLException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

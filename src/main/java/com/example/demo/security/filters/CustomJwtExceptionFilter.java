@@ -25,8 +25,6 @@ public class CustomJwtExceptionFilter extends OncePerRequestFilter {
             setErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, response, ex.getErrorMsg());
         } catch (JwtMalformedException ex) {
             setErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, response, ex.getErrorMsg());
-        } catch (Exception ex){
-            setErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, response, ex.getMessage());
         }
     }
 
