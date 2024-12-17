@@ -231,7 +231,7 @@ export async function getServiceChargesAPI(pageNumber: number, pageSize: number,
     pageNumber: pageNumber,
     pageSize: pageSize
   }
-  const response = await authAPI(getServiceChargeLink+addParam({pageination}), "GET", null, auth);
+  const response = await authAPI(getServiceChargeLink(auth.user.businessId)+addParam({pageination}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
