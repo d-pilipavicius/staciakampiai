@@ -266,7 +266,7 @@ export async function putServiceChargeAPI(serviceChargeId: string, dto: PutServi
   return response.json();
 }
 
-export async function deleteServiceCharge(serviceChargeId: string) {
+export async function deleteServiceChargeAPI(serviceChargeId: string) {
   const response = await basicAPI(deleteServiceChargeLink(serviceChargeId), "DELETE", null);
 
   if (!response.ok) {
@@ -370,7 +370,7 @@ async function basicAPI(url: string, method: string, body: string | null) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: null
+    body: body
   })
 
   return response;

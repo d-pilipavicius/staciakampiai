@@ -1,9 +1,21 @@
 import Header from "../../Header";
+import "./discount.css";
+import Discounts from "./Discounts";
+import Giftcards from "./Giftcards";
 
 function DiscountPage() {
+
+
   return <>
     <Header/>
-    <p>Hello, Discount/Giftcard!</p>
+    <div className="discountPage">
+      <div className="discounts">
+        <Discounts/>
+      </div>
+      <div className="giftcards">
+        <Giftcards/>
+      </div>
+    </div>
   </>
 }
 
