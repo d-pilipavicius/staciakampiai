@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Currency, GetProductsDTO } from "../../../data/Responses";
 import Header from "../../Header";
-import { getMyBusinessProducts, postProductAPI } from "../../../data/APICalls";
+import { getBusinessProductsAPI, postProductAPI } from "../../../data/APICalls";
 import Pageination from "../../Pageination";
 import ProductCard from "./ProductCard";
 import "./products.css"
@@ -23,7 +23,8 @@ function ProductsPage() {
   const businessId = localStorage.getItem("userBusinessId");
 
   const getProducts = async () => {
-    const productsdto = await getMyBusinessProducts(page, pageSize);
+    //Fix for API later on
+    const productsdto = await getBusinessProductsAPI(page, pageSize, "");
     if(productsdto) setProducts(productsdto);
   };
 

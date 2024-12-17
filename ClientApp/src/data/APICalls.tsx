@@ -1,5 +1,5 @@
-import { BusinessDTO, DiscountDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
-import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
+import { BusinessDTO, DiscountDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, LoginDTO, LoginResponseDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
+import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, loginLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
 
 export async function getMyBusiness(): Promise<BusinessDTO> {
   const businessId = localStorage.getItem("userBusinessId");
@@ -9,14 +9,15 @@ export async function getMyBusiness(): Promise<BusinessDTO> {
     throw new Error(`Error: Bad login!`);
 }
 
-export async function getMyBusinessProducts(pageNumber: number, pageSize: number): Promise<GetProductsDTO> {
-  const businessId = localStorage.getItem("userBusinessId");
-  if(businessId) 
-    return await getBusinessProductsAPI(pageNumber, pageSize, businessId);
-  else 
-    throw new Error(`Error: Bad login!`);
-}
+//Login / Authentication
+export async function loginAPI(login: LoginDTO): Promise<LoginResponseDTO> {
+  const response = await basicAPI(loginLink, "POST", JSON.stringify(login));
 
+  if(!response.ok) 
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  
+  return response.json();
+}
 
 //Products
 export async function getBusinessProductsAPI(pageNumber: number, pageSize: number, businessId: string): Promise<GetProductsDTO> {
@@ -369,6 +370,19 @@ async function basicAPI(url: string, method: string, body: string | null) {
     method: method,
     headers: {
       "Content-Type": "application/json",
+    },
+    body: body
+  })
+
+  return response;
+}
+
+async function authAPI(url: string, method: string, body: string | null, auth: LoginResponseDTO) {
+  const response = fetch(url, {
+    method: method,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `${auth.tokenType}${auth.accessToken}`
     },
     body: body
   })

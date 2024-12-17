@@ -1,45 +1,44 @@
 import { useRef, useState } from "react"
 import "./login.css"
-import validator from "validator"
 import { useNavigate } from "react-router";
-import { getUserAPI } from "../../../data/APICalls";
+import { getUserAPI, loginAPI } from "../../../data/APICalls";
+import { LoginDTO } from "../../../data/Responses";
 
 function Login() {
-  const [pVisible, setPVisible] = useState(false);
-  const inpRef = useRef<HTMLInputElement>(null);
-  const textRef = useRef<HTMLParagraphElement>(null);
+  const [showPass, setShowPass] = useState(false);
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const nav = useNavigate();
 
   const onClick = async () => {
-    if(inpRef.current && textRef.current){
-      const text = inpRef.current.value;
-      if(!text) {
-        textRef.current.innerText = "This field cannot be empty!";
-        setPVisible(true);
-      } else if(!validator.isUUID(text)) {
-        textRef.current.innerText = "Invalid username!"
-        setPVisible(true);
-      } else {
-        const user = await getUserAPI(text);
-        if(user) {
-          localStorage.setItem("userId", user.id);
-          localStorage.setItem("userBusinessId", user.businessId);
-          setPVisible(false);
-          nav("/home");
-        }
+    if(username && password) {
+      const loginInfo: LoginDTO = {
+        username: username,
+        password: password
+      };
+      const loginDetails = await loginAPI(loginInfo);
+      if(loginDetails) {
+        localStorage.setItem("loginToken", JSON.stringify(loginInfo));
+        nav("/home");
+        console.log(JSON.stringify(loginDetails));
       }
     }
-  };
+  }
 
-  localStorage.removeItem("userId");
-  localStorage.removeItem("userBusinessId");
+  localStorage.removeItem("loginToken");
 
   return <>
     <div className="loginPage">
       <h1 className="loginH">Log in</h1>
-      <input ref={inpRef} type="text" className="form-control" placeholder="Enter your ID"/>
-      <p ref={textRef} style={{visibility: pVisible ? 'visible' : 'hidden'}} className="small"></p>
-      <button type="button" onClick={onClick} className="btn btn-primary">Log in</button>
+      <form>
+        <input className="form-control" value={username} onChange={(event) => setUsername(event.target.value)} type="text" placeholder="Username"/>
+        <div className="input-group">
+          <input className="form-control" value={password} onChange={(event) => setPassword(event.target.value)} type={showPass ? "text" : "password"} placeholder="Password"/>
+          <span className="input-group-text" onClick={() => setShowPass(!showPass)} style={{ cursor: 'pointer' }}><img src={showPass ? "../../eye-open.svg" : "../../eye-closed.svg"}/></span>
+        </div>
+        <button type="button" onClick={onClick} className="btn btn-primary">Log in</button>
+      </form>
     </div>
   </>;
 }

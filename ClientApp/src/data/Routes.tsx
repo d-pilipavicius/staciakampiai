@@ -16,6 +16,7 @@ function business(id: string) {
 }
 
 //User links
+export const loginLink = address+"/v1/user/login";
 export const postUserLink = address+"/v1/user";
 export const getUserLink = (id: string) => user(id);
 export const putUserLink = (id: string) => user(id);
