@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/h2-console/**").permitAll() //used for h2 to be accessible
                         .requestMatchers(HttpMethod.POST, "/v1/user/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "v1/business/*").hasAnyAuthority("BusinessOwner", "Employee")
                         .requestMatchers( "v1/user/**").hasAuthority("ITAdministrator")
                         .requestMatchers("v1/business/**").hasAuthority("ITAdministrator")
                         .requestMatchers(HttpMethod.GET, "v1/**").hasAnyAuthority("BusinessOwner", "Employee")

@@ -24,6 +24,8 @@ public class UserApplicationService {
     return userService.getUser(userID);
   }
 
+  public UserDTO getUserByUsername(@NotNull String username) {return userService.getUserByUsername(username);}
+
   public UserDTO updateUser(@NotNull UUID userId, @NotNull @Valid UpdateUserDTO updateUserDTO) {
     return userService.updateUser(userId, updateUserDTO);
   }
