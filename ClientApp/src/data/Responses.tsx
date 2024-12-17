@@ -66,11 +66,11 @@ export interface DiscountDTO {
   usageCount: number;
   code: string;
   amount: number;
-  valueType: 'Percentage' | 'FixedAmount';
+  valueType: PricingStrategy;
   currency: Currency;
   validFrom: string;
   validUntil: string;
-  target: 'Entitled' | 'All';
+  target: DiscountTarget;
   entitledProductsIds: string[];
   businessId: string;
   usageCountLimit: number;
@@ -108,7 +108,7 @@ export interface PutTaxDTO extends Partial<Omit<TaxDTO, "id" | "businessId">> {
 export interface ServiceChargeDTO {
   id: string;
   title: string;
-  valueType: 'PERCENTAGE' | 'FIXED_AMOUNT';
+  valueType: PricingStrategy;
   serviceChargeValue: number;
   currency: Currency;
   businessId: string;
@@ -152,7 +152,7 @@ export interface AppliedServiceChargeDTO {
   id: string;
   chargedByEmployeeId: string;
   title: string;
-  valueType: "PERCENTAGE" | "FIXED_AMOUNT";
+  valueType: PricingStrategy;
   value: number;
   amount: number;
   currency: Currency;
@@ -205,6 +205,14 @@ export enum OrderStatus {
 
 export enum Currency {
   EUR, USD
+}
+
+export enum DiscountTarget {
+  Entitled, All
+}
+
+export enum PricingStrategy {
+  PERCENTAGE, FIXED_AMOUNT
 }
 
 export interface UnitPrice {

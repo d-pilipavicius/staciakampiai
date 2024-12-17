@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GetProductsDTO } from "../../../data/Responses";
+import { Currency, GetProductsDTO } from "../../../data/Responses";
 import Header from "../../Header";
 import { getMyBusinessProducts, postProductAPI } from "../../../data/APICalls";
 import Pageination from "../../Pageination";
@@ -44,7 +44,7 @@ function ProductsPage() {
         "businessId": businessId,
         "price": {
           "amount": Number(price),
-          "currency": "USD",
+          "currency": Currency.EUR,
         },
         "compatibleModifierIds": []
       })

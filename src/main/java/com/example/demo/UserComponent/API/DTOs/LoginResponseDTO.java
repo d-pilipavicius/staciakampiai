@@ -12,4 +12,7 @@ public class LoginResponseDTO {
 
     @NotNull
     private final String tokenType = "Bearer ";
+
+    @NotNull
+    private final UserDTO user;
 }
