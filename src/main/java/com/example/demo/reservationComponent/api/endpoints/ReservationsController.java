@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/reservations")
+@RequestMapping("/v1/reservations/{businessId}")
 @AllArgsConstructor
 public class ReservationsController {
     private static final Logger logger = LoggerFactory.getLogger(ReservationsController.class);
@@ -35,7 +35,7 @@ public class ReservationsController {
     public ResponseEntity<Object> getReservations(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam UUID businessId
+            @PathVariable UUID businessId
     ){
         GetReservationsDTO reservationsDTO = reservationApplicationService.getReservationsByBusinessId(businessId, pageNumber, pageSize);
         return ResponseEntity.ok(reservationsDTO);
