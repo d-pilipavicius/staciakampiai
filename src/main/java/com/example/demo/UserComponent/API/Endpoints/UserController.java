@@ -1,11 +1,16 @@
 package com.example.demo.UserComponent.API.Endpoints;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnauthorizedException;
+import com.example.demo.UserComponent.API.DTOs.*;
+import com.example.demo.security.JWTUtils;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.UserComponent.API.DTOs.CreateUserDTO;
-import com.example.demo.UserComponent.API.DTOs.UpdateUserDTO;
-import com.example.demo.UserComponent.API.DTOs.UserDTO;
 import com.example.demo.UserComponent.ApplicationServices.UserApplicationService;
 
 import jakarta.validation.Valid;
@@ -30,8 +35,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class UserController {
   private final UserApplicationService userApplicationService;
 
+  private final JWTUtils jwtUtils;
+
+  private final AuthenticationManager authenticationManager;
+
   @PostMapping
-  public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
+  public ResponseEntity<UserDTO> createUser(@NotNull @Valid @RequestBody CreateUserDTO createUserDTO) {
     UserDTO createdUser = userApplicationService.createUser(createUserDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
@@ -48,10 +57,34 @@ public class UserController {
     return ResponseEntity.ok().body(updatedUserDTO);
   }
 
+  @PutMapping("/{userId}/updateCredentials")
+  public ResponseEntity<UserDTO> updatePassword(@PathVariable UUID userId, @NotNull @Valid @RequestBody PutUserCredentialsDTO passwordDTO){
+    UserDTO updatedPasswordUserDTO = userApplicationService.updatePassword(userId, passwordDTO);
+    return ResponseEntity.status(HttpStatus.OK).body(updatedPasswordUserDTO);
+  }
+
   @DeleteMapping("/{userId}")
   public ResponseEntity<Void> deleteUser(@NotNull @PathVariable UUID userId) {
     userApplicationService.deleteUser(userId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponseDTO> loginUser(@NotNull @Valid @RequestBody LoginDTO loginDTO){
+    Authentication authentication;
+    try{
+      authentication = authenticationManager.authenticate(
+              new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
+      );
+    } catch (AuthenticationException ex){
+      throw new UnauthorizedException("The inputted user credentials were incorrect.");
+    }
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    String token = jwtUtils.generateToken(authentication);
+
+    UserDTO userDTO = userApplicationService.getUserByUsername(authentication.getName());
+
+    return new ResponseEntity<>(LoginResponseDTO.builder().accessToken(token).user(userDTO).build(), HttpStatus.OK);
   }
 
 }

@@ -42,4 +42,8 @@ public class ServiceChargeApplicationService {
     public void validateServiceChargeIds(List<UUID> serviceChargeIds) {
         serviceChargeValidator.validateServiceChargeIds(serviceChargeIds);
     }
+
+    public ServiceChargeDTO getServiceChargeById(UUID id) {
+        return serviceChargeService.getServiceChargeById(id);
+    }
 }

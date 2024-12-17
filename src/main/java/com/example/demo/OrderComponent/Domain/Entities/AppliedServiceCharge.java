@@ -1,7 +1,7 @@
-package com.example.demo.serviceChargeComponent.domain.entities;
+package com.example.demo.OrderComponent.Domain.Entities;
 
 //import com.example.demo.orderComponent.domain.entities.Order;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 //import com.example.demo.reservationComponent.domain.entities.Reservation;
 import jakarta.persistence.*;
@@ -20,11 +20,11 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "applied_service_charge", indexes = {
+@Table(name = "applied_service_charge"/*, indexes = {
         @Index(name = "idx_applied_service_charge_charged_by_employee_id", columnList = "charged_by_employee_id"),
         @Index(name = "idx_applied_service_charge_order_id", columnList = "order_id"),
         @Index(name = "idx_applied_service_charge_reservation_id", columnList = "reservation_id")
-})
+}*/)
 public class AppliedServiceCharge {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -46,6 +46,16 @@ public class AppliedServiceCharge {
      * @JoinColumn(name = "reservation_id", nullable = true)
      * private Reservation reservation;
      */
+
+    @Column(name = "charged_by_employee_id", nullable = false)
+    private UUID employeeId;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = true)
+    private Order order;
+
+    @Column(name = "reservation_id", nullable = true)
+    private UUID reservation;
 
     @Column(nullable = false)
     private String title;

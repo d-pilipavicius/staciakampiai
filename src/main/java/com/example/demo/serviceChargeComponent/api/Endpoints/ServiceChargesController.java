@@ -26,7 +26,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/v1/service-charges")
+@RequestMapping("/v1/service-charges/{businessId}")
 @AllArgsConstructor
 public class ServiceChargesController {
     private final ServiceChargeApplicationService serviceChargeApplicationService;

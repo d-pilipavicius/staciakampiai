@@ -1,0 +1,57 @@
+.service-charge-table {
+    width: 80%; /* You can adjust the width as needed */
+    margin: 0 auto; /* This will center the table horizontally */
+    border-spacing: 10px; /* Adds spacing between table rows and columns */
+}
+
+.service-charge-table th, .service-charge-table td {
+    padding: 10px; /* Adds padding inside cells */
+}
+
+.service-charge-table th {
+    background-color: #d3d3d3; /* Adds a light gray background to table headers */
+}
+
+.service-charge-table td button {
+    margin-right: 10px; /* Adds space between the buttons */
+}
+
+.pagination-controls {
+    text-align: center; /* Centers the pagination controls */
+    margin-top: 20px; /* Adds space above the pagination controls */
+}
+
+.pagination-controls span {
+    margin: 0 10px; /* Adds space between the page number and buttons */
+}
+
+.serviceChargeForm input,
+.serviceChargeForm select {
+    margin-bottom: 15px;  /* Add space between form fields */
+    padding: 10px;
+    font-size: 1rem;  /* Adjust font size for readability */
+    width: 225%;  /* Make input fields fill the container */
+}
+
+.serviceChargeForm .btn {
+    padding: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.add-service-charge-button-container {
+    display: flex;
+    justify-content: center;
+    width: 100%; /* Ensure the container takes up full width */
+    margin-top: 10px; /* Optional: Add margin for spacing */
+    margin-bottom: 10px;
+}
+
+.header-container h1 {
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+
+

@@ -1,3 +1,5 @@
+import { PageinationDTO } from "./Responses";
+
 const initialAddress = "http://localhost";
 const apiPort = "8080";
 export const address = initialAddress+":"+apiPort;
@@ -65,9 +67,11 @@ function serviceCharge(id: string) {
 
 //Discounts
 export const postDiscountLink = address+"/v1/discounts";
-export const getDiscountLink = address+"/v1/discounts";
+export const getDiscountsLink = address+"/v1/discounts";
+export const getGiftcardsLink = address+"/v1/discounts/giftcards";
 export const putDiscountLink = (id: string) => discount(id);
 export const deleteDiscountLink = (id: string) => discount(id);
+export const increaseDiscGiftUsageLink = (id:string) => discount(id)+"/increaseUsage"; 
 
 function discount(id: string) {
   return address+"/v1/discounts/"+id;
@@ -84,5 +88,41 @@ function reservation(id: string) {
 }
 
 //Orders
+export const postOrderLink = address+"/v1/orders";
+export const getOrdersLink = address+"/v1/orders";
+export const getOrderLink = (id: string) => order(id);
+export const putOrderLink = (id: string) => order(id);
+export const getOrderReceiptLink = (id: string) => order(id)+"/receipt";
+
+function order(id: string) {
+  return address+`/v1/orders/${id}`;
+}
 
 //Payments
+
+//General
+interface AddParamParam {
+  pageination?: {pageNumber: number, pageSize: number};
+  employeeId?: string;
+  businessId?: string
+}
+
+export function addParam({pageination, employeeId, businessId}: AddParamParam) {
+  const count = (pageination ? 1 : 0) + (employeeId ? 1 : 0) + (businessId ? 1 : 0);
+  if(count == 0)
+    return ""
+  var params = "?"
+  var list = [];
+  if(pageination)
+    list.push(`pageNumber=${pageination.pageNumber}&pageSize=${pageination.pageSize}`);
+  if(employeeId)
+    list.push(`employeeId=${employeeId}`);
+  if(businessId)
+    list.push(`businessId=${businessId}`);
+  list.forEach((el, index) => {
+    params += el;
+    if(index+1 != list.length)
+      params += "&";
+  });
+  return params;
+}

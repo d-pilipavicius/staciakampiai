@@ -22,27 +22,72 @@ public class PostStartupConfig {
 
   @PostConstruct
   public void databaseInit() {
-    UserDTO newUser = userService.createUser(CreateUserDTO.builder()
+    UserDTO newBusinessOwner = userService.createUser(CreateUserDTO.builder()
         .fullName("John Doe")
         .emailAddress("example@example.com")
         .phoneNumber("+37061122334")
         .role(RoleType.BusinessOwner)
+        .username("Tomas")
+        .password("plumbum")
         .build());
     BusinessDTO newBusiness = businessService.createBusiness(CreateBusinessDTO.builder()
         .name("First Business Inc.")
-        .ownerId(newUser.getId())
-        .phoneNumber(newUser.getPhoneNumber())
-        .emailAddress(newUser.getEmailAddress())
+        .ownerId(newBusinessOwner.getId())
+        .phoneNumber(newBusinessOwner.getPhoneNumber())
+        .emailAddress(newBusinessOwner.getEmailAddress())
         .address("Address Avenue 123")
         .build());
-    userService.updateUser(newUser.getId(), UpdateUserDTO.builder()
-        .fullName(newUser.getFullName())
+    userService.updateUser(newBusinessOwner.getId(), UpdateUserDTO.builder()
+        .fullName(newBusinessOwner.getFullName())
         .businessId(newBusiness.getId())
-        .phoneNumber(newUser.getPhoneNumber())
-        .emailAddress(newUser.getEmailAddress())
-        .role(newUser.getRole())
+        .phoneNumber(newBusinessOwner.getPhoneNumber())
+        .emailAddress(newBusinessOwner.getEmailAddress())
+        .role(newBusinessOwner.getRole())
         .build());
-    System.out.println("User id: " + newUser.getId());
-    System.out.println("Business id: " + newBusiness.getId());
+    UserDTO itAdministrator = userService.createUser(CreateUserDTO.builder()
+        .fullName("Dzeimsas Bondas")
+        .emailAddress("example@example.com")
+        .phoneNumber("+37061122334")
+        .role(RoleType.ITAdministrator)
+        .username("Lapas")
+        .password("traukinys")
+        .build());
+    UserDTO employee = userService.createUser(CreateUserDTO.builder()
+            .fullName("Raganosis penkiolika")
+            .emailAddress("example@example.com")
+            .phoneNumber("+37061122334")
+            .role(RoleType.Employee)
+            .username("karatistas5000")
+            .businessId(newBusiness.getId())
+            .password("traktorius")
+            .build());
+    UserDTO ownerOfSecond = userService.createUser(CreateUserDTO.builder()
+            .fullName("Raganosis penkiolika")
+            .emailAddress("example@example.com")
+            .phoneNumber("+37061122334")
+            .role(RoleType.Employee)
+            .username("naujas")
+            .password("traktorius")
+            .build());
+    BusinessDTO businessWithoutEmployee = businessService.createBusiness(CreateBusinessDTO.builder()
+            .name("First Business Inc.")
+            .ownerId(ownerOfSecond.getId())
+            .phoneNumber(ownerOfSecond.getPhoneNumber())
+            .emailAddress(ownerOfSecond.getEmailAddress())
+            .address("Address Avenue 123")
+            .build());
+    userService.updateUser(ownerOfSecond.getId(), UpdateUserDTO.builder()
+            .fullName(ownerOfSecond.getFullName())
+            .role(ownerOfSecond.getRole())
+            .emailAddress(ownerOfSecond.getEmailAddress())
+            .phoneNumber(ownerOfSecond.getPhoneNumber())
+            .businessId(businessWithoutEmployee.getId())
+            .build());
+    System.out.println("UserBusinessOwner id: " + newBusinessOwner.getId() + ", username: " + newBusinessOwner.getUsername() + " password: plumbum");
+    System.out.println("Business, which has employee, id: " + newBusiness.getId());
+    System.out.println("ITADMIN id: " + itAdministrator.getId() + ", username: " + itAdministrator.getUsername() + " password: traukinys");
+    System.out.println("employee id: " + employee.getId() + ", username: " + employee.getUsername() + " password: traktorius");
+    System.out.println("Business, which doesnt have employee, id:" + businessWithoutEmployee.getId());
+    System.out.println("Owner of business without employee id: " + ownerOfSecond.getId() + ", username: " + newBusinessOwner.getUsername() + " password: traktorius");
   }
 }

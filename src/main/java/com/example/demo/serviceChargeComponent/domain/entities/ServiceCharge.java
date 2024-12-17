@@ -1,6 +1,6 @@
 package com.example.demo.serviceChargeComponent.domain.entities;
 
-import com.example.demo.serviceChargeComponent.domain.entities.enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,11 +18,13 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(
-        name = "service_charge" /* ,
-         indexes = {
-            @Index(name = "idx_service_charge_business_id", columnList = "business_id")
-        } */
+@Table(name = "service_charge" /*
+                                * ,
+                                * indexes = {
+                                * 
+                                * @Index(name = "idx_service_charge_business_id", columnList = "business_id")
+                                * }
+                                */
 )
 public class ServiceCharge {
     @Id
@@ -45,6 +47,5 @@ public class ServiceCharge {
     @Column(nullable = true, length = 3)
     @Enumerated(EnumType.STRING)
     private Currency currency;
-
 
 }

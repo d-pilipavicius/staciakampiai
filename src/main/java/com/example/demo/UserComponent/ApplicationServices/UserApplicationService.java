@@ -2,11 +2,9 @@ package com.example.demo.UserComponent.ApplicationServices;
 
 import java.util.UUID;
 
+import com.example.demo.UserComponent.API.DTOs.*;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.UserComponent.API.DTOs.CreateUserDTO;
-import com.example.demo.UserComponent.API.DTOs.UpdateUserDTO;
-import com.example.demo.UserComponent.API.DTOs.UserDTO;
 import com.example.demo.UserComponent.Domain.Services.UserService;
 
 import jakarta.validation.Valid;
@@ -26,11 +24,18 @@ public class UserApplicationService {
     return userService.getUser(userID);
   }
 
+  public UserDTO getUserByUsername(@NotNull String username) {return userService.getUserByUsername(username);}
+
   public UserDTO updateUser(@NotNull UUID userId, @NotNull @Valid UpdateUserDTO updateUserDTO) {
     return userService.updateUser(userId, updateUserDTO);
+  }
+
+  public UserDTO updatePassword(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){
+    return userService.updatePassword(userId, putUserCredentialsDTO);
   }
 
   public void deleteUser(@NotNull UUID userId) {
     userService.deleteUser(userId);
   }
+
 }

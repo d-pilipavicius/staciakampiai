@@ -1,0 +1,30 @@
+.discountPage {
+  padding: 30px;
+  display: flex;
+}
+
+.discounts {
+  width: 40%;
+}
+
+.giftcards {
+  width: 40%;
+}
+
+form input {
+  margin: 5px;
+}
+
+form .checkBoxes {
+  display: flex;
+}
+
+.checkBoxes * {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.form-check * {
+  margin-left: 0px;
+  margin-right: 0px;
+}
