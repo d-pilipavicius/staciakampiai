@@ -1,7 +1,7 @@
-import { useRef, useState } from "react"
+import { useState } from "react"
 import "./login.css"
 import { useNavigate } from "react-router";
-import { getUserAPI, loginAPI } from "../../../data/APICalls";
+import { loginAPI } from "../../../data/APICalls";
 import { LoginDTO } from "../../../data/Responses";
 
 function Login() {
@@ -19,7 +19,7 @@ function Login() {
       };
       const loginDetails = await loginAPI(loginInfo);
       if(loginDetails) {
-        localStorage.setItem("loginToken", JSON.stringify(loginInfo));
+        localStorage.setItem("loginToken", JSON.stringify(loginDetails));
         nav("/home");
         console.log(JSON.stringify(loginDetails));
       }

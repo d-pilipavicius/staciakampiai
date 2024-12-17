@@ -64,7 +64,7 @@ public class ProductService {
         List<ProductDTO> productDTOS = Mapper.mapToDTOList(products, ProductMapper.TO_DTO);
 
         // Build and return the DTO
-        return Mapper.mapToDTO(productDTOS, ProductMapper.LIST_TO_GET_PRODUCTS_DTO);
+        return ProductMapper.listToGetProductsDTO(businessId, productDTOS);
     }
 
     public GetProductsDTO getProductsByBusinessId(int page, int size, UUID businessId) {
@@ -75,7 +75,7 @@ public class ProductService {
         Page<ProductDTO> productDTOS = Mapper.mapToDTOPage(products, ProductMapper.TO_DTO);
 
         // Build and return the DTO
-        return Mapper.mapToDTO(productDTOS, ProductMapper.PAGE_TO_GET_PRODUCTS_DTO);
+        return ProductMapper.pageToGetProducts(businessId, productDTOS);
     }
 
     @Transactional

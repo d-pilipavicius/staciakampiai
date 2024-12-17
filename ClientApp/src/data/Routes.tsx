@@ -1,5 +1,3 @@
-import { PageinationDTO } from "./Responses";
-
 const initialAddress = "http://localhost";
 const apiPort = "8080";
 export const address = initialAddress+":"+apiPort;

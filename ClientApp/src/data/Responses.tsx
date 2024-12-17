@@ -7,6 +7,7 @@ export interface LoginDTO {
 export interface LoginResponseDTO {
   accessToken: string;
   tokenType: string;
+  user: UserDTO;
 }
 
 //User
