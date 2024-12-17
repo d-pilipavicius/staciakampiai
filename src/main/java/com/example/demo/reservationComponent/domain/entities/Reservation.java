@@ -38,13 +38,13 @@ public class Reservation {
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "reservation_start_at", nullable = false)
     private Timestamp reservationStartAt;
 
-    @Column(nullable = false)
+    @Column(name = "reservation_end_at", nullable = false)
     private Timestamp reservationEndAt;
 
     @ElementCollection

@@ -29,6 +29,6 @@ public class ReservationNotification {
     @Column(nullable = false)
     private String text;
 
-    @Column(nullable = true)
+    @Column(name = "sent_at", nullable = true)
     private Timestamp sentAt;
 }
