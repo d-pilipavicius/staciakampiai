@@ -28,7 +28,7 @@ public class Product {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(name = "quantity_in_stock", nullable = false)
     private int quantityInStock;
 
     @Column(nullable = false)

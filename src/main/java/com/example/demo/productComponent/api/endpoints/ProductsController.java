@@ -100,9 +100,6 @@ public class ProductsController {
     public ResponseEntity<Void> deleteProductModifier(
             @PathVariable UUID modifierId) {
 
-        // ResponseEntity<Object> badResponse =
-        // ValidationForDifferentHTTPCodes.checkFor403(employeeId);
-
         productApplicationService.deleteProductModifier(modifierId);
 
         return ResponseEntity.noContent().build();

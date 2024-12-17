@@ -1,6 +1,5 @@
 package com.example.demo.reservationComponent.api.endpoints;
 
-import com.example.demo.CommonHelper.validator.ValidationForDifferentHTTPCodes;
 import com.example.demo.reservationComponent.api.dtos.GetReservationsDTO;
 import com.example.demo.reservationComponent.api.dtos.PostReservationDTO;
 import com.example.demo.reservationComponent.api.dtos.PutReservationDTO;
@@ -28,12 +27,7 @@ public class ReservationsController {
             @RequestParam UUID employeeId,
             @Valid @RequestBody PostReservationDTO postReservationDTO
     ) {
-
         ReservationDTO reservationDTO = reservationApplicationService.createReservation(postReservationDTO, employeeId);
-
-        // Check for 404
-        ValidationForDifferentHTTPCodes.checkFor404(reservationDTO);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(reservationDTO);
     }
 
@@ -43,11 +37,7 @@ public class ReservationsController {
             @RequestParam int pageSize,
             @RequestParam UUID businessId
     ){
-
         GetReservationsDTO reservationsDTO = reservationApplicationService.getReservationsByBusinessId(businessId, pageNumber, pageSize);
-
-        ValidationForDifferentHTTPCodes.checkFor404(reservationsDTO);
-
         return ResponseEntity.ok(reservationsDTO);
     }
 
@@ -56,11 +46,7 @@ public class ReservationsController {
             @PathVariable UUID reservationId,
             @Valid @RequestBody PutReservationDTO putReservationDTO
     ){
-
         ReservationDTO updatedReservation = reservationApplicationService.updateReservation(putReservationDTO, reservationId);
-
-        ValidationForDifferentHTTPCodes.checkFor404(updatedReservation);
-
         return ResponseEntity.ok(updatedReservation);
     }
 
@@ -69,7 +55,6 @@ public class ReservationsController {
             @PathVariable UUID reservationId
     ){
         reservationApplicationService.deleteReservation(reservationId);
-
         return ResponseEntity.noContent().build();
     }
 }
