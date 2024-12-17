@@ -15,8 +15,13 @@ import lombok.Getter;
 
 @Getter
 @Builder
-@AllArgsConstructor
 public class CreateUserDTO {
+
+  @NotNull
+  private final String username;
+
+  @NotNull
+  private final String password;
 
   @NotNull
   private final String fullName;
