@@ -4,14 +4,17 @@ import com.example.demo.OrderComponent.API.DTOs.AppliedServiceChargeDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
+import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Services.OrderService;
 import com.example.demo.OrderComponent.Helpers.Mappers.OrderMapper;
+import com.example.demo.payments.API.DTOs.OrderItemPaymentDTO;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
 import com.example.demo.serviceChargeComponent.applicationServices.ServiceChargeApplicationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -75,5 +78,18 @@ public class OrderApplicationService {
                     .collect(Collectors.toList());
             itemRequest.setModifiers(OrderMapper.mapToOrderItemModifierResponse(selectedModifiers));
         }
+    }
+
+    // Payment related methods
+    public void validateOrder(UUID orderId) {
+        orderService.validateOrder(orderId);
+    }
+
+    public void validateOrderItems(UUID orderId, List<OrderItemPaymentDTO> orderItems) {
+        orderService.validateOrderItems(orderId, orderItems);
+    }
+
+    public BigDecimal calculateItemPrice(UUID orderItemId, Integer quantity) {
+        return orderService.calculateItemPrice(orderItemId, quantity);
     }
 }
