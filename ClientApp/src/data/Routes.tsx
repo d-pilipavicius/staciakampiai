@@ -25,76 +25,103 @@ function user(id: string) {
 }
 
 //Product links
-export const postProductLink = address+"/v1/products";
-export const getProductListLink = address+"/v1/products";
-export const putProductLink = (id: string) => product(id);
-export const deleteProductLink = (id: string) => product(id);
+export const postProductLink = (businessId: string) => product(businessId);
+export const getProductListLink = (businessId: string) => product(businessId);
+export const putProductLink = (businessId: string, productId: string) => productById(businessId, productId);
+export const deleteProductLink = (businessId: string, productId: string) => productById(businessId, productId);
 
-function product(id: string) {
-  return address+"/v1/products/"+id;
+function product(businessId: string) {
+  return address+`/v1/products/${businessId}`;
+}
+
+function productById(businessId: string, productId: string) {
+  return product(businessId)+`/${productId}`;
 }
 
 //Product modifier links
-export const postProductModifierLink = address+"/v1/products/modifiers";
-export const getProductModifierListLink = address+"/v1/products/modifiers";
-export const putProductModifierLink = (id: string) => productModifier(id);
-export const deleteProductModifierLink = (id: string) => productModifier(id);
+export const postProductModifierLink = (businessId: string) => productModifier(businessId);
+export const getProductModifierListLink = (businessId: string) => productModifier(businessId);
+export const putProductModifierLink = (businessId: string, productId: string) => productModifierById(businessId, productId);
+export const deleteProductModifierLink = (businessId: string, productId: string) => productModifierById(businessId, productId);
 
-function productModifier(id: string) {
-  return address+"/v1/products/modifiers/"+id
+function productModifierById(businessId: string, productId: string) {
+  return productModifier(businessId)+`/${productId}`;
 }
 
+function productModifier(businessId: string) {
+  return address+`/v1/products/${businessId}/modifiers`;
+}
 //Tax links
-export const postTaxLink = address+"/v1/taxes";
-export const getTaxLink = address+"/v1/taxes";
-export const putTaxLink = (id: string) => tax(id);
-export const deleteTaxLink = (id: string) => tax(id);
+export const postTaxLink = (businessId: string) => tax(businessId);
+export const getTaxLink = (businessId: string) => tax(businessId);
+export const putTaxLink = (businessId: string, taxId: string) => taxById(businessId, taxId);
+export const deleteTaxLink = (businessId: string, taxId: string) => taxById(businessId, taxId);
 
 function tax(id: string) {
-  return address+"/v1/taxes/"+id
+  return address+`/v1/taxes/${id}`;
+}
+
+function taxById(id: string, taxId: string) {
+  return tax(id)+`/${taxId}`;
 }
 
 //Service charges
-export const postServiceChargeLink = address+"/v1/service-charges";
-export const getServiceChargeLink = address+"/v1/service-charges";
-export const putServiceChargeLink = (id: string) => serviceCharge(id);
-export const deleteServiceChargeLink = (id: string) => serviceCharge(id);
+export const postServiceChargeLink = serviceCharge;
+export const getServiceChargeLink = serviceCharge;
+export const putServiceChargeLink = serviceChargeById;
+export const deleteServiceChargeLink = serviceChargeById;
 
-function serviceCharge(id: string) {
-  return address+"/v1/service-charges/"+id
+function serviceCharge(businessId: string) {
+  return address+`/v1/service-charges/${businessId}`;
+}
+
+function serviceChargeById(businessId: string, serChId: string) {
+  return serviceCharge(businessId)+`/${serChId}`;
 }
 
 //Discounts
-export const postDiscountLink = address+"/v1/discounts";
-export const getDiscountsLink = address+"/v1/discounts";
-export const getGiftcardsLink = address+"/v1/discounts/giftcards";
-export const putDiscountLink = (id: string) => discount(id);
-export const deleteDiscountLink = (id: string) => discount(id);
-export const increaseDiscGiftUsageLink = (id:string) => discount(id)+"/increaseUsage"; 
+export const postDiscountLink = discount;
+export const getDiscountsLink = discount;
+export const getGiftcardsLink = (businessId: string) => discount(businessId)+"/giftcards";
+export const putDiscountLink = discountById;
+export const deleteDiscountLink = discountById;
+export const increaseDiscGiftUsageLink = (businessId: string, discountId: string) => discountById(businessId,discountId)+"/increaseUsage"; 
 
-function discount(id: string) {
-  return address+"/v1/discounts/"+id;
+function discount(businessId: string) {
+  return address+`/v1/discounts/${businessId}`;
+}
+
+function discountById(businessId: string, discountId: string) {
+  return discount(businessId)+`/${discountId}`;
 }
 
 //Reservations
-export const postReservationLink = address+"/v1/reservations";
-export const getReservationLink = address+"/v1/reservations";
-export const putReservationLink = (id: string) => reservation(id);
-export const deleteReservationLink = (id: string) => reservation(id);
+export const postReservationLink = reservation;
+export const getReservationLink = reservation;
+export const putReservationLink = reservationById;
+export const deleteReservationLink = reservationById;
 
-function reservation(id: string) {
-  return address+"/v1/reservations/"+id;
+function reservation(businessId: string) {
+  return address+`/v1/reservations/${businessId}`;
+}
+
+function reservationById(businessId: string, reservationId: string) {
+  return reservation(businessId)+`/${reservationId}`;
 }
 
 //Orders
-export const postOrderLink = address+"/v1/orders";
-export const getOrdersLink = address+"/v1/orders";
-export const getOrderLink = (id: string) => order(id);
-export const putOrderLink = (id: string) => order(id);
-export const getOrderReceiptLink = (id: string) => order(id)+"/receipt";
+export const postOrderLink = order;
+export const getOrdersLink = order;
+export const getOrderLink = orderById;
+export const putOrderLink = orderById
+export const getOrderReceiptLink = (businessId: string, orderId: string) => orderById(businessId,orderId)+"/receipt";
 
-function order(id: string) {
-  return address+`/v1/orders/${id}`;
+function order(businessId: string) {
+  return address+`/v1/orders/${businessId}`;
+}
+
+function orderById(businessId: string, orderId: string) {
+  return order(businessId)+`/${orderId}`;
 }
 
 //Payments

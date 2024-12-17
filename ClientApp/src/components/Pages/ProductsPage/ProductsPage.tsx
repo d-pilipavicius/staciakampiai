@@ -32,7 +32,7 @@ function ProductsPage() {
 
   const getProducts = async () => {
     try {
-      const productsdto = await getBusinessProductsAPI(page, pageSize, loginToken.user.businessId, loginToken);
+      const productsdto = await getBusinessProductsAPI(page-1, pageSize, loginToken.user.businessId, loginToken);
       setProducts(productsdto);
     } catch (err) {
       if(err instanceof MissingAuthError) {
