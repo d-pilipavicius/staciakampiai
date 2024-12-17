@@ -37,4 +37,7 @@ public class UserDTO {
   @Enumerated(EnumType.STRING)
   @NotNull
   private final RoleType role;
+
+  @NotNull
+  private final String username;
 }

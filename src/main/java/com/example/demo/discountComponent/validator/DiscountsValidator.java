@@ -1,12 +1,12 @@
 package com.example.demo.discountComponent.validator;
 
 import com.example.demo.discountComponent.domain.entities.Discount;
-import com.example.demo.helper.ErrorHandling.CustomExceptions.NotFoundException;
-import com.example.demo.helper.ErrorHandling.CustomExceptions.UnauthorizedException;
-import com.example.demo.helper.ErrorHandling.CustomExceptions.UnprocessableException;
-import com.example.demo.helper.enums.Currency;
-import com.example.demo.helper.enums.DiscountTarget;
-import com.example.demo.helper.enums.PricingStrategy;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnauthorizedException;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnprocessableException;
+import com.example.demo.CommonHelper.enums.Currency;
+import com.example.demo.CommonHelper.enums.DiscountTarget;
+import com.example.demo.CommonHelper.enums.PricingStrategy;
 import com.example.demo.discountComponent.repository.DiscountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -69,24 +69,23 @@ public final class DiscountsValidator {
         }
     }
 
-    public void checkIfBusinessHadGiftcards(int totalGiftcardsOfBusiness, UUID businessId){
-        if(totalGiftcardsOfBusiness == 0){
+    public void checkIfBusinessHadGiftcards(int totalGiftcardsOfBusiness, UUID businessId) {
+        if (totalGiftcardsOfBusiness == 0) {
             throw new NotFoundException(
-                    "The provided business id " + businessId + ", had no giftcards associated with it."
-            );
+                    "The provided business id " + businessId + ", had no giftcards associated with it.");
         }
     }
 
-    public void checkIfUsageLimitExceeded(Discount discount){
-        if(discount.getUsageCount() > discount.getUsageCountLimit()){
-            throw  new UnprocessableException(
-                    "The provided discount has already reached its usage count limit, which was: " + discount.getUsageCountLimit()
-            );
+    public void checkIfUsageLimitExceeded(Discount discount) {
+        if (discount.getUsageCount() > discount.getUsageCountLimit()) {
+            throw new UnprocessableException(
+                    "The provided discount has already reached its usage count limit, which was: "
+                            + discount.getUsageCountLimit());
         }
     }
 
-    public void checkIfDiscountPageExceeded(int askedPage, int totalPages){
-        if(askedPage >= totalPages){
+    public void checkIfDiscountPageExceeded(int askedPage, int totalPages) {
+        if (askedPage >= totalPages) {
             throw new UnprocessableException(
                     "Asked for page " + askedPage + " of discounts which is bigger than total discount pages "
                             + totalPages + ".");

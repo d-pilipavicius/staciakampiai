@@ -8,6 +8,8 @@ import Login from "./components/Pages/Login/Login";
 import { ReactNode, useEffect } from "react";
 import TaxPage from "./components/Pages/TaxPage/TaxPage";
 import DiscountPage from "./components/Pages/DiscountsPage/DiscountPage";
+import ServiceChargePage from "./components/Pages/ServiceChargesPage/ServiceChargePage";
+import PaymentPage from "./components/Pages/PaymentsPage/PaymentPage";
 
 function App() {
   return <>
@@ -21,6 +23,8 @@ function App() {
           <Route path="/orders" element={<OrderPage/>}/>
           <Route path="/tax" element={<TaxPage/>}/>
           <Route path="/discounts" element={<DiscountPage/>}/>
+          <Route path="/service-charges" element={<ServiceChargePage/>}/>
+          <Route path="/payments" element={<PaymentPage/>}/>
           <Route path="/*" element={<NotFound/>}/>
         </Routes>
       </AuthWrapper>
