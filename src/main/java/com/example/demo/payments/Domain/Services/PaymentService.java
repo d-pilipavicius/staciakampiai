@@ -97,15 +97,16 @@ public class PaymentService {
         return true;
     }
 
-    public Tip addTip(AddTipDTO request) {
+    public Tip addTip(UUID businessId,AddTipDTO request) {
         Tip tipPayment = Mappers.toTip(request);
+        tipPayment.setBusinessId(businessId);
         ITipRepository.save(tipPayment);
         return tipPayment;
     }
 
-    public Page<Tip> getOrderTips(UUID orderId, int page, int pageSize) {
+    public Page<Tip> getOrderTips(UUID businessId, UUID orderId, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return ITipRepository.findByOrderId(orderId, pageable);
+        return ITipRepository.findByBusinessIdAndOrderId(businessId, orderId, pageable);
     }
 
     public void processCheckoutSessionCompleted(CheckoutSessionCompletedDTO request) {

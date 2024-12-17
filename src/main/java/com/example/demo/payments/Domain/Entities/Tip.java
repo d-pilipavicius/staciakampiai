@@ -32,4 +32,7 @@ public class Tip {
     @Enumerated(EnumType.STRING)
     @Column(name = "currency", nullable = false)
     private Currency currency;
+
+    @Column(name = "business_id", nullable = false)
+    private UUID businessId;
 }

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/payments/webhooks")
+@RequestMapping("/v1/payments/{businessId}/webhooks")
 @AllArgsConstructor
 public class PaymentWebhookController {
     private final PaymentService paymentService;

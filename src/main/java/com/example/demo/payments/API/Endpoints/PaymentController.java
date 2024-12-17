@@ -16,23 +16,24 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/v1/payments")
+@RequestMapping("/v1/payments/{businessId}")
 public class PaymentController {
     private PaymentApplicationService paymentApplicationService;
 
     @PostMapping("/tips")
-    public ResponseEntity<Tip> addTip(@RequestBody AddTipDTO request) {
-        Tip createdTip = paymentApplicationService.addTip(request);
+    public ResponseEntity<Tip> addTip(@PathVariable UUID businessId, @RequestBody AddTipDTO request) {
+        Tip createdTip = paymentApplicationService.addTip(businessId, request);
         return ResponseEntity.ok(createdTip);
     }
 
     @GetMapping("/tips")
     public ResponseEntity<Map<String, Object>> getOrderTips(
+            @PathVariable UUID businessId,
             @RequestParam UUID orderId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize
     ) {
-        Page<Tip> tipsPage = paymentApplicationService.getOrderTips(orderId, page, pageSize);
+        Page<Tip> tipsPage = paymentApplicationService.getOrderTips(businessId, orderId, page, pageSize);
         Map<String, Object> response = Mappers.mapPageToResponse(tipsPage);
         return ResponseEntity.ok(response);
     }

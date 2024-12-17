@@ -43,13 +43,13 @@ public class PaymentApplicationService {
         return paymentService.completeOrderPayment(orderId);
     }
 
-    public Tip addTip(AddTipDTO request) {
+    public Tip addTip(UUID businessId,AddTipDTO request) {
         orderApplicationService.validateOrder(request.getOrderId());
-        return paymentService.addTip(request);
+        return paymentService.addTip(businessId, request);
     }
 
-    public Page<Tip> getOrderTips(UUID orderId, int page, int pageSize) {
+    public Page<Tip> getOrderTips(UUID businessId, UUID orderId, int page, int pageSize) {
         orderApplicationService.validateOrder(orderId);
-        return paymentService.getOrderTips(orderId, page, pageSize);
+        return paymentService.getOrderTips(businessId, orderId, page, pageSize);
     }
 }

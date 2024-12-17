@@ -8,5 +8,5 @@ import com.example.demo.payments.Domain.Entities.Tip;
  import java.util.UUID;
 
 public interface ITipRepository extends JpaRepository<Tip, UUID> {
-    Page<Tip> findByOrderId(UUID orderId, Pageable pageable);
+    Page<Tip> findByBusinessIdAndOrderId(UUID businessId, UUID orderId, Pageable pageable);
 }
