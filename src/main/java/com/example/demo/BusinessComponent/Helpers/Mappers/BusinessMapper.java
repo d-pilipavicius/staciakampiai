@@ -1,5 +1,7 @@
 package com.example.demo.BusinessComponent.Helpers.Mappers;
 
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -16,7 +18,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 @Component
+@AllArgsConstructor
 public class BusinessMapper {
+  private final PasswordEncoder passwordEncoder;
 
   public BusinessDTO toBusinessDTO(@NotNull @Valid Business business) {
     return BusinessDTO

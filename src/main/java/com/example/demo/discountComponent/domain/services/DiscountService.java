@@ -25,8 +25,7 @@ public class DiscountService {
     private final DiscountsValidator discountsValidator;
 
     @Transactional
-    public DiscountDTO createDiscount(UUID employeeId, PostDiscountDTO postDiscountDTO) {
-        discountsValidator.checkIfAuthorized(employeeId);
+    public DiscountDTO createDiscount(PostDiscountDTO postDiscountDTO) {
         discountsValidator.checkDatesOverlap(postDiscountDTO.getValidFrom(), postDiscountDTO.getValidUntil());
         discountsValidator.checkPricingStrategy(postDiscountDTO.getCurrency(), postDiscountDTO.getValueType());
         discountsValidator.checkGiftcard(postDiscountDTO.getTarget(), postDiscountDTO.getUsageCountLimit(),
@@ -60,9 +59,7 @@ public class DiscountService {
     }
 
     @Transactional
-    public DiscountDTO updateDiscount(UUID discountId, UUID employeeId, PutDiscountDTO putDiscountDTO) {
-        discountsValidator.checkIfAuthorized(employeeId);
-
+    public DiscountDTO updateDiscount(UUID discountId, PutDiscountDTO putDiscountDTO) {
         Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new NotFoundException(
                 "The given discount id wasn't associated with any discount inside the database for updating."));
 
@@ -90,8 +87,7 @@ public class DiscountService {
     }
 
     @Transactional
-    public void deleteDiscountById(UUID discountId, UUID employeeId){
-        discountsValidator.checkIfAuthorized(employeeId);
+    public void deleteDiscountById(UUID discountId){
         discountsValidator.checkIfDiscountExists(discountId);
         discountRepository.deleteById(discountId);
     }
