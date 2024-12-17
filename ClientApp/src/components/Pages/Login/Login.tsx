@@ -26,7 +26,6 @@ function Login() {
       if(loginDetails) {
         localStorage.setItem("loginToken", JSON.stringify(loginDetails));
         nav("/home");
-        console.log(JSON.stringify(loginDetails));
       }
     }
   }
