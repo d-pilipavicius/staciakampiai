@@ -82,7 +82,9 @@ public class UserController {
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String token = jwtUtils.generateToken(authentication);
 
-    return new ResponseEntity<>(LoginResponseDTO.builder().accessToken(token).build(), HttpStatus.OK);
+    UserDTO userDTO = userApplicationService.getUserByUsername(authentication.getName());
+
+    return new ResponseEntity<>(LoginResponseDTO.builder().accessToken(token).user(userDTO).build(), HttpStatus.OK);
   }
 
 }

@@ -44,6 +44,14 @@ public class UserService {
     return userMapper.toUserDTO(user);
   }
 
+  public UserDTO getUserByUsername(@NotNull String username){
+    User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(
+            "No user exists"
+    ));
+
+    return userMapper.toUserDTO(user);
+  }
+
   public UserDTO updateUser(@NotNull UUID userId, @NotNull @Valid UpdateUserDTO updateUserDTO) {
     User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(
             "The given user id was not found."
