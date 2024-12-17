@@ -216,7 +216,7 @@ export enum OrderStatus {
 }
 
 export enum Currency {
-  EUR = "EUR", USD = "USD"
+  EUR = "EUR" , USD = "USD"
 }
 
 export enum DiscountTarget {
