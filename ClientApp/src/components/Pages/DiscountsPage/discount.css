@@ -28,3 +28,19 @@ form .checkBoxes {
   margin-left: 0px;
   margin-right: 0px;
 }
+
+.product {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  width: 80% !important;
+}
+
+.productInside {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fullWidth {
+  width: 90%!important;
+}

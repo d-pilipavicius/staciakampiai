@@ -17,7 +17,7 @@ public class CustomAccessHandler implements AccessDeniedHandler {
             throws IOException, ServletException {
 
         CustomJwtExceptionFilter.setErrorResponse(
-                HttpServletResponse.SC_UNAUTHORIZED,
+                HttpServletResponse.SC_FORBIDDEN,
                 response,
                 "You do not have permissions to access this resource");
     }
