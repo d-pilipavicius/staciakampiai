@@ -92,4 +92,8 @@ public class OrderApplicationService {
     public BigDecimal calculateItemPrice(UUID orderItemId, Integer quantity) {
         return orderService.calculateItemPrice(orderItemId, quantity);
     }
+
+    public OrderDTO returnOrder(UUID orderId) {
+        return orderService.returnOrder(orderId);
+    }
 }
