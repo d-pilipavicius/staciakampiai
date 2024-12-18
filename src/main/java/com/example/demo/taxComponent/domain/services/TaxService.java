@@ -67,4 +67,9 @@ public class TaxService {
             throw new IllegalArgumentException("Tax with id " + taxId + " not found");
         }
     }
+
+    @Transactional
+    public List<UUID> findProductIdsForTax(TaxDTO taxDTO){
+       return taxRepository.findProductsByTaxId(taxDTO.getId());
+    }
 }

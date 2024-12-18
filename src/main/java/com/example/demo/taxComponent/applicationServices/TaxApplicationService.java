@@ -27,8 +27,6 @@ public class TaxApplicationService {
 
     private final ProductApplicationService productApplicationService;
 
-    private final TaxRepository taxRepository;
-
     @Transactional
     public TaxDTO createTax(PostTaxDTO postTaxDTO) {
         if(!productApplicationService.validateProductIds(postTaxDTO.getEntitledProductIds())){
@@ -44,8 +42,8 @@ public class TaxApplicationService {
     public GetTaxesDTO getAllTaxes(int page, int size, UUID businessId) {
         GetTaxesDTO getTaxesDTO = taxService.getAllTaxes(page, size, businessId);
         getTaxesDTO.getItems().forEach(taxDTO -> {
-            List<UUID> proudctIds = taxRepository.findProductsByTaxId(taxDTO.getId());
-            taxDTO.setEntitledProducts(productApplicationService.getProductsByListOfId(proudctIds));
+            List<UUID> productIds = taxService.findProductIdsForTax(taxDTO);
+            taxDTO.setEntitledProducts(productApplicationService.getProductsByListOfId(productIds));
         });
 
         return  getTaxesDTO;
