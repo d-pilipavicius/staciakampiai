@@ -47,17 +47,17 @@ public class GlobalExceptionHandler {
 
     }
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-//        ErrorResponse response = ErrorResponse.builder().errorCode("Bad request").errorMessage(ex.getMessage() + "missing params")
-//                .build();
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-//    }
-//
-//    @ExceptionHandler(MissingServletRequestParameterException.class)
-//    public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException ex) {
-//        ErrorResponse response = ErrorResponse.builder().errorCode("Bad request").errorMessage(ex.getMessage())
-//                .build();
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-//    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        ErrorResponse response = ErrorResponse.builder().errorCode("Bad request").errorMessage(ex.getMessage() + "missing params")
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException ex) {
+        ErrorResponse response = ErrorResponse.builder().errorCode("Bad request").errorMessage(ex.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }
