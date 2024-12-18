@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @AllArgsConstructor
@@ -24,11 +26,17 @@ public class ServiceChargeService {
 
     private final ServiceChargeRepository serviceChargeRepository;
     private final ServiceChargeMapper serviceChargeMapper;
+    private static final Logger logger = LoggerFactory.getLogger(ServiceChargeService.class);
+
 
     public ServiceChargeDTO createServiceCharge(PostServiceChargeDTO postServiceChargeDTO) {
         ServiceCharge serviceCharge = serviceChargeMapper.toServiceCharge(postServiceChargeDTO);
         ServiceCharge savedServiceCharge = serviceChargeRepository.save(serviceCharge);
-        return serviceChargeMapper.toServiceChargeDTO(savedServiceCharge);
+        
+        ServiceChargeDTO savedServiceChargeDTO = serviceChargeMapper.toServiceChargeDTO(savedServiceCharge);
+        logger.info("Created service charge with ID: {}, Details: {}", savedServiceChargeDTO.getId(), savedServiceChargeDTO.toString());
+
+        return savedServiceChargeDTO;
     }
 
     public GetServiceChargesDTO getServiceCharges(int page, int size) {
@@ -43,7 +51,10 @@ public class ServiceChargeService {
         applyServiceChargeUpdates(putServiceChargeDTO, serviceCharge); 
         ServiceCharge updatedServiceCharge = serviceChargeRepository.save(serviceCharge);
         
-        return serviceChargeMapper.toServiceChargeDTO(updatedServiceCharge);
+        ServiceChargeDTO updatedServiceChargeDTO = serviceChargeMapper.toServiceChargeDTO(updatedServiceCharge);
+        logger.info("Updated service charge with ID: {}, Updated details: {}", updatedServiceChargeDTO.getId(), updatedServiceChargeDTO);
+
+        return updatedServiceChargeDTO;
     }
 
 

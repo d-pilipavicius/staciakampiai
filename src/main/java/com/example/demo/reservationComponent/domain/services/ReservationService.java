@@ -41,8 +41,10 @@ public class ReservationService {
         reservation.setEmployeeId(employeeId);
 
         Reservation savedReservation = reservationRepository.save(reservation);
+        ReservationDTO mappedReservation = Mapper.mapToDTO(savedReservation, ReservationMapper.TO_DTO);
 
-        return Mapper.mapToDTO(savedReservation, ReservationMapper.TO_DTO);
+        logger.info("Created Reservation: {}", mappedReservation.toString());
+        return mappedReservation;
     }
 
     public GetReservationsDTO getReservationsByBusinessId(UUID businessId, int page, int size) {
@@ -69,8 +71,9 @@ public class ReservationService {
         applyReservationUpdates(putReservationDTO, reservation);
 
         Reservation updatedReservation = reservationRepository.save(reservation);
-
-        return Mapper.mapToDTO(updatedReservation, ReservationMapper.TO_DTO);
+        ReservationDTO updatedReservationDTO = Mapper.mapToDTO(updatedReservation, ReservationMapper.TO_DTO);
+        logger.info("Updated Reservation with ID: {}, Details: {}", updatedReservation.getId(), updatedReservationDTO.toString());
+        return updatedReservationDTO;
     }
 
     public void deleteReservation(UUID reservationId) {
