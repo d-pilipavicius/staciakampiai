@@ -44,4 +44,10 @@ public class OrderValidator {
         }
         return true;
     }
+
+    public void isOrderStatusClosed(Order order) {
+        if (order.getStatus() != OrderStatus.CLOSED) {
+            throw new UnprocessableException("Order is not closed yet.");
+        }
+    }
 }

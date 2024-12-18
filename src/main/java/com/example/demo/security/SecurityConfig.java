@@ -51,11 +51,13 @@ public class SecurityConfig {
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/v1/orders/**").hasAnyAuthority("BusinessOwner", "Employee")
+                        .requestMatchers("/v1/reservations/**").hasAnyAuthority("BusinessOwner", "Employee")
                         .requestMatchers("/h2-console/**").permitAll() //used for h2 to be accessible
                         .requestMatchers(HttpMethod.POST, "/v1/user/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "v1/business/*").hasAnyAuthority("BusinessOwner", "Employee")
                         .requestMatchers( "v1/user/**").hasAuthority("ITAdministrator")
-                        .requestMatchers(HttpMethod.PUT,"v1/business").hasAuthority("BusinessOwner")
+                        .requestMatchers(HttpMethod.PUT,"v1/business/*").hasAuthority("BusinessOwner")
                         .requestMatchers("v1/business/**").hasAuthority("ITAdministrator")
                         .requestMatchers(HttpMethod.GET, "v1/**").hasAnyAuthority("BusinessOwner", "Employee")
                         //if need to add some DELETE method which needs to get accessed by Employee add below comment

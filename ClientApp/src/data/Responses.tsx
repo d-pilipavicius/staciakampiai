@@ -104,16 +104,20 @@ export interface TaxDTO {
   title: string;
   ratePercentage: number;
   businessId: string;
+  entitledProducts: ProductDTO[]
 }
 
-export interface PostTaxDTO extends Omit<TaxDTO, "id"> {
+export interface PostTaxDTO extends Omit<TaxDTO, 'id' | 'entitledProducts'> {
+  entitledProducts: string[]
 }
 
 export interface GetTaxesDTO extends PageinationDTO {
   items: TaxDTO[];
+  businessId: string;
 }
 
-export interface PutTaxDTO extends Partial<Omit<TaxDTO, "id" | "businessId">> {
+export interface PutTaxDTO extends Omit<TaxDTO, 'id' | 'businessId' | 'entitledProducts'> {
+  entitledProducts: string[]
 }
 
 //Service charges
@@ -216,15 +220,15 @@ export enum OrderStatus {
 }
 
 export enum Currency {
-  EUR, USD
+  EUR = "EUR" , USD = "USD"
 }
 
 export enum DiscountTarget {
-  Entitled, All
+  Entitled = "Entitled", All = "All"
 }
 
 export enum PricingStrategy {
-  PERCENTAGE, FIXED_AMOUNT
+  PERCENTAGE = "PERCENTAGE", FIXED_AMOUNT="FIXED_AMOUNT"
 }
 
 export interface UnitPrice {

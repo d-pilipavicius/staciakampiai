@@ -1,5 +1,5 @@
 import { MissingAuthError } from "./MissingAuthError";
-import { BusinessDTO, DiscountDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, LoginDTO, LoginResponseDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
+import { BusinessDTO, DiscountDTO, GetDiscountsDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, LoginDTO, LoginResponseDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
 import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, loginLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
 
 //Login / Authentication
@@ -109,6 +109,7 @@ export async function deleteProductModifierAPI(modifierId: string, auth: LoginRe
 
 //Discount / Giftcard
 export async function postDiscountAPI(dto: PostDiscountDTO, auth: LoginResponseDTO): Promise<DiscountDTO> {
+  console.log(JSON.stringify(dto));
   const response = await authAPI(postDiscountLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
 
   if (!response.ok) {
@@ -118,11 +119,11 @@ export async function postDiscountAPI(dto: PostDiscountDTO, auth: LoginResponseD
   return response.json();
 }
 
-export async function getDiscountsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<DiscountDTO> {
+export async function getDiscountsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<GetDiscountsDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await authAPI(getDiscountsLink(auth.user.businessId), "GET", null, auth);
+  const response = await authAPI(getDiscountsLink(auth.user.businessId)+addParam({pageination, businessId}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -184,17 +185,27 @@ export async function postTaxAPI(dto: PostTaxDTO, auth: LoginResponseDTO): Promi
   return response.json();
 }
 
-export async function getTaxesAPI(pageNumber: number, pageSize: number, auth: LoginResponseDTO): Promise<GetTaxesDTO> {
+export async function getTaxesAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<GetTaxesDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await authAPI(getTaxLink+addParam({pageination}), "GET", null, auth);
+  const response = await authAPI(getTaxLink(auth.user.businessId)+addParam({pageination, businessId}), "GET", null, auth);
 
   if (!response.ok) {
+    if(response.status == 500){
+      return {
+        "businessId": "",
+        "totalPages": 0,
+        "totalItems": 0,
+        "currentPage": 0,
+        "items": []
+      }
+    }
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
 
-  return response.json();
+  const data: GetTaxesDTO = await response.json();
+  return data;
 }
 
 export async function putTaxesAPI(taxId: string, dto: PutTaxDTO, auth: LoginResponseDTO) {
@@ -361,6 +372,7 @@ async function basicAPI(url: string, method: string, body: string | null) {
 }
 
 async function authAPI(url: string, method: string, body: string | null, auth: LoginResponseDTO) {
+  console.log(`${auth.tokenType}${auth.accessToken}`)
   const response = await fetch(url, {
     method: method,
     headers: {
