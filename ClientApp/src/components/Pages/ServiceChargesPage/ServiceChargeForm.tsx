@@ -69,7 +69,7 @@ const ServiceChargeForm: React.FC<ServiceChargeFormProps> = ({ initialData, onSu
             />
             <select
                 value={valueType}
-                onChange={(e) => setValueType(Number(e.target.value) as PricingStrategy)}
+                onChange={(e) => setValueType(String(e.target.value) as PricingStrategy)}
                 className="form-control"
             >
                 {Object.entries(PricingStrategy)
@@ -100,7 +100,7 @@ const ServiceChargeForm: React.FC<ServiceChargeFormProps> = ({ initialData, onSu
             )}
             <select
                 value={currency}
-                onChange={(e) => setCurrency(Number(e.target.value) as Currency)}
+                onChange={(e) => setCurrency(String(e.target.value) as Currency)}
                 className="form-control"
             >
                 {Object.entries(Currency)
