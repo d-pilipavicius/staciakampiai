@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/orders")
+@RequestMapping("/v1/orders/{businessId}")
 @AllArgsConstructor
 public class OrderController {
     private final OrderApplicationService orderApplicationService;

@@ -1,3 +1,15 @@
+//Login / auth
+export interface LoginDTO {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponseDTO {
+  accessToken: string;
+  tokenType: string;
+  user: UserDTO;
+}
+
 //User
 export interface UserDTO {
   id: string;

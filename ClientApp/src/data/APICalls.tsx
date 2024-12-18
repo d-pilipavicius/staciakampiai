@@ -1,30 +1,23 @@
-import { BusinessDTO, DiscountDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
-import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
+import { MissingAuthError } from "./MissingAuthError";
+import { BusinessDTO, DiscountDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, LoginDTO, LoginResponseDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
+import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, loginLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
 
-export async function getMyBusiness(): Promise<BusinessDTO> {
-  const businessId = localStorage.getItem("userBusinessId");
-  if(businessId) 
-    return await getBusinessAPI(businessId);
-  else 
-    throw new Error(`Error: Bad login!`);
+//Login / Authentication
+export async function loginAPI(login: LoginDTO): Promise<LoginResponseDTO> {
+  const response = await basicAPI(loginLink, "POST", JSON.stringify(login));
+
+  if(!response.ok) 
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  
+  return response.json();
 }
-
-export async function getMyBusinessProducts(pageNumber: number, pageSize: number): Promise<GetProductsDTO> {
-  const businessId = localStorage.getItem("userBusinessId");
-  if(businessId) 
-    return await getBusinessProductsAPI(pageNumber, pageSize, businessId);
-  else 
-    throw new Error(`Error: Bad login!`);
-}
-
 
 //Products
-export async function getBusinessProductsAPI(pageNumber: number, pageSize: number, businessId: string): Promise<GetProductsDTO> {
+export async function getBusinessProductsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<GetProductsDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await fetch(getProductListLink+addParam({pageination, employeeId, businessId}));
+  const response = await authAPI(getProductListLink(auth.user.businessId)+addParam({pageination, businessId}), "GET", null, auth);
 
   if(!response.ok) {
     if(response.status == 500) {
@@ -44,9 +37,8 @@ export async function getBusinessProductsAPI(pageNumber: number, pageSize: numbe
   return data;
 }
 
-export async function postProductAPI(product: PostProductDTO): Promise<ProductDTO> {
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(postProductLink+addParam({employeeId}), "POST", JSON.stringify(product));
+export async function postProductAPI(product: PostProductDTO, auth: LoginResponseDTO): Promise<ProductDTO> {
+  const response = await authAPI(postProductLink(auth.user.businessId), "POST", JSON.stringify(product), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -55,9 +47,8 @@ export async function postProductAPI(product: PostProductDTO): Promise<ProductDT
   return response.json();
 }
 
-export async function putProductAPI(productId: string, product: PutProductDTO): Promise<ProductDTO> {
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(putProductLink(productId)+addParam({employeeId}), "PUT", JSON.stringify(product));
+export async function putProductAPI(productId: string, product: PutProductDTO, auth: LoginResponseDTO): Promise<ProductDTO> {
+  const response = await authAPI(putProductLink(auth.user.businessId, productId), "PUT", JSON.stringify(product), auth);
   
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -66,9 +57,8 @@ export async function putProductAPI(productId: string, product: PutProductDTO): 
   return response.json();
 }
 
-export async function deleteProductAPI(productId: string) {
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(deleteProductLink(productId)+addParam({employeeId}), "DELETE", null);
+export async function deleteProductAPI(productId: string, auth: LoginResponseDTO) {
+  const response = await authAPI(deleteProductLink(auth.user.businessId, productId), "DELETE", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -76,9 +66,8 @@ export async function deleteProductAPI(productId: string) {
 }
 
 //Product modifiers
-export async function postProductModifierAPI(dto: PostProductModifierDTO): Promise<ProductModifierDTO> {
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(postProductModifierLink+addParam({employeeId}), "POST", JSON.stringify(dto));
+export async function postProductModifierAPI(dto: PostProductModifierDTO, auth: LoginResponseDTO): Promise<ProductModifierDTO> {
+  const response = await authAPI(postProductModifierLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -87,12 +76,11 @@ export async function postProductModifierAPI(dto: PostProductModifierDTO): Promi
   return response.json();
 }
 
-export async function getProductModifierAPI(pageNumber: number, pageSize: number, businessId: string): Promise<GetProductModifiersDTO> {
+export async function getProductModifierAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<GetProductModifiersDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await fetch(getProductModifierListLink+addParam({businessId, employeeId, pageination}));
+  const response = await authAPI(getProductModifierListLink(auth.user.businessId)+addParam({businessId, pageination}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -101,9 +89,8 @@ export async function getProductModifierAPI(pageNumber: number, pageSize: number
   return response.json();
 }
 
-export async function putProductModifierAPI(modifierId: string, dto: PutProductModifierDTO): Promise<ProductModifierDTO> {
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(putProductModifierLink(modifierId)+addParam({employeeId}), "PUT", JSON.stringify(dto));
+export async function putProductModifierAPI(modifierId: string, dto: PutProductModifierDTO, auth: LoginResponseDTO): Promise<ProductModifierDTO> {
+  const response = await authAPI(putProductModifierLink(auth.user.businessId, modifierId), "PUT", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -112,9 +99,8 @@ export async function putProductModifierAPI(modifierId: string, dto: PutProductM
   return response.json();
 }
 
-export async function deleteProductModifierAPI(modifierId: string) {
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(deleteProductModifierLink(modifierId)+addParam({employeeId}), "DELETE", null);
+export async function deleteProductModifierAPI(modifierId: string, auth: LoginResponseDTO) {
+  const response = await authAPI(deleteProductModifierLink(auth.user.businessId, modifierId), "DELETE", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -122,9 +108,8 @@ export async function deleteProductModifierAPI(modifierId: string) {
 }
 
 //Discount / Giftcard
-export async function postDiscountAPI(dto: PostDiscountDTO): Promise<DiscountDTO> {
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(postDiscountLink+addParam({employeeId}), "POST", JSON.stringify(dto));
+export async function postDiscountAPI(dto: PostDiscountDTO, auth: LoginResponseDTO): Promise<DiscountDTO> {
+  const response = await authAPI(postDiscountLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -133,11 +118,11 @@ export async function postDiscountAPI(dto: PostDiscountDTO): Promise<DiscountDTO
   return response.json();
 }
 
-export async function getDiscountsAPI(pageNumber: number, pageSize: number, businessId: string): Promise<DiscountDTO> {
+export async function getDiscountsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<DiscountDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await fetch(getDiscountsLink+addParam({pageination, businessId}));
+  const response = await authAPI(getDiscountsLink(auth.user.businessId), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -146,11 +131,11 @@ export async function getDiscountsAPI(pageNumber: number, pageSize: number, busi
   return response.json();
 }
 
-export async function getGiftcardsAPI(pageNumber: number, pageSize: number, businessId: string): Promise<DiscountDTO> {
+export async function getGiftcardsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<DiscountDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await fetch(getGiftcardsLink+addParam({pageination, businessId}));
+  const response = await authAPI(getGiftcardsLink+addParam({pageination, businessId}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -159,9 +144,9 @@ export async function getGiftcardsAPI(pageNumber: number, pageSize: number, busi
   return response.json();
 }
 
-export async function putDiscountAPI(discountId: string, dto: PutDiscountDTO): Promise<DiscountDTO>{
+export async function putDiscountAPI(discountId: string, dto: PutDiscountDTO, auth: LoginResponseDTO): Promise<DiscountDTO>{
   const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(putDiscountLink(discountId)+addParam({employeeId}), "PUT", JSON.stringify(dto));
+  const response = await authAPI(putDiscountLink(auth.user.businessId, discountId), "PUT", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -170,8 +155,8 @@ export async function putDiscountAPI(discountId: string, dto: PutDiscountDTO): P
   return response.json();
 }
 
-export async function useDiscountAPI(discountId: string): Promise<DiscountDTO> {
-  const response = await basicAPI(increaseDiscGiftUsageLink(discountId), "PUT", null);
+export async function useDiscountAPI(discountId: string, auth: LoginResponseDTO): Promise<DiscountDTO> {
+  const response = await authAPI(increaseDiscGiftUsageLink(auth.user.businessId, discountId), "PUT", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -180,9 +165,8 @@ export async function useDiscountAPI(discountId: string): Promise<DiscountDTO> {
   return response.json();
 }
 
-export async function deleteDiscountAPI(discountId: string) {
-  const employeeId = localStorage.getItem("userId") ?? undefined;
-  const response = await basicAPI(deleteDiscountLink(discountId)+addParam({employeeId}), "DELETE", null);
+export async function deleteDiscountAPI(discountId: string, auth: LoginResponseDTO) {
+  const response = await authAPI(deleteDiscountLink(auth.user.businessId, discountId), "DELETE", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -190,8 +174,8 @@ export async function deleteDiscountAPI(discountId: string) {
 }
 
 //Tax
-export async function postTaxAPI(dto: PostTaxDTO): Promise<TaxDTO> {
-  const response = await basicAPI(postTaxLink, "POST", JSON.stringify(dto));
+export async function postTaxAPI(dto: PostTaxDTO, auth: LoginResponseDTO): Promise<TaxDTO> {
+  const response = await authAPI(postTaxLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -200,11 +184,11 @@ export async function postTaxAPI(dto: PostTaxDTO): Promise<TaxDTO> {
   return response.json();
 }
 
-export async function getTaxesAPI(pageNumber: number, pageSize: number): Promise<GetTaxesDTO> {
+export async function getTaxesAPI(pageNumber: number, pageSize: number, auth: LoginResponseDTO): Promise<GetTaxesDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await fetch(getTaxLink+addParam({pageination}));
+  const response = await authAPI(getTaxLink+addParam({pageination}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -213,8 +197,8 @@ export async function getTaxesAPI(pageNumber: number, pageSize: number): Promise
   return response.json();
 }
 
-export async function putTaxesAPI(taxId: string, dto: PutTaxDTO) {
-  const response = await basicAPI(putTaxLink(taxId), "PUT", JSON.stringify(dto));
+export async function putTaxesAPI(taxId: string, dto: PutTaxDTO, auth: LoginResponseDTO) {
+  const response = await authAPI(putTaxLink(auth.user.businessId, taxId), "PUT", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -223,8 +207,8 @@ export async function putTaxesAPI(taxId: string, dto: PutTaxDTO) {
   return response.json();
 }
 
-export async function deleteTaxAPI(taxId: string) {
-  const response = await basicAPI(deleteTaxLink(taxId), "DELETE", null);
+export async function deleteTaxAPI(taxId: string, auth: LoginResponseDTO) {
+  const response = await authAPI(deleteTaxLink(auth.user.businessId, taxId), "DELETE", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -232,8 +216,8 @@ export async function deleteTaxAPI(taxId: string) {
 }
 
 //Service charges
-export async function postServiceChargeAPI(dto: PostServiceChargeDTO): Promise<ServiceChargeDTO> {
-  const response = await basicAPI(postServiceChargeLink, "POST", JSON.stringify(dto));
+export async function postServiceChargeAPI(dto: PostServiceChargeDTO, auth: LoginResponseDTO): Promise<ServiceChargeDTO> {
+  const response = await authAPI(postServiceChargeLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -242,12 +226,12 @@ export async function postServiceChargeAPI(dto: PostServiceChargeDTO): Promise<S
   return response.json();
 }
 
-export async function getServiceChargesAPI(pageNumber: number, pageSize: number): Promise<GetServiceChargeDTO> {
+export async function getServiceChargesAPI(pageNumber: number, pageSize: number, auth: LoginResponseDTO): Promise<GetServiceChargeDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize
   }
-  const response = await fetch(getServiceChargeLink+addParam({pageination}));
+  const response = await authAPI(getServiceChargeLink(auth.user.businessId)+addParam({pageination}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -256,8 +240,8 @@ export async function getServiceChargesAPI(pageNumber: number, pageSize: number)
   return response.json();
 }
 
-export async function putServiceChargeAPI(serviceChargeId: string, dto: PutServiceChargeDTO): Promise<ServiceChargeDTO> {
-  const response = await basicAPI(putServiceChargeLink(serviceChargeId), "PUT", JSON.stringify(dto));
+export async function putServiceChargeAPI(serviceChargeId: string, dto: PutServiceChargeDTO, auth: LoginResponseDTO): Promise<ServiceChargeDTO> {
+  const response = await authAPI(putServiceChargeLink(auth.user.businessId, serviceChargeId), "PUT", JSON.stringify(dto), auth);
   
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -266,8 +250,8 @@ export async function putServiceChargeAPI(serviceChargeId: string, dto: PutServi
   return response.json();
 }
 
-export async function deleteServiceChargeAPI(serviceChargeId: string) {
-  const response = await basicAPI(deleteServiceChargeLink(serviceChargeId), "DELETE", null);
+export async function deleteServiceChargeAPI(serviceChargeId: string, auth: LoginResponseDTO) {
+  const response = await authAPI(deleteServiceChargeLink(auth.user.businessId, serviceChargeId), "DELETE", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -275,8 +259,8 @@ export async function deleteServiceChargeAPI(serviceChargeId: string) {
 }
 
 //Order
-export async function postOrderAPI(dto: PostOrderDTO): Promise<OrderDTO> {
-  const response = await basicAPI(postOrderLink, "POST", JSON.stringify(dto));
+export async function postOrderAPI(dto: PostOrderDTO, auth: LoginResponseDTO): Promise<OrderDTO> {
+  const response = await authAPI(postOrderLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -285,12 +269,12 @@ export async function postOrderAPI(dto: PostOrderDTO): Promise<OrderDTO> {
   return response.json();
 }
 
-export async function getOrdersAPI(pageNumber: number, pageSize: number): Promise<OrderDTO> {
+export async function getOrdersAPI(pageNumber: number, pageSize: number, auth: LoginResponseDTO): Promise<OrderDTO> {
   const pageination = {
     pageNumber: pageNumber+1,
     pageSize: pageSize
   };
-  const response = await fetch(getOrdersLink+addParam({pageination}));
+  const response = await authAPI(getOrdersLink+addParam({pageination}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -299,8 +283,8 @@ export async function getOrdersAPI(pageNumber: number, pageSize: number): Promis
   return response.json();
 }
 
-export async function getOrderAPI(orderId: string): Promise<OrderDTO> {
-  const response = await fetch(getOrderLink(orderId));
+export async function getOrderAPI(orderId: string, auth: LoginResponseDTO): Promise<OrderDTO> {
+  const response = await authAPI(getOrderLink(auth.user.businessId, orderId), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -309,8 +293,8 @@ export async function getOrderAPI(orderId: string): Promise<OrderDTO> {
   return response.json();
 }
 
-export async function putOrderAPI(orderId: string, dto: PutOrderDTO): Promise<OrderDTO> {
-  const response = await basicAPI(putOrderLink(orderId), "PUT", JSON.stringify(dto));
+export async function putOrderAPI(orderId: string, dto: PutOrderDTO, auth: LoginResponseDTO): Promise<OrderDTO> {
+  const response = await authAPI(putOrderLink(auth.user.businessId, orderId), "PUT", JSON.stringify(dto), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -319,8 +303,8 @@ export async function putOrderAPI(orderId: string, dto: PutOrderDTO): Promise<Or
   return response.json();
 }
 
-export async function getOrderReceiptAPI(id: string): Promise<OrderDTO> {
-  const response = await fetch(getOrderReceiptLink(id));
+export async function getOrderReceiptAPI(id: string, auth: LoginResponseDTO): Promise<OrderDTO> {
+  const response = await authAPI(getOrderReceiptLink(auth.user.businessId, id), "GET", null, auth);
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
@@ -330,8 +314,8 @@ export async function getOrderReceiptAPI(id: string): Promise<OrderDTO> {
 
 
 //User
-export async function getUserAPI(userId: string): Promise<UserDTO> {
-  const response = await fetch(getUserLink(userId));
+export async function getUserAPI(userId: string, auth: LoginResponseDTO): Promise<UserDTO> {
+  const response = await authAPI(getUserLink(userId), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -342,8 +326,8 @@ export async function getUserAPI(userId: string): Promise<UserDTO> {
 
 
 //Business
-export async function getBusinessAPI(id: string): Promise<BusinessDTO> {
-  const response = await fetch(getBusinessLink(id));
+export async function getBusinessAPI(id: string, auth: LoginResponseDTO): Promise<BusinessDTO> {
+  const response = await authAPI(getBusinessLink(id), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -352,8 +336,8 @@ export async function getBusinessAPI(id: string): Promise<BusinessDTO> {
   return response.json();
 }
 
-export async function putBusinessAPI(business: BusinessDTO): Promise<BusinessDTO> {
-  const response = await basicAPI(putBusinessLink(business.id), "PUT", JSON.stringify(business));
+export async function putBusinessAPI(business: BusinessDTO, auth: LoginResponseDTO): Promise<BusinessDTO> {
+  const response = await authAPI(putBusinessLink(business.id), "PUT", JSON.stringify(business), auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -372,6 +356,22 @@ async function basicAPI(url: string, method: string, body: string | null) {
     },
     body: body
   })
+
+  return response;
+}
+
+async function authAPI(url: string, method: string, body: string | null, auth: LoginResponseDTO) {
+  const response = await fetch(url, {
+    method: method,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `${auth.tokenType}${auth.accessToken}`
+    },
+    body: body
+  })
+
+  if(response.status == 401)
+    throw new MissingAuthError("Authentication required.");
 
   return response;
 }

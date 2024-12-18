@@ -10,19 +10,31 @@ import {
   PostServiceChargeDTO,
   GetServiceChargeDTO,
   PutServiceChargeDTO,
+  LoginResponseDTO,
 } from "../../../data/Responses";
 import ServiceChargeForm from "./ServiceChargeForm";
 import Header from "../../Header";
 import "./serviceCharge.css";
 import Popup from "../../Popup"; // Import Popup component
+import { useNavigate } from "react-router";
+import { MissingAuthError } from "../../../data/MissingAuthError";
 
 const ServiceChargePage: React.FC = () => {
+  const nav = useNavigate();
+
   const [serviceCharges, setServiceCharges] = useState<ServiceChargeDTO[]>([]);
   const [selectedServiceCharge, setSelectedServiceCharge] = useState<ServiceChargeDTO | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 10;
   const [isFormVisible, setIsFormVisible] = useState(false);
+
+  const loginString = localStorage.getItem("loginToken");
+  if(!loginString) {
+    nav("/");
+    return;
+  }
+  const loginToken: LoginResponseDTO = JSON.parse(loginString);
 
   useEffect(() => {
     loadServiceCharges();
@@ -31,10 +43,14 @@ const ServiceChargePage: React.FC = () => {
   // Fetch service charges
   const loadServiceCharges = async () => {
     try {
-      const data: GetServiceChargeDTO = await getServiceChargesAPI(currentPage, pageSize);
+      const data: GetServiceChargeDTO = await getServiceChargesAPI(currentPage, pageSize, loginToken);
       setServiceCharges(data.items);
       setTotalPages(data.totalPages);
     } catch (error) {
+      if(error instanceof MissingAuthError) {
+        nav("/");
+        return;
+      }
       console.error("Error fetching service charges:", error);
     }
   };
@@ -43,14 +59,18 @@ const ServiceChargePage: React.FC = () => {
   const handleSave = async (dto: PostServiceChargeDTO | PutServiceChargeDTO) => {
     try {
       if (selectedServiceCharge) {
-        await putServiceChargeAPI(selectedServiceCharge.id, dto as PutServiceChargeDTO);
+        await putServiceChargeAPI(selectedServiceCharge.id, dto as PutServiceChargeDTO, loginToken);
       } else {
-        await postServiceChargeAPI(dto as PostServiceChargeDTO);
+        await postServiceChargeAPI(dto as PostServiceChargeDTO, loginToken);
       }
       loadServiceCharges();
       setSelectedServiceCharge(null);
       setIsFormVisible(false); // Close form after saving
     } catch (error) {
+      if(error instanceof MissingAuthError) {
+        nav("/");
+        return;
+      }
       console.error("Error saving service charge:", error);
     }
   };
@@ -58,9 +78,13 @@ const ServiceChargePage: React.FC = () => {
   // Handle deletion
   const handleDelete = async (id: string) => {
     try {
-      await deleteServiceChargeAPI(id);
+      await deleteServiceChargeAPI(id, loginToken);
       loadServiceCharges();
     } catch (error) {
+      if(error instanceof MissingAuthError) {
+        nav("/");
+        return;
+      }
       console.error("Error deleting service charge:", error);
     }
   };

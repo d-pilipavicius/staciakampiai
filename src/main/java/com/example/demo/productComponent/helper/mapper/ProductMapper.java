@@ -9,6 +9,7 @@ import com.example.demo.productComponent.domain.entities.Product;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ProductMapper {
 
@@ -33,7 +34,8 @@ public class ProductMapper {
                         .businessId(entity.getBusinessId())
                         .build();
 
-        public static final StaticMapper<Page<ProductDTO>, GetProductsDTO> PAGE_TO_GET_PRODUCTS_DTO = productDTO -> GetProductsDTO
+        /* method is not usable, because list might be empty
+        public static final StaticMapper<Page<ProductDTO>, GetProductsDTO> PAGE_TO_GET_PRODUCTS_DTO = (productDTO) -> GetProductsDTO
                         .builder()
                         .items(productDTO.getContent())
                         .totalItems((int) productDTO.getTotalElements())
@@ -41,11 +43,33 @@ public class ProductMapper {
                         .currentPage(productDTO.getPageable().getPageNumber())
                         .businessId(productDTO.getContent().get(0).getBusinessId())
                         .build();
+        */
 
+        public static GetProductsDTO pageToGetProducts(UUID businessId, Page<ProductDTO> productDTO) {
+                return GetProductsDTO
+                .builder()
+                .items(productDTO.getContent())
+                .totalItems((int) productDTO.getTotalElements())
+                .totalPages(productDTO.getTotalPages())
+                .currentPage(productDTO.getPageable().getPageNumber())
+                .businessId(businessId)
+                .build();
+        }
+
+        public static GetProductsDTO listToGetProductsDTO(UUID businessId, List<ProductDTO> productDTO) {
+                return GetProductsDTO
+                .builder()
+                .items(productDTO)
+                .totalItems(productDTO.size())
+                .businessId(businessId)
+                .build(); 
+        }
+
+        /* method uncorrect
         public static final StaticMapper<List<ProductDTO>, GetProductsDTO> LIST_TO_GET_PRODUCTS_DTO = productDTO -> GetProductsDTO
                         .builder()
                         .items(productDTO)
                         .totalItems(productDTO.size())
                         .businessId(productDTO.get(0).getBusinessId())
-                        .build();
+                        .build(); */
 }

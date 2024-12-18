@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Currency, PostServiceChargeDTO, PricingStrategy, ServiceChargeDTO } from "../../../data/Responses";
+import { Currency, LoginResponseDTO, PostServiceChargeDTO, PricingStrategy, ServiceChargeDTO } from "../../../data/Responses";
 import CardComponent from "../../CardComponent";
+import { useNavigate } from "react-router";
 
 interface ServiceChargeFormProps {
     initialData?: ServiceChargeDTO | null;
@@ -9,6 +10,8 @@ interface ServiceChargeFormProps {
 }
 
 const ServiceChargeForm: React.FC<ServiceChargeFormProps> = ({ initialData, onSubmit, onCancel }) => {
+    const nav = useNavigate();
+
     const [title, setTitle] = useState(initialData?.title || "");
     const [valueType, setValueType] = useState<PricingStrategy>(
         initialData?.valueType ?? PricingStrategy.FIXED_AMOUNT
@@ -16,7 +19,13 @@ const ServiceChargeForm: React.FC<ServiceChargeFormProps> = ({ initialData, onSu
     const [serviceChargeValue, setServiceChargeValue] = useState(initialData?.serviceChargeValue || 0);
     const [currency, setCurrency] = useState<Currency>(initialData?.currency ?? Currency.USD);
     const [serviceChargeValueError, setServiceChargeValueError] = useState<string | null>(null);
-    const businessId = localStorage.getItem("userBusinessId");
+    
+      const loginString = localStorage.getItem("loginToken");
+      if(!loginString) {
+        nav("/");
+        return;
+      }
+      const loginToken: LoginResponseDTO = JSON.parse(loginString);
 
     const handleSave = () => {
         // Validate serviceChargeValue
@@ -32,7 +41,7 @@ const ServiceChargeForm: React.FC<ServiceChargeFormProps> = ({ initialData, onSu
             valueType,
             serviceChargeValue,
             currency,
-            businessId: businessId || "",
+            businessId: loginToken.user.businessId,
         };
 
         console.log("Submitting Service Charge:", dto);

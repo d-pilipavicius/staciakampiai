@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { BusinessDTO } from "../../../data/Responses";
+import { BusinessDTO, LoginResponseDTO } from "../../../data/Responses";
 import { putBusinessAPI } from "../../../data/APICalls";
 import CardComponent from "../../CardComponent";
+import { useNavigate } from "react-router";
+import { MissingAuthError } from "../../../data/MissingAuthError";
 
 interface Param {
   business: BusinessDTO | null
@@ -9,6 +11,8 @@ interface Param {
 }
 
 function BusinessEditBox({business, onClick}: Param) {
+  const nav = useNavigate();
+
   const [email, setEmail] = useState(business?.emailAddress ?? "");
   const [phone, setPhone] = useState(business?.phoneNumber ?? "");
   const [address, setAddress] = useState(business?.address ?? "");
@@ -18,7 +22,21 @@ function BusinessEditBox({business, onClick}: Param) {
       business.emailAddress = email;
       business.phoneNumber = phone;
       business.address = address;
-      await putBusinessAPI(business);
+      const loginString = localStorage.getItem("loginToken");
+      if(!loginString) {
+        nav("/");
+        return;
+      }
+      const loginToken: LoginResponseDTO = JSON.parse(loginString); 
+      try {
+        business = await putBusinessAPI(business, loginToken);
+      } catch (err) {
+        if(err instanceof MissingAuthError) {
+          nav("/");
+          return;
+        } else 
+          throw err;
+      }
       onClick();
     }
   }

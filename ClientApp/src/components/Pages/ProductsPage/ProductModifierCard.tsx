@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { ProductDTO, ProductModifierDTO } from "../../../data/Responses";
+import { LoginResponseDTO, ProductDTO, ProductModifierDTO } from "../../../data/Responses";
 import CardComponent from "../../CardComponent";
 import DialogBox from "../../DialogBox";
 import { deleteProductModifierAPI, putProductModifierAPI } from "../../../data/APICalls";
 import "./products.css"
+import { useNavigate } from "react-router";
+import { MissingAuthError } from "../../../data/MissingAuthError";
 
 interface Props {
   prodModifier: ProductModifierDTO;
@@ -11,6 +13,8 @@ interface Props {
 }
 
 function ProductModifierCard ({prodModifier, updatePage}: Props) {
+  const nav = useNavigate();
+
   const [isDelete, setDelete] = useState(false);
   const [isEdit, setEditing] = useState(false);
 
@@ -18,26 +22,49 @@ function ProductModifierCard ({prodModifier, updatePage}: Props) {
   const [price, setPrice] = useState(String(prodModifier.price.amount));
   const [stock, setStock] = useState(String(prodModifier.quantityInStock));
 
+  const loginString = localStorage.getItem("loginToken");
+  if(!loginString) {
+    nav("/");
+    return;
+  }
+  const loginToken: LoginResponseDTO = JSON.parse(loginString);
+
   const onDelete = async () => {
-    await deleteProductModifierAPI(prodModifier.id);
-    setDelete(false);
-    updatePage();
+    try {
+      await deleteProductModifierAPI(prodModifier.id, loginToken);
+      setDelete(false);
+      updatePage();
+    } catch (err) {
+      if(err instanceof MissingAuthError) {
+        nav("/");
+        return;
+      } else 
+        throw err;
+    }
   };
 
   const onEdit = async () => {
-    const data = await putProductModifierAPI(prodModifier.id, {
-      "title": title,
-      "price": {
-        "amount": Number(price),
-        "currency": prodModifier.price.currency
-      },
-      "quantityInStock": Number(stock),
-    });
-    prodModifier.title = data.title;
-    prodModifier.price = data.price;
-    prodModifier.quantityInStock = data.quantityInStock;
-    setEditing(false);
-    updatePage();
+    try {
+      const data = await putProductModifierAPI(prodModifier.id, {
+        "title": title,
+        "price": {
+          "amount": Number(price),
+          "currency": prodModifier.price.currency
+        },
+        "quantityInStock": Number(stock),
+      }, loginToken);
+      prodModifier.title = data.title;
+      prodModifier.price = data.price;
+      prodModifier.quantityInStock = data.quantityInStock;
+      setEditing(false);
+      updatePage();
+    } catch (err) {
+      if(err instanceof MissingAuthError) {
+        nav("/");
+        return;
+      } else 
+        throw err;
+    }
   }
 
   return <>

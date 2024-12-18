@@ -40,7 +40,7 @@ function AuthWrapper({children}: AuthWrapperProps) {
   const nav = useNavigate();
 
   useEffect(() => {
-    if(window.location.pathname != "/" && !localStorage.getItem("userId")){
+    if(window.location.pathname != "/" && !localStorage.getItem("loginToken")){
       nav("/");
     }
   }, [nav]);

@@ -14,7 +14,28 @@
   align-items: center;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+}
+
+form * {
+  margin: 5px;
+}
+
+.input-group *{
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .small {
   align-self: flex-start;
   color: #e20000;
+}
+
+img {
+  max-width: 16px;
+  max-height: 16px;
 }
