@@ -4,6 +4,8 @@ import com.example.demo.OrderComponent.API.DTOs.AppliedServiceChargeDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
+import com.example.demo.OrderComponent.Domain.Entities.Enums.OrderStatus;
+import com.example.demo.OrderComponent.Domain.Entities.Order;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Services.OrderService;
 import com.example.demo.OrderComponent.Helpers.Mappers.OrderMapper;
@@ -13,6 +15,7 @@ import com.example.demo.serviceChargeComponent.applicationServices.ServiceCharge
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,6 +29,7 @@ public class OrderApplicationService {
     private final ProductApplicationService productApplicationService;
     private final ServiceChargeApplicationService serviceChargeApplicationService;
 
+    @Transactional
     public OrderDTO createOrder(OrderDTO createOrderDTO) {
         createOrderDTO.getItems().forEach(this::setProductAndModifierDetails);
         if (createOrderDTO.getServiceChargeIds() != null) {
@@ -35,6 +39,19 @@ public class OrderApplicationService {
                     .collect(Collectors.toList());
             createOrderDTO.setServiceCharges(serviceCharges);
         }
+
+        // adjust added item and modifier stock
+        if (createOrderDTO.getItems() != null) {
+            createOrderDTO.getItems().forEach(item -> {
+                productApplicationService.decrementProductStock(item.getProductId(), item.getQuantity());
+                if (item.getSelectedModifierIds() != null) {
+                    item.getSelectedModifierIds().forEach(modifierId -> {
+                        productApplicationService.decrementModifierStock(modifierId, 1);
+                    });
+                }
+            });
+        }
+
         return orderService.createOrder(createOrderDTO);
     }
 
@@ -46,6 +63,7 @@ public class OrderApplicationService {
         return orderService.getOrders(page, pageSize);
     }
 
+    @Transactional
     public OrderDTO modifyOrder(UUID orderId, ModifyOrderDTO modifyOrderRequest) {
         modifyOrderRequest.getItems().forEach(this::setProductAndModifierDetails);
         if (modifyOrderRequest.getServiceChargeIds() != null) {
@@ -55,6 +73,82 @@ public class OrderApplicationService {
                     .collect(Collectors.toList());
             modifyOrderRequest.setServiceCharges(serviceCharges);
         }
+
+        // adjust modified item and modifier stock
+        OrderDTO oldOrder = orderService.getOrderById(orderId);
+        if (modifyOrderRequest.getItems() != null && !modifyOrderRequest.getStatus().equals(OrderStatus.CANCELED)) {
+            modifyOrderRequest.getItems().forEach(item -> {
+                // Item is added
+                if (oldOrder.getItems().stream().noneMatch(oldItem -> oldItem.getProductId().equals(item.getProductId()))) {
+                    productApplicationService.decrementProductStock(item.getProductId(), item.getQuantity());
+                    if (item.getSelectedModifierIds() != null) {
+                        item.getSelectedModifierIds().forEach(modifierId -> {
+                            productApplicationService.decrementModifierStock(modifierId, 1);
+                        });
+                    }
+                } else {
+                    // Item is modified
+                    oldOrder.getItems().forEach(oldItem -> {
+                        if (oldItem.getProductId().equals(item.getProductId())) {
+                            int oldQuantity = oldItem.getQuantity();
+                            int newQuantity = item.getQuantity();
+
+                            if (oldQuantity > newQuantity) {
+                                productApplicationService.incrementProductStock(oldItem.getProductId(), oldQuantity - newQuantity);
+                            } else if (oldQuantity < newQuantity) {
+                                productApplicationService.decrementProductStock(oldItem.getProductId(), newQuantity - oldQuantity);
+                            }
+
+                            if (oldItem.getSelectedModifierIds() != null) {
+                                List<UUID> oldModifiers = oldItem.getSelectedModifierIds();
+                                List<UUID> newModifiers = item.getSelectedModifierIds();
+
+                                // Increment stock for removed modifiers
+                                oldModifiers.stream()
+                                        .filter(modifierId -> newModifiers == null || !newModifiers.contains(modifierId))
+                                        .forEach(modifierId -> {
+                                            productApplicationService.incrementModifierStock(modifierId, 1);
+                                        });
+
+                                // Decrement stock for added modifiers
+                                if (newModifiers != null) {
+                                    newModifiers.stream()
+                                            .filter(modifierId -> !oldModifiers.contains(modifierId))
+                                            .forEach(modifierId -> {
+                                                productApplicationService.decrementModifierStock(modifierId, 1);
+                                            });
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Item is removed
+            oldOrder.getItems().forEach(oldItem -> {
+                if (modifyOrderRequest.getItems().stream().noneMatch(item -> item.getProductId().equals(oldItem.getProductId()))) {
+                    productApplicationService.incrementProductStock(oldItem.getProductId(), oldItem.getQuantity());
+                    if (oldItem.getSelectedModifierIds() != null) {
+                        oldItem.getSelectedModifierIds().forEach(modifierId -> {
+                            productApplicationService.incrementModifierStock(modifierId, 1);
+                        });
+                    }
+                }
+            });
+        }
+
+        // adjust stock if the order was canceled
+        if (modifyOrderRequest.getStatus() != null && modifyOrderRequest.getStatus().equals(OrderStatus.CANCELED)) {
+            oldOrder.getItems().forEach(item -> {
+                productApplicationService.incrementProductStock(item.getProductId(), item.getQuantity());
+                if (item.getSelectedModifierIds() != null) {
+                    item.getSelectedModifierIds().forEach(modifierId -> {
+                        productApplicationService.incrementModifierStock(modifierId, 1);
+                    });
+                }
+            });
+        }
+
         return orderService.modifyOrder(orderId, modifyOrderRequest);
     }
     public OrderDTO getOrderReceipt(UUID orderId) {
