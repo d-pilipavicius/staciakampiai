@@ -13,7 +13,7 @@ public class ReservationEventListener {
 
     @EventListener
     public void handleReservationCreatedEvent(ReservationCreatedEvent event) {
-       // snsMessageSender.sendSms(event.getPhoneNumber(), event.getText());
+        snsMessageSender.sendSms(event.getPhoneNumber(), event.getText());
         System.out.println("sms sent!!!");
     }
 }
