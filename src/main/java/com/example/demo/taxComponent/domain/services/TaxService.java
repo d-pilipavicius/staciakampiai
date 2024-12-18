@@ -18,6 +18,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 
 import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class TaxService {
                 .build();
     }
 
+    @Transactional
     public TaxDTO updateTax(PutTaxDTO putTaxDTO, UUID id) {
         Tax tax = taxRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tax with id " + id + " not found"));
@@ -57,6 +59,7 @@ public class TaxService {
         return taxMapper.toTaxDTO(savedTax);
     }
 
+    @Transactional
     public void deleteTax(UUID taxId) {
         if (taxRepository.existsById(taxId)) {
             taxRepository.deleteById(taxId);

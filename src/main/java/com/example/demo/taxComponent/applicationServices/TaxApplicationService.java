@@ -13,6 +13,7 @@ import com.example.demo.taxComponent.repository.TaxRepository;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class TaxApplicationService {
 
     private final TaxRepository taxRepository;
 
+    @Transactional
     public TaxDTO createTax(PostTaxDTO postTaxDTO) {
         if(!productApplicationService.validateProductIds(postTaxDTO.getEntitledProductIds())){
             throw new NotFoundException("The provided product ids were not found.");
@@ -38,6 +40,7 @@ public class TaxApplicationService {
         return createdTax;
     }
 
+    @Transactional
     public GetTaxesDTO getAllTaxes(int page, int size, UUID businessId) {
         GetTaxesDTO getTaxesDTO = taxService.getAllTaxes(page, size, businessId);
         getTaxesDTO.getItems().forEach(taxDTO -> {
@@ -48,6 +51,7 @@ public class TaxApplicationService {
         return  getTaxesDTO;
     }
 
+    @Transactional
     public TaxDTO updateTax(PutTaxDTO putTaxDTO, UUID id) {
         if(!productApplicationService.validateProductIds(putTaxDTO.getEntitledProductIds())){
             throw new NotFoundException("The provided product ids were not found.");

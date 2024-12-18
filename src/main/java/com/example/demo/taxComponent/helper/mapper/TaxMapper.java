@@ -48,6 +48,7 @@ public class TaxMapper {
     public Tax fromPutToTax(PutTaxDTO putTaxDTO, Tax original){
         original.setTitle(putTaxDTO.getTitle());
         original.setRatePercentage(putTaxDTO.getRatePercentage());
+        original.setProductIds(putTaxDTO.getEntitledProductIds());
         return original;
     }
 }
