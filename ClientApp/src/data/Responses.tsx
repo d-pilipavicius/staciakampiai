@@ -251,3 +251,39 @@ export interface TipDTO {
 export interface GetTipDTO extends PageinationDTO {
   items: TipDTO[];
 }
+
+export interface CreatePaymentDTO {
+  orderId: string;
+  businessId: string;
+  employeeId: string;
+  currency: Currency;
+  orderItems: OrderItemPaymentDTO[];
+}
+
+export interface OrderItemPaymentDTO {
+  orderItemId: string;
+  quantity: number;
+}
+
+export enum PaymentMethod {
+  CARD, CASH
+}
+export enum PaymentStatus {
+  PENDING, SUCCEEDED, FAILED, REFUNDED, CANCELED
+}
+
+export interface PaymentResponseDTO {
+  id: string;
+  orderId: string;
+  orderItems: OrderItemPaymentDTO[];
+  amount: number;
+  currency: Currency;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  createdAt: string;
+}
+
+export interface CardPaymentResponseDTO{
+  paymentId: string;
+  checkoutUrl: string;
+}

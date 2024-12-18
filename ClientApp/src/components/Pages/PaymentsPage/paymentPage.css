@@ -61,3 +61,52 @@
     margin-top: 10px;
     text-align: center;
 }
+
+.payment-section {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #d3d3d3; /* Adds a light border */
+    border-radius: 10px; /* Rounds the corners */
+    background-color: #f9f9f9; /* Light background for the payment section */
+}
+
+.payment-section div {
+    margin-bottom: 20px;
+}
+
+
+.payment-response {
+    width: 600px;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f1f1f1; /* Light gray background */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    white-space: pre-wrap;
+}
+
+.payment-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.recent-payments {
+    margin-top: 20px;
+    justify-content: space-between;
+}
+
+.payment-section, .recent-payments, .payment-response {
+    flex: 1; /* Makes all sections take equal space */
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds some shadow for better visibility */
+}
+
+
+
+
+
+

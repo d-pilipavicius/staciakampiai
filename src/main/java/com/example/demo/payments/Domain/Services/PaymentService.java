@@ -49,7 +49,7 @@ public class PaymentService {
             return Mappers.toPaymentResponseDTO(payment, orderItems);
         } else {
             try {
-                Session session = stripeService.createStripeSession(totalAmountInCents, request.getOrderId().toString());
+                Session session = stripeService.createStripeSession(request.getCurrency(),totalAmountInCents, request.getOrderId().toString());
 
                 payment.setPaymentProcessorId(session.getId());
                 payment.setStatus(PaymentStatus.PENDING);

@@ -1,7 +1,7 @@
 import { MissingAuthError } from "./MissingAuthError";
 import {
   AddTipDTO,
-  BusinessDTO,
+  BusinessDTO, CardPaymentResponseDTO, CreatePaymentDTO,
   DiscountDTO,
   GetProductModifiersDTO,
   GetProductsDTO,
@@ -9,7 +9,7 @@ import {
   GetTaxesDTO, GetTipDTO,
   LoginDTO,
   LoginResponseDTO,
-  OrderDTO,
+  OrderDTO, PaymentResponseDTO,
   PostDiscountDTO,
   PostOrderDTO,
   PostProductDTO,
@@ -47,8 +47,8 @@ import {
   getTaxLink, getTipsLink,
   getUserLink,
   increaseDiscGiftUsageLink,
-  loginLink,
-  postDiscountLink,
+  loginLink, postCardPaymentLink, postCashPaymentLink,
+  postDiscountLink, postInitiateRefund,
   postOrderLink,
   postProductLink,
   postProductModifierLink,
@@ -432,6 +432,37 @@ export async function getTipsAPI(pageNumber: number, pageSize: number, auth: Log
   }
 
   return response.json();
+}
+
+export async function postCashPaymentAPI(payment: CreatePaymentDTO, auth: LoginResponseDTO): Promise<PaymentResponseDTO> {
+  const response = await authAPI(postCashPaymentLink(auth.user.businessId), "POST", JSON.stringify(payment), auth);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function postCardPaymentAPI(payment: CreatePaymentDTO, auth: LoginResponseDTO): Promise<CardPaymentResponseDTO> {
+  const response = await authAPI(postCardPaymentLink(auth.user.businessId), "POST", JSON.stringify(payment), auth);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function postInitiateRefundAPI(paymentId: string, auth: LoginResponseDTO) {
+    const response = await authAPI(postInitiateRefund(auth.user.businessId, paymentId), "POST", null, auth);
+    console.log(response);
+
+    if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.text}`);
+    }
+
+    return response.json();
 }
 
 //Custom API sending method
