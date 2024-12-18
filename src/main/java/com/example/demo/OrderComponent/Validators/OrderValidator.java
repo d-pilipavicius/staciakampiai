@@ -46,8 +46,8 @@ public class OrderValidator {
     }
 
     public void isOrderStatusClosed(Order order) {
-        if (order.getStatus() == OrderStatus.CLOSED) {
-            throw new UnprocessableException("Order is already closed and cannot be modified.");
+        if (order.getStatus() != OrderStatus.CLOSED) {
+            throw new UnprocessableException("Order is not closed yet.");
         }
     }
 }
