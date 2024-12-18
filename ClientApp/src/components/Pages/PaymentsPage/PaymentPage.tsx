@@ -90,6 +90,7 @@ const PaymentPage: React.FC = () => {
       let response;
       if (paymentMethod === PaymentMethod.CARD) {
         response = await postCardPaymentAPI(payment, loginToken);
+        window.open(response.checkoutUrl, '_blank');
       } else {
         response = await postCashPaymentAPI(payment, loginToken);
       }
