@@ -216,15 +216,15 @@ export enum OrderStatus {
 }
 
 export enum Currency {
-  EUR, USD
+  EUR = "EUR" , USD = "USD"
 }
 
 export enum DiscountTarget {
-  Entitled, All
+  Entitled = "Entitled", All = "All"
 }
 
 export enum PricingStrategy {
-  PERCENTAGE, FIXED_AMOUNT
+  PERCENTAGE = "PERCENTAGE", FIXED_AMOUNT="FIXED_AMOUNT"
 }
 
 export interface UnitPrice {
