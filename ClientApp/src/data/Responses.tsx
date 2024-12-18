@@ -88,7 +88,8 @@ export interface DiscountDTO {
   usageCountLimit: number;
 }
 
-export interface PostDiscountDTO extends Omit<DiscountDTO, "id" | "usageCount"> {
+export interface PostDiscountDTO extends Omit<DiscountDTO, "id" | "usageCount" | "currency"> {
+  currency: Currency | null;
 }
 
 export interface GetDiscountsDTO extends PageinationDTO {
@@ -212,7 +213,7 @@ export interface MoneyDTO {
 }
 
 export enum OrderStatus {
-  NEW, IN_PROGRESS, CLOSED, CANCELED, RETURNED
+  NEW = "NEW", IN_PROGRESS = "IN_PROGRESS", CLOSED="CLOSED", CANCELED="CANCELED", RETURNED="RETURNED"
 }
 
 export enum Currency {

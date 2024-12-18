@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import Popup from "../../Popup";
-import { Currency, DiscountTarget, GetProductsDTO, LoginResponseDTO, PricingStrategy } from "../../../data/Responses";
+import { Currency, DiscountTarget, GetProductsDTO, LoginResponseDTO, PricingStrategy, ProductDTO } from "../../../data/Responses";
 import { useNavigate } from "react-router";
 import { getBusinessProductsAPI, postDiscountAPI } from "../../../data/APICalls";
 import { MissingAuthError } from "../../../data/MissingAuthError";
 import ProductDisplay from "./ProductDisplay";
 import ScrollableList from "../../ScrollableList";
 import Pageination from "../../Pageination";
+import CardComponent from "../../CardComponent";
 
 interface Param {
   isVisible: boolean;
@@ -16,7 +17,7 @@ interface Param {
 
 const pageSize = 20;
 
-function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
+function GiftcardCreate({isVisible, onCreate, onCancel}: Param) {
   const nav = useNavigate();
   const [isProductsVisible, setProductsVisibility] = useState(false);
   const [products, setProducts] = useState<GetProductsDTO | null>(null);
@@ -28,8 +29,7 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
   const [validFrom, setValidFrom] = useState("");
   const [validUntil, setValidUntil] = useState("");
   const [target, setTarget] = useState(DiscountTarget.All);
-  const [entitledProducts, setEntitledProducs] = useState<Set<string>>(new Set());
-  const [usageCountLimit, setUsageCountLimit] = useState("");
+  const [entitledProducts, setEntitledProducts] = useState<string[]>([]);
 
   const loginString = localStorage.getItem("loginToken");
   if(!loginString) {
@@ -62,7 +62,7 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
   }  
 
   const createDiscount = async () => {
-    if(!amount || !validFrom || !validUntil || !usageCountLimit)
+    if(!amount || !validFrom || !validUntil)
       return;
     try {
       await postDiscountAPI({
@@ -75,8 +75,9 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
         target: target,
         entitledProductsIds: (target == DiscountTarget.All ? [] : Array.from(entitledProducts)),
         businessId: loginToken.user.businessId,
-        usageCountLimit: Number(usageCountLimit)
+        usageCountLimit: 1
       }, loginToken);
+
       onCreate();
       onPressCreate();
     } catch (err) {
@@ -94,8 +95,7 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
     setValueType(PricingStrategy.FIXED_AMOUNT);
     setValidFrom(""); setValidUntil("");
     setTarget(DiscountTarget.All);
-    entitledProducts.clear();
-    setUsageCountLimit("");
+    setEntitledProducts([]);
   } 
 
   return <>
@@ -103,7 +103,23 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
     <ScrollableList>
       <div className="items">
         { products && products.items.length > 0
-        ? products.items.map((item) => <ProductDisplay key={item.id} product={item} updateList={setEntitledProducs} list={entitledProducts}/>)
+        ? products.items.map((item) => <CardComponent color="#eeeeee" className="product">
+        <div className="productInside">
+          <div>
+            <p>Name: {item.title}</p>
+            <p>Price: {item.price.amount} {item.price.currency}</p>
+            <p>Left: {item.quantityInStock}</p>
+          </div>
+          <input
+      className="form-check-input"
+      type="checkbox"
+      id="checkAll"
+      checked={entitledProducts.includes(item.id)}
+      onChange={handleCheckboxChange}
+    />
+        </div>
+      </CardComponent>
+        )
         : <p>No products found</p>}
       </div>
     </ScrollableList>
@@ -113,11 +129,10 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
     </div>
   </Popup>
   <Popup setVisibility={isVisible}>
-    <h1>Add new discount</h1>
+    <h1>Add new giftcard</h1>
     <form>
-      <input value={code} onChange={(event) => {setCode(event.target.value)}} type="text" className="form-control" placeholder="Set discount code"/>
-      <input value={amount} onChange={(event) => {setAmount(event.target.value)}} type="text" className="form-control" placeholder="Set discount code value"/>
-      <input value={usageCountLimit} onChange={(event) => {setUsageCountLimit(event.target.value)}} type="text" className="form-control" placeholder="Set discount usage limit"/>
+      <input value={code} onChange={(event) => {setCode(event.target.value)}} type="text" className="form-control" placeholder="Set giftcard code"/>
+      <input value={amount} onChange={(event) => {setAmount(event.target.value)}} type="text" className="form-control" placeholder="Set discount value"/>
       <h4>Discount type (flat cash or %)</h4>
       <div className="checkBoxes">
         <div className="form-check">
@@ -149,4 +164,4 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
   </>;
 }
 
-export default DiscountCreate;
+export default GiftcardCreate;

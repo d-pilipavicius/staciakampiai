@@ -132,11 +132,11 @@ export async function getDiscountsAPI(pageNumber: number, pageSize: number, busi
   return response.json();
 }
 
-export async function getGiftcardsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<DiscountDTO> {
+export async function getGiftcardsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<GetDiscountsDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await authAPI(getGiftcardsLink+addParam({pageination, businessId}), "GET", null, auth);
+  const response = await authAPI(getGiftcardsLink(businessId)+addParam({pageination, businessId}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
