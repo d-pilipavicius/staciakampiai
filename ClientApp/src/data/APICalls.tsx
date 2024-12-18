@@ -1,5 +1,5 @@
 import { MissingAuthError } from "./MissingAuthError";
-import { BusinessDTO, DiscountDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, LoginDTO, LoginResponseDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
+import { BusinessDTO, DiscountDTO, GetDiscountsDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, LoginDTO, LoginResponseDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
 import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, loginLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
 
 //Login / Authentication
@@ -109,6 +109,7 @@ export async function deleteProductModifierAPI(modifierId: string, auth: LoginRe
 
 //Discount / Giftcard
 export async function postDiscountAPI(dto: PostDiscountDTO, auth: LoginResponseDTO): Promise<DiscountDTO> {
+  console.log(JSON.stringify(dto));
   const response = await authAPI(postDiscountLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
 
   if (!response.ok) {
@@ -118,11 +119,11 @@ export async function postDiscountAPI(dto: PostDiscountDTO, auth: LoginResponseD
   return response.json();
 }
 
-export async function getDiscountsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<DiscountDTO> {
+export async function getDiscountsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<GetDiscountsDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await authAPI(getDiscountsLink(auth.user.businessId), "GET", null, auth);
+  const response = await authAPI(getDiscountsLink(auth.user.businessId)+addParam({pageination, businessId}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);

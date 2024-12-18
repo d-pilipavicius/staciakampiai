@@ -37,8 +37,8 @@ public final class DiscountsValidator {
     }
 
     public void checkPricingStrategy(Currency currency, PricingStrategy strat) {
-        if ((currency == null && strat == PricingStrategy.FixedAmount)
-                || (currency != null && strat == PricingStrategy.Percentage)) {
+        if ((currency == null && strat == PricingStrategy.FIXED_AMOUNT)
+                || (currency != null && strat == PricingStrategy.PERCENTAGE)) {
             throw new UnprocessableException(
                     "No currency was provided for a fixedAmount discount, or currency was provided for a percentage discount.");
         }
