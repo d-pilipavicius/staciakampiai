@@ -11,20 +11,20 @@ import software.amazon.awssdk.services.sns.SnsClient;
 @Configuration
 public class SnsConfig {
 
-    @Value("${aws.sns.region}")
-    private String region;
-
-    @Value("${aws.sns.accessKey}")
-    private String accessKey;
-
-    @Value("${aws.sns.secretKey}")
-    private String secretKey;
-
-    @Bean
-    public SnsClient snsClient() {
-        return SnsClient.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
-                .build();
-    }
+//    @Value("${aws.sns.region}")
+//    private String region;
+//
+//    @Value("${aws.sns.accessKey}")
+//    private String accessKey;
+//
+//    @Value("${aws.sns.secretKey}")
+//    private String secretKey;
+//
+//    @Bean
+//    public SnsClient snsClient() {
+//        return SnsClient.builder()
+//                .region(Region.of(region))
+//                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
+//                .build();
+//    }
 }
