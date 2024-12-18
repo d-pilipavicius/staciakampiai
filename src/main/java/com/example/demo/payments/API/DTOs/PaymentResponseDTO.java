@@ -1,6 +1,6 @@
 package com.example.demo.payments.API.DTOs;
 
-import com.example.demo.payments.Domain.Entities.Enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.payments.Domain.Entities.Enums.PaymentMethod;
 import com.example.demo.payments.Domain.Entities.Enums.PaymentStatus;
 import lombok.AllArgsConstructor;

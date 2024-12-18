@@ -104,9 +104,10 @@ public class PaymentService {
         return tipPayment;
     }
 
-    public Page<Tip> getOrderTips(UUID businessId, UUID orderId, int page, int pageSize) {
+    public GetTipsDTO getTips(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return ITipRepository.findByBusinessIdAndOrderId(businessId, orderId, pageable);
+        Page<Tip> tipsPage = ITipRepository.findAll(pageable);
+        return Mappers.toGetTipsDTO(tipsPage);
     }
 
     public void processCheckoutSessionCompleted(CheckoutSessionCompletedDTO request) {

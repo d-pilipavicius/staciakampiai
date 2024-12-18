@@ -1,6 +1,68 @@
 import { MissingAuthError } from "./MissingAuthError";
-import { BusinessDTO, DiscountDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, LoginDTO, LoginResponseDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
-import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, loginLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
+import {
+  AddTipDTO,
+  BusinessDTO,
+  DiscountDTO,
+  GetProductModifiersDTO,
+  GetProductsDTO,
+  GetServiceChargeDTO,
+  GetTaxesDTO, GetTipDTO,
+  LoginDTO,
+  LoginResponseDTO,
+  OrderDTO,
+  PostDiscountDTO,
+  PostOrderDTO,
+  PostProductDTO,
+  PostProductModifierDTO,
+  PostServiceChargeDTO,
+  PostTaxDTO,
+  ProductDTO,
+  ProductModifierDTO,
+  PutDiscountDTO,
+  PutOrderDTO,
+  PutProductDTO,
+  PutProductModifierDTO,
+  PutServiceChargeDTO,
+  PutTaxDTO,
+  ServiceChargeDTO,
+  TaxDTO, TipDTO,
+  UserDTO
+} from "./Responses";
+import {
+  addParam,
+  deleteDiscountLink,
+  deleteProductLink,
+  deleteProductModifierLink,
+  deleteServiceChargeLink,
+  deleteTaxLink,
+  getBusinessLink,
+  getDiscountsLink,
+  getGiftcardsLink,
+  getOrderLink,
+  getOrderReceiptLink,
+  getOrdersLink,
+  getProductListLink,
+  getProductModifierListLink,
+  getServiceChargeLink,
+  getTaxLink, getTipsLink,
+  getUserLink,
+  increaseDiscGiftUsageLink,
+  loginLink,
+  postDiscountLink,
+  postOrderLink,
+  postProductLink,
+  postProductModifierLink,
+  postServiceChargeLink,
+  postTaxLink,
+  postTipLink,
+  putBusinessLink,
+  putDiscountLink,
+  putOrderLink,
+  putProductLink,
+  putProductModifierLink,
+  putServiceChargeLink,
+  putTaxLink
+} from "./Routes";
 
 //Login / Authentication
 export async function loginAPI(login: LoginDTO): Promise<LoginResponseDTO> {
@@ -8,7 +70,7 @@ export async function loginAPI(login: LoginDTO): Promise<LoginResponseDTO> {
 
   if(!response.ok) 
     throw new Error(`Error ${response.status}: ${response.text}`);
-  
+
   return response.json();
 }
 
@@ -345,7 +407,32 @@ export async function putBusinessAPI(business: BusinessDTO, auth: LoginResponseD
 
   return response.json();
 }
+//Payment
+export async function postTipAPI(dto: AddTipDTO, auth: LoginResponseDTO): Promise<TipDTO> {
+  const response = await authAPI(postTipLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
 
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error ${response.status}: ${errorText}`);
+  }
+
+  return response.json();
+}
+
+export async function getTipsAPI(pageNumber: number, pageSize: number, auth: LoginResponseDTO): Promise<GetTipDTO> {
+  const pageination = {
+    pageNumber,
+    pageSize
+  };
+  const response = await authAPI(getTipsLink(auth.user.businessId) + addParam({pageination}), "GET", null, auth);
+  console.log(response);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
 
 //Custom API sending method
 async function basicAPI(url: string, method: string, body: string | null) {

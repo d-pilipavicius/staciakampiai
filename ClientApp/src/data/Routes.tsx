@@ -125,6 +125,8 @@ function orderById(businessId: string, orderId: string) {
 }
 
 //Payments
+export const postTipLink = (businessId: string) => address+`/v1/payments/${businessId}/tips`;
+export const getTipsLink = (businessId: string) => address+`/v1/payments/${businessId}/tips`;
 
 //General
 interface AddParamParam {

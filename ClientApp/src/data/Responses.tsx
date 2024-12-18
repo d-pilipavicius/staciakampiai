@@ -231,3 +231,23 @@ export interface UnitPrice {
   base: number;
   withModifiers: number;
 }
+
+//Payment
+export interface AddTipDTO {
+  orderId: string;
+  employeeId: string;
+  amount: number;
+  currency: Currency;
+}
+
+export interface TipDTO {
+  id: string;
+  orderId: string;
+  employeeId: string;
+  amount: number;
+  currency: Currency;
+}
+
+export interface GetTipDTO extends PageinationDTO {
+  items: TipDTO[];
+}
