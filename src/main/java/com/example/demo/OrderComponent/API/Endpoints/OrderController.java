@@ -58,4 +58,10 @@ public class OrderController {
         OrderDTO orderReceipt = orderApplicationService.getOrderReceipt(orderId);
         return ResponseEntity.ok(orderReceipt);
     }
+
+    @PostMapping("/{orderId}/return")
+    public ResponseEntity<OrderDTO> returnOrder(@NotNull @PathVariable UUID orderId) {
+        OrderDTO orderReceipt = orderApplicationService.returnOrder(orderId);
+        return ResponseEntity.ok(orderReceipt);
+    }
 }
