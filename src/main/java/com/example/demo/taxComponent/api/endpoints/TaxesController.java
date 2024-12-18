@@ -3,7 +3,7 @@ package com.example.demo.taxComponent.api.endpoints;
 import com.example.demo.taxComponent.api.dtos.GetTaxesDTO;
 import com.example.demo.taxComponent.api.dtos.PutTaxDTO;
 import com.example.demo.taxComponent.api.dtos.PostTaxDTO;
-import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
+import com.example.demo.taxComponent.api.dtos.TaxDTO;
 import com.example.demo.taxComponent.applicationServices.TaxApplicationService;
 
 import jakarta.validation.constraints.NotNull;
@@ -28,11 +28,12 @@ public class TaxesController {
     @PostMapping
     public ResponseEntity<Object> createTax (@NotNull @Valid @RequestBody PostTaxDTO postTaxDTO){
         TaxDTO createdTax = taxApplicationService.createTax(postTaxDTO);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTax);
     }
 
     @PutMapping("{taxId}")
-    public ResponseEntity<Object> putMethodName(@NotNull @PathVariable UUID taxId, @NotNull @Valid @RequestBody PutTaxDTO putTaxDTO) {
+    public ResponseEntity<Object> putTax(@NotNull @PathVariable UUID taxId, @NotNull @Valid @RequestBody PutTaxDTO putTaxDTO) {
         TaxDTO updatedTax = taxApplicationService.updateTax(putTaxDTO, taxId);
         return ResponseEntity.status(HttpStatus.OK).body(updatedTax);
     }
@@ -44,8 +45,8 @@ public class TaxesController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getTaxes(@NotNull @RequestParam int pageNumber, @NotNull @RequestParam int pageSize){
-        GetTaxesDTO taxes = taxApplicationService.getAllTaxes(pageNumber, pageSize);
+    public ResponseEntity<GetTaxesDTO> getTaxes(@NotNull @RequestParam int pageNumber, @NotNull @RequestParam int pageSize, @PathVariable UUID businessId){
+        GetTaxesDTO taxes = taxApplicationService.getAllTaxes(pageNumber, pageSize, businessId);
         return ResponseEntity.status(HttpStatus.OK).body(taxes);
     }
     

@@ -13,6 +13,6 @@ public class GetProductsDTO {
     private final int totalItems;
     private final int totalPages;
     private final int currentPage;
-    private final List<ProductDTO> items;
+    private List<ProductDTO> items;
     private final UUID businessId;
 }

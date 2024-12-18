@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -31,8 +32,10 @@ public class Tax {
     @Column(name = "business_id", nullable = false)
     private UUID businessId;
 
-   /* @ManyToMany(mappedBy = "taxes")
-    private List<Product> products; */
+    @ElementCollection
+    @CollectionTable(name = "product_tax", joinColumns = @JoinColumn(name = "tax_id"))
+    @Column(name = "product_id"/*, nullable = false*/)
+    private List<UUID> productIds;
 
     @Column(name = "title", nullable = false)
     private String title;

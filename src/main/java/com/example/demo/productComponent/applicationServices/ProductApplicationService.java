@@ -8,6 +8,7 @@ import com.example.demo.productComponent.api.dtos.PutProductDTO;
 import com.example.demo.productComponent.api.dtos.PostProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
+import com.example.demo.productComponent.domain.entities.Product;
 import com.example.demo.productComponent.domain.services.ProductModifierService;
 import com.example.demo.productComponent.domain.services.ProductService;
 import lombok.AllArgsConstructor;
@@ -55,6 +56,10 @@ public class ProductApplicationService {
         ));
 
         return productsDTO;
+    }
+
+    public List<ProductDTO> getProductsByListOfId(List<UUID> productIds){
+        return productService.getProductsByListOfId(productIds);
     }
 
     public GetProductsDTO getProductsByBusinessId(int page, int size, UUID businessId) {
@@ -105,8 +110,8 @@ public class ProductApplicationService {
     }
 
     // Helper methods for other components
-    public void validateProductIds(List<UUID> productIds) {
-        productService.validateProductIds(productIds);
+    public boolean validateProductIds(List<UUID> productIds) {
+        return productService.validateProductIds(productIds);
     }
 
     @Transactional

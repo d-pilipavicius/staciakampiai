@@ -13,6 +13,7 @@ public class SnsMessageSender {
 
 //    private final SnsClient snsClient;
 //
+
 //    public void sendSms(String phoneNumber, String message) {
 //        try {
 //            PublishRequest request = PublishRequest.builder()

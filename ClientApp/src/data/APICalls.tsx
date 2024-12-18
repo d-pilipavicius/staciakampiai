@@ -184,17 +184,27 @@ export async function postTaxAPI(dto: PostTaxDTO, auth: LoginResponseDTO): Promi
   return response.json();
 }
 
-export async function getTaxesAPI(pageNumber: number, pageSize: number, auth: LoginResponseDTO): Promise<GetTaxesDTO> {
+export async function getTaxesAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<GetTaxesDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await authAPI(getTaxLink+addParam({pageination}), "GET", null, auth);
+  const response = await authAPI(getTaxLink(auth.user.businessId)+addParam({pageination, businessId}), "GET", null, auth);
 
   if (!response.ok) {
+    if(response.status == 500){
+      return {
+        "businessId": "",
+        "totalPages": 0,
+        "totalItems": 0,
+        "currentPage": 0,
+        "items": []
+      }
+    }
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
 
-  return response.json();
+  const data: GetTaxesDTO = await response.json();
+  return data;
 }
 
 export async function putTaxesAPI(taxId: string, dto: PutTaxDTO, auth: LoginResponseDTO) {
@@ -361,6 +371,7 @@ async function basicAPI(url: string, method: string, body: string | null) {
 }
 
 async function authAPI(url: string, method: string, body: string | null, auth: LoginResponseDTO) {
+  console.log(`${auth.tokenType}${auth.accessToken}`)
   const response = await fetch(url, {
     method: method,
     headers: {

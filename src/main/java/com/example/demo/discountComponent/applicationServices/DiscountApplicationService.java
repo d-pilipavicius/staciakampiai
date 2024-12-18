@@ -1,5 +1,6 @@
 package com.example.demo.discountComponent.applicationServices;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.discountComponent.api.dtos.DiscountDTO;
 import com.example.demo.discountComponent.api.dtos.GetDiscountsDTO;
 import com.example.demo.discountComponent.api.dtos.PutDiscountDTO;
@@ -21,8 +22,8 @@ public class DiscountApplicationService {
 
     @Transactional
     public DiscountDTO createDiscount(PostDiscountDTO postDiscountDTO){
-        if(postDiscountDTO.getEntitledProductIds() != null){
-            productApplicationService.validateProductIds(postDiscountDTO.getEntitledProductIds());
+        if(postDiscountDTO.getEntitledProductIds() != null && !productApplicationService.validateProductIds(postDiscountDTO.getEntitledProductIds())){
+            throw new NotFoundException("The provided product ids were not found.");
         }
         return discountService.createDiscount(postDiscountDTO);
     }
