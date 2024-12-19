@@ -235,3 +235,46 @@ export interface UnitPrice {
   base: number;
   withModifiers: number;
 }
+
+// Reservations
+export interface ReservationDTO {
+  id: string;
+  customer: CustomerDTO;
+  createdByEmployeeId: string;
+  createdAt: string;
+  reservationStartAt: string;
+  reservationEndAt: string;
+  businessId: string;
+  serviceChargeIds: string[];
+}
+
+export interface CustomerDTO {
+  firstName: string;
+  lastName: String;
+  phoneNumber: string;
+}
+
+export interface PostReservationDTO {
+  customer: CustomerDTO;
+  reservationStartAt: string;
+  reservationEndAt: string;
+  serviceChargeIds: string[];
+  businessId: string;
+}
+
+export interface PutReservationDTO {
+  reservationStartAt: string;
+  reservationEndAt: string;
+  customer: {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+  };
+}
+
+export interface GetReservationsDTO {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  items: ReservationDTO[];
+}

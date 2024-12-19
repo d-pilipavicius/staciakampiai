@@ -1,6 +1,69 @@
 import { MissingAuthError } from "./MissingAuthError";
-import { BusinessDTO, DiscountDTO, GetDiscountsDTO, GetProductModifiersDTO, GetProductsDTO, GetServiceChargeDTO, GetTaxesDTO, LoginDTO, LoginResponseDTO, OrderDTO, PostDiscountDTO, PostOrderDTO, PostProductDTO, PostProductModifierDTO, PostServiceChargeDTO, PostTaxDTO, ProductDTO, ProductModifierDTO, PutDiscountDTO, PutOrderDTO, PutProductDTO, PutProductModifierDTO, PutServiceChargeDTO, PutTaxDTO, ServiceChargeDTO, TaxDTO, UserDTO } from "./Responses";
-import { addParam, deleteDiscountLink, deleteProductLink, deleteProductModifierLink, deleteServiceChargeLink, deleteTaxLink, getBusinessLink, getDiscountsLink, getGiftcardsLink, getOrderLink, getOrderReceiptLink, getOrdersLink, getProductListLink, getProductModifierListLink, getServiceChargeLink, getTaxLink, getUserLink, increaseDiscGiftUsageLink, loginLink, postDiscountLink, postOrderLink, postProductLink, postProductModifierLink, postServiceChargeLink, postTaxLink, putBusinessLink, putDiscountLink, putOrderLink, putProductLink, putProductModifierLink, putServiceChargeLink, putTaxLink } from "./Routes";
+import {
+  BusinessDTO,
+  DiscountDTO,
+  GetDiscountsDTO,
+  GetProductModifiersDTO,
+  GetProductsDTO, GetReservationsDTO,
+  GetServiceChargeDTO,
+  GetTaxesDTO,
+  LoginDTO,
+  LoginResponseDTO,
+  OrderDTO,
+  PostDiscountDTO,
+  PostOrderDTO,
+  PostProductDTO,
+  PostProductModifierDTO,
+  PostReservationDTO,
+  PostServiceChargeDTO,
+  PostTaxDTO,
+  ProductDTO,
+  ProductModifierDTO,
+  PutDiscountDTO,
+  PutOrderDTO,
+  PutProductDTO,
+  PutProductModifierDTO,
+  PutServiceChargeDTO,
+  PutTaxDTO,
+  ServiceChargeDTO,
+  TaxDTO,
+  UserDTO
+} from "./Responses";
+import {
+  addParam,
+  deleteDiscountLink,
+  deleteProductLink,
+  deleteProductModifierLink,
+  deleteServiceChargeLink,
+  deleteTaxLink,
+  getBusinessLink,
+  getDiscountsLink,
+  getGiftcardsLink,
+  getOrderLink,
+  getOrderReceiptLink,
+  getOrdersLink,
+  getProductListLink,
+  getProductModifierListLink,
+  getReservationLink,
+  getServiceChargeLink,
+  getTaxLink,
+  getUserLink,
+  increaseDiscGiftUsageLink,
+  loginLink,
+  postDiscountLink,
+  postOrderLink,
+  postProductLink,
+  postProductModifierLink, postReservationLink,
+  postServiceChargeLink,
+  postTaxLink,
+  putBusinessLink,
+  putDiscountLink,
+  putOrderLink,
+  putProductLink,
+  putProductModifierLink,
+  putServiceChargeLink,
+  putTaxLink
+} from "./Routes";
 
 //Login / Authentication
 export async function loginAPI(login: LoginDTO): Promise<LoginResponseDTO> {
@@ -387,3 +450,35 @@ async function authAPI(url: string, method: string, body: string | null, auth: L
 
   return response;
 }
+
+// Reservations
+export async function getReservationsAPI(businessId: string, page: number, pageSize: number, auth: LoginResponseDTO): Promise<GetReservationsDTO> {
+  const response = await authAPI(
+      `${getReservationLink(businessId)}?pageNumber=${page}&pageSize=${pageSize}`,
+      "GET",
+      null,
+      auth
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${await response.text()}`);
+  }
+
+  return response.json();
+}
+
+export async function postReservationAPI(reservation: PostReservationDTO, auth: LoginResponseDTO): Promise<void> {
+  const response = await authAPI(
+      postReservationLink(reservation.businessId, auth.user.id),
+      "POST",
+      JSON.stringify(reservation),
+      auth
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${await response.text()}`);
+  }
+}
+
+
+
