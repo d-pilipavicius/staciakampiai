@@ -8,7 +8,6 @@ import java.util.UUID;
 
 @Getter
 @Builder
-@ToString
 public class ProductModifierDTO {
     @NotNull(message = "ID is required")
     private final UUID id;

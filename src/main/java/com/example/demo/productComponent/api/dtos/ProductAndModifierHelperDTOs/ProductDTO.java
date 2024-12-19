@@ -7,11 +7,9 @@ import org.springframework.lang.NonNull;
 import java.util.List;
 import java.util.UUID;
 
-
 @Setter
 @Getter
 @Builder
-@ToString
 public class ProductDTO {
     @NotNull(message = "ID is required")
     private final UUID id;

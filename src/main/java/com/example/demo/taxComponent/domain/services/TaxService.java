@@ -13,9 +13,6 @@ import com.example.demo.taxComponent.domain.entities.Tax;
 import com.example.demo.taxComponent.helper.mapper.TaxMapper;
 import com.example.demo.taxComponent.repository.TaxRepository;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.data.domain.Pageable;
@@ -34,16 +31,11 @@ public class TaxService {
 
     private final ProductApplicationService productApplicationService;
     private final TaxMapper taxMapper;
-    private static final Logger logger = LoggerFactory.getLogger(TaxService.class);
 
     public TaxDTO createTax(PostTaxDTO postTaxDTO) {
         Tax tax = taxMapper.toTax(postTaxDTO);
         Tax savedTax = taxRepository.save(tax);
-        TaxDTO savedTaxDTO = taxMapper.toTaxDTO(savedTax);
-
-        logger.info("Created tax with ID: {}, Details: {}", savedTaxDTO.getId(), savedTaxDTO.toString());
-
-        return savedTaxDTO;
+        return taxMapper.toTaxDTO(savedTax);
     }
 
     public GetTaxesDTO getAllTaxes(int page, int size, UUID businessId) {
@@ -64,9 +56,7 @@ public class TaxService {
                 .orElseThrow(() -> new EntityNotFoundException("Tax with id " + id + " not found"));
         Tax updatedTax = taxMapper.fromPutToTax(putTaxDTO, tax);
         Tax savedTax = taxRepository.save(updatedTax);
-        TaxDTO updatedTaxDTO = taxMapper.toTaxDTO(savedTax);
-        logger.info("Updated tax with ID: {}, Updated details: {}", updatedTaxDTO.getId(), updatedTaxDTO.toString());
-        return updatedTaxDTO;
+        return taxMapper.toTaxDTO(savedTax);
     }
 
     @Transactional

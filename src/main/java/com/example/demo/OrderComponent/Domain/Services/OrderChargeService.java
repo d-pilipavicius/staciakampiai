@@ -12,16 +12,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Service
 @AllArgsConstructor
 public class OrderChargeService {
     private final IAppliedServiceChargeRepository appliedServiceChargeRepository;
-    private static final Logger logger = LoggerFactory.getLogger(OrderChargeService.class);
 
-    
     public List<AppliedServiceCharge> saveServiceCharges(List<AppliedServiceChargeDTO> charges, Order order) {
         if (charges == null || charges.isEmpty()) {
             return List.of();
@@ -31,7 +26,6 @@ public class OrderChargeService {
                 .map(dto -> OrderMapper.mapToAppliedServiceCharge(dto, order))
                 .collect(Collectors.toList());
         appliedServiceChargeRepository.saveAll(appliedCharges);
-        logger.info("Saved service charges: {}", appliedCharges.toString()); 
         return appliedCharges;
     }
 

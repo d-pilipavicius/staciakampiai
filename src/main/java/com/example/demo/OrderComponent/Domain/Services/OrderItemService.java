@@ -17,15 +17,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
 @Service
 @AllArgsConstructor
 public class OrderItemService {
-
-    private static final Logger logger = LoggerFactory.getLogger(OrderItemService.class);
     private final IOrderItemRepository orderItemRepository;
     private final IOrderItemModifierRepository orderItemModifierRepository;
 
@@ -36,7 +30,6 @@ public class OrderItemService {
             savedItems.add(orderItemRepository.save(orderItem));
             saveModifiers(item.getModifiers(), orderItem.getId());
         }
-        logger.info("Returned saved order items: {}", savedItems.toString());
         return savedItems;
     }
 
@@ -47,7 +40,6 @@ public class OrderItemService {
 
         List<OrderItem> updatedItems = processItems(modifyOrderRequest.getItems(), existingItemsMap, order.getId());
         deleteRemovedItems(existingItemsMap, modifyOrderRequest.getItems());
-        logger.info("Returned modified order items: {}", updatedItems.toString());
         return updatedItems;
     }
 

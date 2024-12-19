@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @AllArgsConstructor
 @Service
 public class ProductModifierService {
@@ -33,7 +30,6 @@ public class ProductModifierService {
     private final ProductModifierRepository productModifierRepository;
     private final ProductCompatibleModifierRepository productCompatibleModifierRepository;
     private final ProductModifierValidator productModifierValidator;
-    private static final Logger logger = LoggerFactory.getLogger(ProductModifierService.class);
 
     @Transactional
     public ProductModifierDTO createModifier(PostModifierDTO postModifierDTO) {
@@ -42,12 +38,9 @@ public class ProductModifierService {
 
         // save the modifier
         ProductModifier savedModifier = productModifierRepository.save(modifier);
-        ProductModifierDTO savedModifierDTO = Mapper.mapToDTO(savedModifier, ProductModifierMapper.TO_DTO);
-
-        logger.info("Created product:", savedModifierDTO.toString());
 
         // map the saved modifier to a DTO and return it
-        return savedModifierDTO;
+        return Mapper.mapToDTO(savedModifier, ProductModifierMapper.TO_DTO);
     }
 
     // Fetches all modifiers that are linked to the product
@@ -101,11 +94,9 @@ public class ProductModifierService {
 
         // Save the updated product modifier
         ProductModifier updatedProductModifier = productModifierRepository.save(productModifier);
-        ProductModifierDTO updatedProductModifierDTO = Mapper.mapToDTO(updatedProductModifier, ProductModifierMapper.TO_DTO);
 
-        logger.info("Updated product modifier with ID: {}, Updated details: {}", updatedProductModifier.getId(), updatedProductModifierDTO.toString());
-
-        return updatedProductModifierDTO;
+        // Map the updated product modifier to DTO and return it
+        return Mapper.mapToDTO(updatedProductModifier, ProductModifierMapper.TO_DTO);
     }
 
     @Transactional

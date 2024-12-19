@@ -20,9 +20,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Service
 @AllArgsConstructor
 // TODO: Add exception handling
@@ -35,16 +32,11 @@ public class UserService {
 
   private final PasswordEncoder passwordEncoder;
 
-  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
   public UserDTO createUser(@NotNull @Valid CreateUserDTO createUserDTO) {
     userValidator.checkIfUsernameExists(createUserDTO.getUsername());
     User user = userMapper.toUser(createUserDTO);
     User savedUser = userRepository.save(user);
-    UserDTO savedUserDTO = userMapper.toUserDTO(savedUser);
-    logger.info("Created user with ID: {}, Details: {}", savedUserDTO.getId(), savedUserDTO.toString());
-
-    return savedUserDTO;
+    return userMapper.toUserDTO(savedUser);
   }
 
   public UserDTO getUser(@NotNull UUID userId) {
@@ -70,11 +62,7 @@ public class UserService {
     updatedUser.setRole(user.getRole());
     updatedUser.setBusiness(user.getBusiness());
     User savedUser = userRepository.save(updatedUser);
-    UserDTO savedUserDTO = userMapper.toUserDTO(savedUser);
-
-    logger.info("Updated user with ID: {}, New details: {}", savedUserDTO.getId(), savedUserDTO.toString());
-
-    return savedUserDTO;
+    return userMapper.toUserDTO(savedUser);
   }
 
   public UserDTO updateSensitiveInformation(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){

@@ -15,21 +15,14 @@ import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundExce
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnauthorizedException;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnprocessableException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.SQLException;
 import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> unauthorizedException(UnauthorizedException ex) {
-        logger.error("UnauthorizedException occurred: {}", ex.getErrorMsg(), ex); 
         ErrorResponse response = ErrorResponse.builder().errorCode("Unauthorized").errorMessage(ex.getErrorMsg())
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
@@ -37,7 +30,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnprocessableException.class)
     public ResponseEntity<ErrorResponse> unprocessableException(UnprocessableException ex) {
-        logger.error("UnprocessableException occurred: {}", ex.getErrorMsg(), ex);  
         ErrorResponse response = ErrorResponse.builder().errorCode("Invalid data").errorMessage(ex.getErrorMsg())
                 .build();
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
@@ -45,7 +37,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> notFoundException(NotFoundException ex) {
-        logger.error("NotFoundException occurred: {}", ex.getErrorMsg(), ex);
         ErrorResponse response = ErrorResponse.builder().errorCode("Id not found").errorMessage(ex.getErrorMsg())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -53,7 +44,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ErrorResponse> forbiddenException(ForbiddenException ex){
-        logger.error("ForbiddenException occurred: {}", ex.getErrorMsg(), ex);
         ErrorResponse response = ErrorResponse.builder().errorCode("Forbidden").errorMessage(ex.getErrorMsg())
                 .build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
@@ -68,7 +58,6 @@ public class GlobalExceptionHandler {
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                 .toList();
 
-        logger.error("MethodArgumentNotValidException occurred: {}", ex.getMessage(), ex); 
         ErrorResponse response = ErrorResponse.builder()
                 .errorCode("Bad request")
                 .errorMessage("Validation failed for one or more fields")
@@ -80,7 +69,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException ex) {
-        logger.error("MissingServletRequestParameterException occurred: {}", ex.getMessage(), ex);
         ErrorResponse response = ErrorResponse.builder().errorCode("Bad request").errorMessage(ex.getMessage())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

@@ -19,31 +19,25 @@ import com.example.demo.BusinessComponent.Repositories.IBusinessRepository;
 import com.example.demo.CommonDTOs.PageinationDTO;
 import com.example.demo.UserComponent.Repositories.IUserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
 @Service
 @AllArgsConstructor
+// TODO: Add exception handling
 public class BusinessService {
   private final IBusinessRepository businessRepository;
   private final IUserRepository userRepository;
   private final BusinessMapper businessMapper;
   private final BusinessValidator businessValidator;
-  private static final Logger logger = LoggerFactory.getLogger(BusinessService.class);
-
 
   public BusinessDTO createBusiness(@NotNull @Valid CreateBusinessDTO dto) {
     businessValidator.checkIfPhoneNumberValid(dto.getPhoneNumber());
     Business business = businessMapper.toBusiness(dto);
     Business savedBusiness = businessRepository.save(business);
-    BusinessDTO mappedBusiness = businessMapper.toBusinessDTO(savedBusiness);
-    logger.info("Created Business: {}", mappedBusiness.toString());
-    return mappedBusiness;
+    return businessMapper.toBusinessDTO(savedBusiness);
   }
 
   public GetBusinessListDTO getBusinessList(@NotNull @Valid PageinationDTO pageinationInfo) {
@@ -68,11 +62,7 @@ public class BusinessService {
 
     Business updatedBusiness = businessMapper.updateBusinessFromDto(updateBusinessDTO, existingBusiness);
     Business savedBusiness = businessRepository.save(updatedBusiness);
-    
-    BusinessDTO updatedBusinessDTO = businessMapper.toBusinessDTO(savedBusiness);
-    logger.info("Updated Business: {}", updatedBusinessDTO.toString());
-
-    return updatedBusinessDTO;
+    return businessMapper.toBusinessDTO(savedBusiness);
   }
 
   public void deleteBusiness(@NotNull UUID businessId) {
