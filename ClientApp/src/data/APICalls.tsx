@@ -349,7 +349,7 @@ export async function getOrdersAPI(pageNumber: number, pageSize: number, auth: L
     pageNumber: pageNumber+1,
     pageSize: pageSize
   };
-  const response = await authAPI(getOrdersLink+addParam({pageination}), "GET", null, auth);
+  const response = await authAPI(getOrdersLink(auth.user.businessId)+addParam({pageination}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);

@@ -4,9 +4,19 @@ import {
   getTipsAPI,
   postCardPaymentAPI,
   postCashPaymentAPI,
-  postInitiateRefundAPI
+  postInitiateRefundAPI, getOrdersAPI
 } from "../../../data/APICalls";
-import { AddTipDTO, TipDTO, LoginResponseDTO, GetTipDTO, CreatePaymentDTO, PaymentMethod, OrderItemPaymentDTO, Currency } from "../../../data/Responses";
+import {
+  AddTipDTO,
+  TipDTO,
+  LoginResponseDTO,
+  GetTipDTO,
+  CreatePaymentDTO,
+  PaymentMethod,
+  OrderItemPaymentDTO,
+  Currency,
+  OrderDTO
+} from "../../../data/Responses";
 import TipForm from "./TipForm";
 import Header from "../../Header";
 import "./paymentPage.css";
@@ -33,6 +43,19 @@ const PaymentPage: React.FC = () => {
   const [paymentResponse, setPaymentResponse] = useState<any>(null);
   const [recentPayments, setRecentPayments] = useState<any[]>([]);
 
+  const [orders, setOrders] = useState<OrderDTO[]>([]);
+
+  const loadOrders = async () => {
+    try {
+      const ordersData = await getOrdersAPI(0, 10, loginToken);
+      setOrders(ordersData); // Ensure the entire data is set
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
+
+
   const loginString = localStorage.getItem("loginToken");
   if (!loginString) {
     nav("/");
@@ -42,12 +65,13 @@ const PaymentPage: React.FC = () => {
 
   useEffect(() => {
     loadTips();
-    // Load recent payments from localStorage when the component mounts
+    loadOrders();
     const savedPayments = localStorage.getItem("recentPayments");
     if (savedPayments) {
       setRecentPayments(JSON.parse(savedPayments));
     }
   }, [currentPage]);
+
 
   const loadTips = async () => {
     try {
@@ -315,6 +339,12 @@ const PaymentPage: React.FC = () => {
               </div>
           )}
         </div>
+
+        <div className="orders-section">
+          <h2>All Orders</h2>
+          <pre>{JSON.stringify(orders, null, 2)}</pre>
+        </div>
+
       </div>
   );
 };
