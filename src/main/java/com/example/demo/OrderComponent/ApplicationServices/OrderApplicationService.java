@@ -103,8 +103,8 @@ public class OrderApplicationService {
                                 productApplicationService.decrementProductStock(oldItem.getProductId(), newQuantity - oldQuantity);
                             }
 
-                            if (oldItem.getSelectedModifierIds() != null) {
-                                List<UUID> oldModifiers = oldItem.getSelectedModifierIds();
+                            if (oldItem.getModifiers() != null) {
+                                List<UUID> oldModifiers = oldItem.getModifiers().stream().map(OrderItemModifierDTO::getProductModifierId).toList();
                                 List<UUID> newModifiers = item.getSelectedModifierIds();
 
                                 // Increment stock for removed modifiers
@@ -113,6 +113,20 @@ public class OrderApplicationService {
                                         .forEach(modifierId -> {
                                             productApplicationService.incrementModifierStock(modifierId, oldQuantity);
                                         });
+
+                                // change stock on modified modifiers
+                                if(newModifiers != null){
+                                    oldModifiers.stream()
+                                            .filter(newModifiers::contains)
+                                            .forEach(modifierId -> {
+                                                if (oldQuantity > newQuantity) {
+                                                    productApplicationService.incrementModifierStock(modifierId, oldQuantity - newQuantity);
+                                                } else if (oldQuantity < newQuantity) {
+                                                    productApplicationService.decrementModifierStock(modifierId, newQuantity - oldQuantity);
+                                                }
+                                            });
+                                }
+
 
                                 // Decrement stock for added modifiers
                                 if (newModifiers != null) {
@@ -132,9 +146,10 @@ public class OrderApplicationService {
             oldOrder.getItems().forEach(oldItem -> {
                 if (modifyOrderRequest.getItems().stream().noneMatch(item -> item.getProductId().equals(oldItem.getProductId()))) {
                     productApplicationService.incrementProductStock(oldItem.getProductId(), oldItem.getQuantity());
-                    if (oldItem.getSelectedModifierIds() != null) {
-                        oldItem.getSelectedModifierIds().forEach(modifierId -> {
-                            productApplicationService.incrementModifierStock(modifierId, 1);
+                    if (oldItem.getModifiers() != null) {
+                        List<UUID> modifierIds = oldItem.getModifiers().stream().map(OrderItemModifierDTO::getProductModifierId).toList();
+                        modifierIds.forEach(modifierId -> {
+                            productApplicationService.incrementModifierStock(modifierId, oldItem.getQuantity());
                         });
                     }
                 }
@@ -146,7 +161,7 @@ public class OrderApplicationService {
             oldOrder.getItems().forEach(item -> {
                 if(item.getModifiers() != null){
                     List<UUID> modifierIds = item.getModifiers().stream()
-                            .map(OrderItemModifierDTO::getId)
+                            .map(OrderItemModifierDTO::getProductModifierId)
                             .toList();
 
                     productApplicationService.incrementProductStock(item.getProductId(), item.getQuantity());
