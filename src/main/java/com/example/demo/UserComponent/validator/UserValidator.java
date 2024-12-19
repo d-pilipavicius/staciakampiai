@@ -17,4 +17,12 @@ public class UserValidator {
             );
         }
     }
+
+    public void checkIfUsernameExistsForUpdate(String username){
+        if(userRepository.countByUsername(username) > 1){
+            throw new UnprocessableException(
+                    "The given username already exists."
+            );
+        }
+    }
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import com.example.demo.payments.Domain.Entities.Enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import lombok.Setter;
 
 import java.math.BigDecimal;

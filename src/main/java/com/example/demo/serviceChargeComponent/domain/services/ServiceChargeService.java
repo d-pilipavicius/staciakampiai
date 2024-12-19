@@ -1,11 +1,13 @@
 package com.example.demo.serviceChargeComponent.domain.services;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.serviceChargeComponent.api.dtos.GetServiceChargesDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.PostServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.PutServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.api.dtos.ServiceChargeHelperDTOs.ServiceChargeDTO;
 import com.example.demo.serviceChargeComponent.domain.entities.ServiceCharge;
 import com.example.demo.serviceChargeComponent.helper.mapper.ServiceChargeMapper;
+import com.example.demo.serviceChargeComponent.helper.validator.ServiceChargeValidator;
 import com.example.demo.serviceChargeComponent.repository.ServiceChargeRepository;
 
 import org.springframework.data.domain.Pageable;
@@ -26,10 +28,13 @@ public class ServiceChargeService {
 
     private final ServiceChargeRepository serviceChargeRepository;
     private final ServiceChargeMapper serviceChargeMapper;
+
+    private final ServiceChargeValidator serviceChargeValidator;
     private static final Logger logger = LoggerFactory.getLogger(ServiceChargeService.class);
 
 
     public ServiceChargeDTO createServiceCharge(PostServiceChargeDTO postServiceChargeDTO) {
+        serviceChargeValidator.checkPricingStrategy(postServiceChargeDTO.getCurrency(), postServiceChargeDTO.getValueType());
         ServiceCharge serviceCharge = serviceChargeMapper.toServiceCharge(postServiceChargeDTO);
         ServiceCharge savedServiceCharge = serviceChargeRepository.save(serviceCharge);
         
@@ -41,14 +46,17 @@ public class ServiceChargeService {
 
     public GetServiceChargesDTO getServiceCharges(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ServiceCharge> serviceChargePage = serviceChargeRepository.findAll(pageable);     
+        Page<ServiceCharge> serviceChargePage = serviceChargeRepository.findAll(pageable);
+        serviceChargeValidator.checkIfBusinessHadServiceCharges((int) serviceChargePage.getTotalElements());
+        serviceChargeValidator.checkIfServiceChargePageExceeded(page, serviceChargePage.getTotalPages());
         return serviceChargeMapper.toGetServiceChargesDTO(serviceChargePage);
     }
     
     public ServiceChargeDTO updateServiceCharge(PutServiceChargeDTO putServiceChargeDTO, UUID id) {
         ServiceCharge serviceCharge = serviceChargeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ServiceCharge with id " + id + " not found"));
-        applyServiceChargeUpdates(putServiceChargeDTO, serviceCharge); 
+                .orElseThrow(() -> new NotFoundException("ServiceCharge with id " + id + " not found"));
+        applyServiceChargeUpdates(putServiceChargeDTO, serviceCharge);
+        serviceChargeValidator.checkPricingStrategy(serviceCharge.getCurrency(), serviceCharge.getValueType());
         ServiceCharge updatedServiceCharge = serviceChargeRepository.save(serviceCharge);
         
         ServiceChargeDTO updatedServiceChargeDTO = serviceChargeMapper.toServiceChargeDTO(updatedServiceCharge);
@@ -62,7 +70,7 @@ public class ServiceChargeService {
         if (serviceChargeRepository.existsById(id)) {
             serviceChargeRepository.deleteById(id);
         }else{
-            throw new EntityNotFoundException("ServiceCharge with id " + id + " not found");
+            throw new NotFoundException("ServiceCharge with id " + id + " not found");
         }
     }
 
@@ -75,7 +83,7 @@ public class ServiceChargeService {
 
     public ServiceChargeDTO getServiceChargeById(UUID id) {
         ServiceCharge serviceCharge = serviceChargeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ServiceCharge with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("ServiceCharge with id " + id + " not found"));
         return serviceChargeMapper.toServiceChargeDTO(serviceCharge);
     }
 }

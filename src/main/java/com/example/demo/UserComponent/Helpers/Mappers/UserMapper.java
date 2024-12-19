@@ -2,6 +2,7 @@ package com.example.demo.UserComponent.Helpers.Mappers;
 
 import java.util.UUID;
 
+import com.example.demo.UserComponent.API.DTOs.PutUserCredentialsDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -38,17 +39,12 @@ public class UserMapper {
   }
 
   public User toUser(@NotNull @Valid UpdateUserDTO updateUserDTO, @NotNull UUID userId) {
-    // If businessId was passed as null, business is null, else pass business;
-    Business business = (updateUserDTO.getBusinessId() == null) ? null
-        : Business.builder().id(updateUserDTO.getBusinessId()).build();
     return User
         .builder()
         .id(userId)
         .fullName(updateUserDTO.getFullName())
         .phoneNumber(updateUserDTO.getPhoneNumber())
         .emailAddress(updateUserDTO.getEmailAddress())
-        .business(business)
-        .role(updateUserDTO.getRole())
         .build();
   }
 

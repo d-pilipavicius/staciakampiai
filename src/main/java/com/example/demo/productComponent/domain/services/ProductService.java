@@ -82,6 +82,11 @@ public class ProductService {
         return ProductMapper.pageToGetProducts(businessId, productDTOS);
     }
 
+    public List<ProductDTO> getProductsByListOfId(List<UUID> productIds){
+        List<Product> products = productRepository.findByIdIn(productIds);
+        return Mapper.mapToDTOList(products, ProductMapper.TO_DTO);
+    }
+
     @Transactional
     public ProductDTO updateProduct(PutProductDTO putProductDTO, UUID productId) {
         // Validate the modifiers
@@ -179,8 +184,8 @@ public class ProductService {
         productCompatibleModifierRepository.deleteByProductIdAndModifierId(productId, modifierId);
     }
 
-    public void validateProductIds(List<UUID> productIds) {
-        productValidator.productsExist(productIds);
+    public boolean validateProductIds(List<UUID> productIds) {
+        return productValidator.productsExist(productIds);
     }
 
     // If returns false, then the stock was not updated -> you should retry fetching

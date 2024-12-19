@@ -2,6 +2,8 @@ package com.example.demo.BusinessComponent.Domain.Services;
 
 import java.util.UUID;
 
+import com.example.demo.BusinessComponent.validator.BusinessValidator;
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +19,6 @@ import com.example.demo.BusinessComponent.Repositories.IBusinessRepository;
 import com.example.demo.CommonDTOs.PageinationDTO;
 import com.example.demo.UserComponent.Repositories.IUserRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,15 +29,16 @@ import org.slf4j.LoggerFactory;
 
 @Service
 @AllArgsConstructor
-// TODO: Add exception handling
 public class BusinessService {
   private final IBusinessRepository businessRepository;
   private final IUserRepository userRepository;
   private final BusinessMapper businessMapper;
+  private final BusinessValidator businessValidator;
   private static final Logger logger = LoggerFactory.getLogger(BusinessService.class);
 
 
   public BusinessDTO createBusiness(@NotNull @Valid CreateBusinessDTO dto) {
+    businessValidator.checkIfPhoneNumberValid(dto.getPhoneNumber());
     Business business = businessMapper.toBusiness(dto);
     Business savedBusiness = businessRepository.save(business);
     BusinessDTO mappedBusiness = businessMapper.toBusinessDTO(savedBusiness);
@@ -45,29 +47,24 @@ public class BusinessService {
   }
 
   public GetBusinessListDTO getBusinessList(@NotNull @Valid PageinationDTO pageinationInfo) {
-    // Set up pageable entity that is used for retrieving the specific business
-    // items from the database
     Pageable pageable = PageRequest.of(pageinationInfo.getPage(), pageinationInfo.getPageSize());
     Page<Business> pageination = businessRepository.findAll(pageable);
+    businessValidator.checkIfAnyBusinessExisted((int) pageination.getTotalElements());
+    businessValidator.checkIfBusinessPageExceeded(pageinationInfo.getPage(), pageination.getTotalPages());
     return businessMapper.toGetBusinessListDTO(pageination);
   }
 
   public BusinessDTO getBusiness(@NotNull @Valid UUID businessId) {
+    businessValidator.checkIfBusinessIdExists(businessId);
     Business business = businessRepository.getReferenceById(businessId);
     return businessMapper.toBusinessDTO(business);
   }
 
   public BusinessDTO updateBusiness(@NotNull UUID businessId, @NotNull @Valid UpdateBusinessDTO updateBusinessDTO) {
-    // TODO: Move exception handling to a different class
     Business existingBusiness = businessRepository.findById(businessId)
-        .orElseThrow(() -> new EntityNotFoundException("Business not found with ID: " + businessId));
+        .orElseThrow(() -> new NotFoundException("Business not found with ID: " + businessId));
 
-    if (updateBusinessDTO.getOwnerId() != null) {
-      boolean ownerExists = userRepository.existsById(updateBusinessDTO.getOwnerId());
-      if (!ownerExists) {
-        throw new EntityNotFoundException("No user found with ID: " + updateBusinessDTO.getOwnerId());
-      }
-    }
+    businessValidator.checkIfPhoneNumberValid(updateBusinessDTO.getPhoneNumber());
 
     Business updatedBusiness = businessMapper.updateBusinessFromDto(updateBusinessDTO, existingBusiness);
     Business savedBusiness = businessRepository.save(updatedBusiness);
@@ -79,11 +76,7 @@ public class BusinessService {
   }
 
   public void deleteBusiness(@NotNull UUID businessId) {
-    // TODO: Move exception handling to a different class
-    if (businessRepository.existsById(businessId)) {
-      businessRepository.deleteById(businessId);
-    } else {
-      throw new EntityNotFoundException("Business with ID " + businessId + " does not exist.");
-    }
+    businessValidator.checkIfBusinessIdExists(businessId);
+    businessRepository.deleteById(businessId);
   }
 }

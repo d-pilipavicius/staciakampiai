@@ -9,5 +9,7 @@ import com.example.demo.UserComponent.Domain.Entities.User;
 
 public interface IUserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUsername(String username);
+
+    int countByUsername(String username);
     Boolean existsByUsername(String username);
 }

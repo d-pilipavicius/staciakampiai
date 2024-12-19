@@ -29,10 +29,4 @@ public class UpdateUserDTO {
   @Email
   private final String emailAddress;
 
-  private final UUID businessId;
-
-  @NotNull
-  @Enumerated(EnumType.STRING)
-  private final RoleType role;
-
 }

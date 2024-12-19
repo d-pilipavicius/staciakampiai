@@ -1,5 +1,6 @@
 package com.example.demo.CommonHelper;
 
+import com.example.demo.UserComponent.API.DTOs.PutUserCredentialsDTO;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
@@ -37,11 +38,10 @@ public class PostStartupConfig {
         .emailAddress(newBusinessOwner.getEmailAddress())
         .address("Address Avenue 123")
         .build());
-    userService.updateUser(newBusinessOwner.getId(), UpdateUserDTO.builder()
-        .fullName(newBusinessOwner.getFullName())
+    userService.updateSensitiveInformation(newBusinessOwner.getId(), PutUserCredentialsDTO.builder()
         .businessId(newBusiness.getId())
-        .phoneNumber(newBusinessOwner.getPhoneNumber())
-        .emailAddress(newBusinessOwner.getEmailAddress())
+        .username("Tomas")
+        .password("plumbum")
         .role(newBusinessOwner.getRole())
         .build());
     UserDTO itAdministrator = userService.createUser(CreateUserDTO.builder()
@@ -76,12 +76,11 @@ public class PostStartupConfig {
             .emailAddress(ownerOfSecond.getEmailAddress())
             .address("Address Avenue 123")
             .build());
-    userService.updateUser(ownerOfSecond.getId(), UpdateUserDTO.builder()
-            .fullName(ownerOfSecond.getFullName())
+    userService.updateSensitiveInformation(ownerOfSecond.getId(), PutUserCredentialsDTO.builder()
             .role(ownerOfSecond.getRole())
-            .emailAddress(ownerOfSecond.getEmailAddress())
-            .phoneNumber(ownerOfSecond.getPhoneNumber())
             .businessId(businessWithoutEmployee.getId())
+            .password("traktorius")
+            .username("naujas")
             .build());
     System.out.println("UserBusinessOwner id: " + newBusinessOwner.getId() + ", username: " + newBusinessOwner.getUsername() + " password: plumbum");
     System.out.println("Business, which has employee, id: " + newBusiness.getId());

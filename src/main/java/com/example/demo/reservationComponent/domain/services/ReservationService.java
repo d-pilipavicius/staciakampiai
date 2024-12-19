@@ -1,6 +1,8 @@
 package com.example.demo.reservationComponent.domain.services;
 
+import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.FullNameDTO;
+import com.example.demo.reservationComponent.domain.entities.Customer;
 import com.example.demo.reservationComponent.helper.mapper.CustomerMapper;
 import com.example.demo.reservationComponent.helper.mapper.ReservationMapper;
 import com.example.demo.CommonHelper.mapper.base.Mapper;
@@ -10,6 +12,7 @@ import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.Rese
 import com.example.demo.reservationComponent.api.dtos.PostReservationDTO;
 import com.example.demo.reservationComponent.domain.entities.Reservation;
 import com.example.demo.reservationComponent.helper.validator.ReservationValidator;
+import com.example.demo.reservationComponent.repository.CustomerRepository;
 import com.example.demo.reservationComponent.repository.ReservationRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -29,6 +32,8 @@ public class ReservationService {
     private static final Logger logger = LoggerFactory.getLogger(ReservationService.class);
 
     private final ReservationRepository reservationRepository;
+
+    private final CustomerRepository customerRepository;
     private final ReservationValidator reservationValidator;
 
     @Transactional
@@ -40,6 +45,8 @@ public class ReservationService {
 
         reservation.setEmployeeId(employeeId);
 
+        Customer customer = customerRepository.save(reservation.getCustomer());
+        reservation.setCustomer(customer);
         Reservation savedReservation = reservationRepository.save(reservation);
         ReservationDTO mappedReservation = Mapper.mapToDTO(savedReservation, ReservationMapper.TO_DTO);
 
@@ -62,11 +69,11 @@ public class ReservationService {
     }
 
     @Transactional
-    public ReservationDTO updateReservation(PutReservationDTO putReservationDTO, UUID reservationId) {
+    public ReservationDTO updateReservation(PutReservationDTO putReservationDTO, UUID reservationId, UUID businessId) {
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+                .orElseThrow(() -> new NotFoundException("Reservation not found"));
 
-        reservationValidator.validatePutReservationDTO(putReservationDTO);
+        reservationValidator.validatePutReservationDTO(businessId, putReservationDTO, reservationId);
 
         applyReservationUpdates(putReservationDTO, reservation);
 
@@ -85,7 +92,9 @@ public class ReservationService {
     private void applyReservationUpdates(PutReservationDTO putReservationDTO, Reservation reservation) {
         reservation.setReservationEndAt(putReservationDTO.getReservationEndAt());
         reservation.setReservationStartAt(putReservationDTO.getReservationStartAt());
-        reservation.setCustomer(Mapper.mapToModel(putReservationDTO.getCustomer(), CustomerMapper.TO_MODEL));
+        reservation.getCustomer().setFirstName(putReservationDTO.getCustomer().getFirstName());
+        reservation.getCustomer().setLastName(putReservationDTO.getCustomer().getLastName());
+        reservation.getCustomer().setPhoneNumber(putReservationDTO.getCustomer().getPhoneNumber());
         reservation.setCreatedAt(new Timestamp(System.currentTimeMillis()));
     }
 }

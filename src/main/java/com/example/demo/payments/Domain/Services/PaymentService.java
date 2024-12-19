@@ -49,7 +49,7 @@ public class PaymentService {
             return Mappers.toPaymentResponseDTO(payment, orderItems);
         } else {
             try {
-                Session session = stripeService.createStripeSession(totalAmountInCents, request.getOrderId().toString());
+                Session session = stripeService.createStripeSession(request.getCurrency(),totalAmountInCents, request.getOrderId().toString());
 
                 payment.setPaymentProcessorId(session.getId());
                 payment.setStatus(PaymentStatus.PENDING);
@@ -97,16 +97,17 @@ public class PaymentService {
         return true;
     }
 
-    public Tip addTip(UUID businessId,AddTipDTO request) {
+    public Tip addTip(UUID businessId, AddTipDTO request) {
         Tip tipPayment = Mappers.toTip(request);
         tipPayment.setBusinessId(businessId);
         ITipRepository.save(tipPayment);
         return tipPayment;
     }
 
-    public Page<Tip> getOrderTips(UUID businessId, UUID orderId, int page, int pageSize) {
+    public GetTipsDTO getTips(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return ITipRepository.findByBusinessIdAndOrderId(businessId, orderId, pageable);
+        Page<Tip> tipsPage = ITipRepository.findAll(pageable);
+        return Mappers.toGetTipsDTO(tipsPage);
     }
 
     public void processCheckoutSessionCompleted(CheckoutSessionCompletedDTO request) {

@@ -40,37 +40,37 @@ public class UserController {
   private final AuthenticationManager authenticationManager;
 
   @PostMapping
-  public ResponseEntity<UserDTO> createUser(@NotNull @Valid @RequestBody CreateUserDTO createUserDTO) {
+  public ResponseEntity<UserDTO> createUser(@NotNull @RequestBody @Valid CreateUserDTO createUserDTO) {
     UserDTO createdUser = userApplicationService.createUser(createUserDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
 
-  @GetMapping("/{userId}")
+  @GetMapping("/{businessId}/{userId}")
   public ResponseEntity<UserDTO> getUser(@PathVariable UUID userId) {
     UserDTO gottenUserDTO = userApplicationService.getUser(userId);
     return ResponseEntity.ok().body(gottenUserDTO);
   }
 
-  @PutMapping("/{userId}")
-  public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @RequestBody UpdateUserDTO updateUserDTO) {
+  @PutMapping("/{businessId}/{userId}")
+  public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @NotNull @RequestBody @Valid UpdateUserDTO updateUserDTO) {
     UserDTO updatedUserDTO = userApplicationService.updateUser(userId, updateUserDTO);
     return ResponseEntity.ok().body(updatedUserDTO);
   }
 
-  @PutMapping("/{userId}/updateCredentials")
-  public ResponseEntity<UserDTO> updatePassword(@PathVariable UUID userId, @NotNull @Valid @RequestBody PutUserCredentialsDTO passwordDTO){
-    UserDTO updatedPasswordUserDTO = userApplicationService.updatePassword(userId, passwordDTO);
+  @PutMapping("/{businessId}/{userId}/updateCredentials")
+  public ResponseEntity<UserDTO> updateSensitiveInformation(@PathVariable UUID userId, @NotNull @RequestBody @Valid PutUserCredentialsDTO passwordDTO){
+    UserDTO updatedPasswordUserDTO = userApplicationService.updateSensitiveInformation(userId, passwordDTO);
     return ResponseEntity.status(HttpStatus.OK).body(updatedPasswordUserDTO);
   }
 
-  @DeleteMapping("/{userId}")
+  @DeleteMapping("/{businessId}/{userId}")
   public ResponseEntity<Void> deleteUser(@NotNull @PathVariable UUID userId) {
     userApplicationService.deleteUser(userId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   @PostMapping("/login")
-  public ResponseEntity<LoginResponseDTO> loginUser(@NotNull @Valid @RequestBody LoginDTO loginDTO){
+  public ResponseEntity<LoginResponseDTO> loginUser(@NotNull @RequestBody @Valid LoginDTO loginDTO){
     Authentication authentication;
     try{
       authentication = authenticationManager.authenticate(

@@ -69,7 +69,7 @@ public class Mappers {
         Map<String, Object> response = new HashMap<>();
         response.put("totalItems", page.getTotalElements());
         response.put("totalPages", page.getTotalPages());
-        response.put("currentPage", page.getNumber() + 1);  // Convert 0-based to 1-based
+        response.put("currentPage", page.getNumber());  // Convert 0-based to 1-based
         response.put("items", page.getContent());
         return response;
     }
@@ -108,5 +108,24 @@ public class Mappers {
                         item.getOrderItemId(),
                         item.getQuantity()))
                 .collect(Collectors.toList());
+    }
+
+    public static GetTipsDTO toGetTipsDTO(Page<Tip> tipsPage) {
+        List<TipDTO> tipDTOs = tipsPage.getContent().stream()
+                .map(tip -> new TipDTO(
+                        tip.getId(),
+                        tip.getOrderId(),
+                        tip.getEmployeeId(),
+                        tip.getAmount(),
+                        tip.getCurrency(),
+                        tip.getBusinessId()
+                ))
+                .collect(Collectors.toList());
+        return GetTipsDTO.builder()
+                .currentPage(tipsPage.getNumber())
+                .totalItems((int) tipsPage.getTotalElements())
+                .totalPages(tipsPage.getTotalPages())
+                .items(tipDTOs)
+                .build();
     }
 }

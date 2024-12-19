@@ -4,6 +4,7 @@ import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.ApplicationServices.OrderApplicationService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,7 @@ public class OrderController {
     private final OrderApplicationService orderApplicationService;
 
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@NotNull @RequestBody OrderDTO createOrderDTO) {
+    public ResponseEntity<OrderDTO> createOrder(@NotNull @RequestBody @Valid OrderDTO createOrderDTO) {
         OrderDTO response = orderApplicationService.createOrder(createOrderDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -48,7 +49,7 @@ public class OrderController {
 
     @PutMapping("/{orderId}")
     public ResponseEntity<OrderDTO> modifyOrder(@NotNull @PathVariable UUID orderId,
-            @RequestBody ModifyOrderDTO modifyOrderRequest) {
+                                                @NotNull @RequestBody @Valid ModifyOrderDTO modifyOrderRequest) {
         OrderDTO updatedOrder = orderApplicationService.modifyOrder(orderId, modifyOrderRequest);
         return ResponseEntity.ok(updatedOrder);
     }
@@ -56,6 +57,12 @@ public class OrderController {
     @GetMapping("/{orderId}/receipt")
     public ResponseEntity<OrderDTO> getOrderReceipt(@NotNull @PathVariable UUID orderId) {
         OrderDTO orderReceipt = orderApplicationService.getOrderReceipt(orderId);
+        return ResponseEntity.ok(orderReceipt);
+    }
+
+    @PostMapping("/{orderId}/return")
+    public ResponseEntity<OrderDTO> returnOrder(@NotNull @PathVariable UUID orderId) {
+        OrderDTO orderReceipt = orderApplicationService.returnOrder(orderId);
         return ResponseEntity.ok(orderReceipt);
     }
 }

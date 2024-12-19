@@ -30,7 +30,6 @@ function Discounts() {
     try {
       const discounts = await getDiscountsAPI(page-1, pageSize, loginToken.user.businessId, loginToken);
       setDiscounts(discounts);
-      console.log(JSON.stringify(discounts));
     } catch (err) {
       if(err instanceof MissingAuthError) {
         nav("/");
@@ -58,7 +57,7 @@ function Discounts() {
       {discounts && discounts.totalItems > 0
       ? discounts.items.map((item) => <DiscountCard key={item.id} item={item} updatePage={() => setTrigger(trigger+1)}/>) 
       : <p>No discounts available</p>}
-      <Pageination selectedPage={page} totalPages={discounts ? discounts.totalPages : 0} setPage={(i) => console.log(i)}/>
+      <Pageination selectedPage={page} totalPages={discounts ? discounts.totalPages : 0} setPage={(i) => setPage(i)}/>
     </CardComponent>      
   </>
 }

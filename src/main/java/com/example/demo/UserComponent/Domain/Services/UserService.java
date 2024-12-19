@@ -2,10 +2,10 @@ package com.example.demo.UserComponent.Domain.Services;
 
 import java.util.UUID;
 
+import com.example.demo.BusinessComponent.Domain.Entities.Business;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.UserComponent.API.DTOs.PutUserCredentialsDTO;
 import com.example.demo.UserComponent.validator.UserValidator;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +67,8 @@ public class UserService {
     User updatedUser = userMapper.toUser(updateUserDTO, userId);
     updatedUser.setUsername(user.getUsername());
     updatedUser.setPassword(user.getPassword());
+    updatedUser.setRole(user.getRole());
+    updatedUser.setBusiness(user.getBusiness());
     User savedUser = userRepository.save(updatedUser);
     UserDTO savedUserDTO = userMapper.toUserDTO(savedUser);
 
@@ -75,13 +77,15 @@ public class UserService {
     return savedUserDTO;
   }
 
-  public UserDTO updatePassword(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){
-    userValidator.checkIfUsernameExists(putUserCredentialsDTO.getUsername());
+  public UserDTO updateSensitiveInformation(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){
+    userValidator.checkIfUsernameExistsForUpdate(putUserCredentialsDTO.getUsername());
     User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(
             "The given user id was not found."
     ));
     user.setUsername(putUserCredentialsDTO.getUsername());
     user.setPassword(passwordEncoder.encode(putUserCredentialsDTO.getPassword()));
+    user.setRole(putUserCredentialsDTO.getRole());
+    user.setBusiness(Business.builder().id(putUserCredentialsDTO.getBusinessId()).build());
     User savedUser = userRepository.save(user);
     return userMapper.toUserDTO(savedUser);
   }
@@ -89,5 +93,13 @@ public class UserService {
   public void deleteUser(@NotNull UUID userId) {
     // TODO:Add checking if user id null
     userRepository.deleteById(userId);
+  }
+
+  public void checkIfUserExists(UUID userId){
+      if(!userRepository.existsById(userId)){
+        throw new NotFoundException(
+                "The provided user id: " + userId + ", does not exist."
+        );
+      }
   }
 }

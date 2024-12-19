@@ -6,6 +6,8 @@ import { getBusinessProductsAPI, postDiscountAPI } from "../../../data/APICalls"
 import { MissingAuthError } from "../../../data/MissingAuthError";
 import ProductDisplay from "./ProductDisplay";
 import ScrollableList from "../../ScrollableList";
+import Pageination from "../../Pageination";
+import CardComponent from "../../CardComponent";
 
 interface Param {
   isVisible: boolean;
@@ -27,7 +29,7 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
   const [validFrom, setValidFrom] = useState("");
   const [validUntil, setValidUntil] = useState("");
   const [target, setTarget] = useState(DiscountTarget.All);
-  const entitledProducts: Set<string> = new Set();
+  const [entitledProducts, setEntitledProducs] = useState<Set<string>>(new Set());
   const [usageCountLimit, setUsageCountLimit] = useState("");
 
   const loginString = localStorage.getItem("loginToken");
@@ -61,22 +63,23 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
   }  
 
   const createDiscount = async () => {
-    if(!code || !amount || !validFrom || !validUntil || !usageCountLimit)
+    if(!amount || !validFrom || !validUntil || !usageCountLimit)
       return;
     try {
       await postDiscountAPI({
         code: code,
         amount: Number(amount),
         valueType: valueType,
-        currency: Currency.USD,
+        currency: (valueType == PricingStrategy.FIXED_AMOUNT ? Currency.USD : null),
         validFrom: validFrom,
         validUntil: validUntil,
         target: target,
-        entitledProductsIds: (target == DiscountTarget.All ? [] : Array.from(entitledProducts)),
+        entitledProductIds: (target == DiscountTarget.All ? [] : Array.from(entitledProducts)),
         businessId: loginToken.user.businessId,
         usageCountLimit: Number(usageCountLimit)
       }, loginToken);
       onCreate();
+      onPressCreate();
     } catch (err) {
       if(err instanceof MissingAuthError) {
         nav("/");
@@ -100,11 +103,24 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
   <Popup setVisibility={isProductsVisible} priority={1}>
     <ScrollableList>
       <div className="items">
-        { products && products.items.length < 1
-        ? products.items.map((item) => <ProductDisplay product={item} list={entitledProducts}/>)
+        { products && products.items.length > 0
+        ? products.items.map((item) =>     <CardComponent color="#eeeeee" className="product">
+        <div className="productInside">
+          <div>
+            <p>Name: {item.title}</p>
+            <p>Price: {item.price.amount} {item.price.currency}</p>
+            <p>Left: {item.quantityInStock}</p>
+          </div>
+          <input className="form-check-input" type="checkbox" id="checkAll" checked={entitledProducts.has(item.id)} onClick={() => entitledProducts.has(item.id) ? entitledProducts.delete(item.id) : entitledProducts.add(item.id)}/>
+        </div>
+      </CardComponent>)
         : <p>No products found</p>}
       </div>
     </ScrollableList>
+    <div className="horizontal">
+      <button type="button" onClick={() => setProductsVisibility(false)} className="btn btn-primary">Close</button>
+      <Pageination selectedPage={page} totalPages={products?.totalPages ?? 0} setPage={(id) => setPage(id)}/>
+    </div>
   </Popup>
   <Popup setVisibility={isVisible}>
     <h1>Add new discount</h1>
