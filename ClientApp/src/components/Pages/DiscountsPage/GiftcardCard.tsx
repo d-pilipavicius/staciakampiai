@@ -5,14 +5,13 @@ import DialogBox from "../../DialogBox";
 import { MissingAuthError } from "../../../data/MissingAuthError";
 import { useNavigate } from "react-router";
 import { deleteDiscountAPI } from "../../../data/APICalls";
-import ScrollableList from "../../ScrollableList";
 
 interface Param {
   item: DiscountDTO;
   updatePage: () => void;
 }
 
-function DiscountCard({item, updatePage}: Param) {
+function GiftcardCard({item, updatePage}: Param) {
   const nav = useNavigate();
 
   const [isEdit, setEdit] = useState(false);
@@ -20,7 +19,6 @@ function DiscountCard({item, updatePage}: Param) {
 
   const [code, setCode] = useState(item.code);
   const [amount, setAmount] = useState(`${item.amount}`);
-  const [limit, setLimit] = useState(`${item.usageCountLimit}`);
   const [validFrom, setFrom] = useState(item.validFrom.slice(0, 10));
   const [validTo, setTo] = useState(item.validUntil.slice(0,10));
 
@@ -65,13 +63,10 @@ function DiscountCard({item, updatePage}: Param) {
       {!isEdit ? <><div>
         <p>Code: {item.code}</p>
         <p>Amount: {item.amount} {item.valueType == PricingStrategy.FIXED_AMOUNT ? item.currency : "%"}</p>
-        <p>Usage limit: {item.usageCountLimit}</p>
-        <p>Already used: {item.usageCount}</p>
+        <p>Already used: {String(item.usageCount > 0)}</p>
         <p>Valid from: {item.validFrom.slice(0,10)}</p>
         <p>Valid to: {item.validUntil.slice(0,10)}</p>
-        <p>For: { item.target==DiscountTarget.All ? DiscountTarget.All : <ScrollableList>
-            {item.entitledProductIds.map((item) => <p>Product id: {item}</p>)}
-          </ScrollableList>}</p>
+        <p>For: { item.target==DiscountTarget.All ? DiscountTarget.All : <button>See products</button>}</p>
       </div>     
       <div className="buttonSlot">
         <button type="button" onClick={() => setEdit(true)} className="btn btn-primary">Edit</button>
@@ -82,7 +77,6 @@ function DiscountCard({item, updatePage}: Param) {
         <input value={code} onChange={(event) => {setCode(event.target.value)}} type="text" className="form-control" placeholder="Set code"/>
         <input value={amount} onChange={(event) => {setAmount(event.target.value)}} type="text" className="form-control" placeholder="Set amount"/>
         <p>Already used: {item.usageCount}</p>
-        <input value={limit} onChange={(event) => {setLimit(event.target.value)}} type="text" className="form-control" placeholder="Set amount"/>
         <div className="dateForm">
           <label className="form-check-label" htmlFor="dateFrom">Set valid from:</label>
           <input value={validFrom} onChange={(event) => setFrom(event.target.value)} type="date" id="dateFrom"/>
@@ -91,9 +85,7 @@ function DiscountCard({item, updatePage}: Param) {
           <label className="form-check-label" htmlFor="dateTo">Set valid until:</label>
           <input value={validTo} onChange={(event) => setTo(event.target.value)} type="date" id="dateTo"/>
         </div>
-        <p>For: { item.target==DiscountTarget.All ? DiscountTarget.All : <ScrollableList>
-            {item.entitledProductIds.map((item) => <p>Product id: {item}</p>)}
-          </ScrollableList>}</p>
+        <p>For: { item.target==DiscountTarget.All ? DiscountTarget.All : <button>See products</button>}</p>
         <button type="button" onClick={onEdit} className="btn btn-success">Set</button>
         <button type="button" onClick={() =>setEdit(false)} className="btn btn-danger">Cancel</button>
       </div>}
@@ -125,4 +117,4 @@ function DiscountCard({item, updatePage}: Param) {
 
 */
 
-export default DiscountCard;
+export default GiftcardCard;

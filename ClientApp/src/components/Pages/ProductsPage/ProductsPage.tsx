@@ -60,7 +60,7 @@ function ProductsPage() {
         "businessId": loginToken.user.businessId,
         "price": {
           "amount": Number(price),
-          "currency": Currency.EUR,
+          "currency": Currency.USD,
         },
         "compatibleModifierIds": []
       }, loginToken);

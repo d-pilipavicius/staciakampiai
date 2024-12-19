@@ -4,7 +4,6 @@ import com.example.demo.OrderComponent.API.DTOs.AppliedServiceChargeDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
 import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
-import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Services.OrderService;
 import com.example.demo.OrderComponent.Helpers.Mappers.OrderMapper;
 import com.example.demo.payments.API.DTOs.OrderItemPaymentDTO;
