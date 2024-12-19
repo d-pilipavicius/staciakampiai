@@ -492,7 +492,7 @@ async function basicAPI(url: string, method: string, body: string | null) {
   return response;
 }
 
-async function authAPI(url: string, method: string, body: string | null, auth: LoginResponseDTO) {
+export async function authAPI(url: string, method: string, body: string | null, auth: LoginResponseDTO) {
   console.log(`${auth.tokenType}${auth.accessToken}`)
   const response = await fetch(url, {
     method: method,
