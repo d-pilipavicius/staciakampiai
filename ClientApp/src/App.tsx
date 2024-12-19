@@ -10,6 +10,7 @@ import TaxPage from "./components/Pages/TaxPage/TaxPage";
 import DiscountPage from "./components/Pages/DiscountsPage/DiscountPage";
 import ServiceChargePage from "./components/Pages/ServiceChargesPage/ServiceChargePage";
 import PaymentPage from "./components/Pages/PaymentsPage/PaymentPage";
+import ReservationsPage from "./components/Pages/ReservationsPage/ReservationsPage";
 
 function App() {
   return <>
@@ -25,6 +26,7 @@ function App() {
           <Route path="/discounts" element={<DiscountPage/>}/>
           <Route path="/service-charges" element={<ServiceChargePage/>}/>
           <Route path="/payments" element={<PaymentPage/>}/>
+          <Route path="/reservations" element={<ReservationsPage/>}/>
           <Route path="/*" element={<NotFound/>}/>
         </Routes>
       </AuthWrapper>

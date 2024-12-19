@@ -11,13 +11,16 @@ import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.P
 import com.example.demo.productComponent.domain.entities.Product;
 import com.example.demo.productComponent.domain.services.ProductModifierService;
 import com.example.demo.productComponent.domain.services.ProductService;
+import com.example.demo.productComponent.helper.enums.StockOperation;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.sns.endpoints.internal.Value;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -114,9 +117,28 @@ public class ProductApplicationService {
         return productService.validateProductIds(productIds);
     }
 
-    @Transactional
-    public boolean updateProductStock(UUID productId, int newStock) {
-        return productService.updateProductStock(productId, newStock);
+    public void incrementProductStock(UUID productId, int increment) {
+        productService.updateProductStock(productId, increment, StockOperation.INCREMENT);
+    }
+
+    public void decrementProductStock(UUID productId, int decrement) {
+        productService.updateProductStock(productId, decrement, StockOperation.DECREMENT);
+    }
+
+    public void updateProductListStock(Map<UUID, Integer> productStockMap, StockOperation stockOperation) {
+        productService.updateProductListStock(productStockMap, stockOperation);
+    }
+
+    public void incrementModifierStock(UUID modifierId, int increment) {
+        productModifierService.updateModifierStock(modifierId, increment, StockOperation.INCREMENT);
+    }
+
+    public void decrementModifierStock(UUID modifierId, int decrement) {
+        productModifierService.updateModifierStock(modifierId, decrement, StockOperation.DECREMENT);
+    }
+
+    public void updateModifierListStock(Map<UUID, Integer> modifierStockChanges, StockOperation operation) {
+        productModifierService.updateModifierListStock(modifierStockChanges, operation);
     }
 
     public ProductDTO getProductById(UUID productId) {

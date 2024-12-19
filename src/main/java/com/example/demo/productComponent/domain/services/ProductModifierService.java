@@ -6,7 +6,9 @@ import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
+import com.example.demo.productComponent.domain.entities.Product;
 import com.example.demo.productComponent.domain.entities.ProductModifier;
+import com.example.demo.productComponent.helper.enums.StockOperation;
 import com.example.demo.productComponent.helper.mapper.ProductModifierMapper;
 import com.example.demo.productComponent.helper.validator.ProductModifierValidator;
 import com.example.demo.productComponent.repository.ProductCompatibleModifierRepository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -112,5 +115,40 @@ public class ProductModifierService {
         modifier.setQuantityInStock(putModifierDTO.getQuantityInStock());
         modifier.setPrice(putModifierDTO.getPrice().getAmount());
         modifier.setCurrency(putModifierDTO.getPrice().getCurrency());
+    }
+
+    @Transactional
+    public void updateModifierStock(UUID modifierId, int value, StockOperation operation) {
+        if ((operation == StockOperation.INCREMENT || operation == StockOperation.DECREMENT) && value <= 0) {
+            throw new IllegalArgumentException("Value must be positive for increment or decrement operations");
+        }
+
+        ProductModifier modifier = productModifierRepository.findById(modifierId)
+                .orElseThrow(() -> new NotFoundException("Modifier with id " + modifierId + " not found"));
+
+        switch (operation) {
+            case INCREMENT:
+                modifier.setQuantityInStock(modifier.getQuantityInStock() + value);
+                break;
+            case DECREMENT:
+                if (modifier.getQuantityInStock() < value) {
+                    throw new IllegalStateException("Not enough stock for modifier with id " + modifierId);
+                }
+                modifier.setQuantityInStock(modifier.getQuantityInStock() - value);
+                break;
+            case SET:
+                modifier.setQuantityInStock(value);
+                break;
+        }
+
+        productModifierRepository.save(modifier);
+    }
+
+
+    @Transactional
+    public void updateModifierListStock(Map<UUID, Integer> modifierStockChanges, StockOperation operation){
+        for (Map.Entry<UUID, Integer> entry : modifierStockChanges.entrySet()) {
+            updateModifierStock(entry.getKey(), entry.getValue(), operation);
+        }
     }
 }

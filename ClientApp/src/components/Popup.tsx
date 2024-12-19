@@ -9,17 +9,32 @@ interface Param {
 
 
 //High priority = it shows up on top (only change if multiple popups occur, increment by 1 for each popup)
-function Popup({setVisibility, children, priority}: Param) {
+function Popup({ setVisibility, children, priority }: Param) {
+  if (!setVisibility) return null;
+
   return (
-    setVisibility &&
-    <div>
-      <div className="popupBackground" style={{zIndex: 1040+(priority ?? 0)*11}}/>
-      <div className="popup" style={{zIndex: 1050+(priority ?? 0)*11}}>
-        {children}
+      <div
+          className="popupWrapper"
+          style={{
+            zIndex: 1040 + (priority ?? 0) * 11,
+          }}
+      >
+        <div
+            className="popupBackground"
+            style={{
+              zIndex: 1040 + (priority ?? 0) * 11,
+            }}
+        ></div>
+        <div
+            className="popup"
+            style={{
+              zIndex: 1050 + (priority ?? 0) * 11,
+            }}
+        >
+          {children}
+        </div>
       </div>
-    </div>
   );
-  
 }
 
 export default Popup;

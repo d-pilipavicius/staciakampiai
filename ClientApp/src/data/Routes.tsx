@@ -96,13 +96,19 @@ function discountById(businessId: string, discountId: string) {
 }
 
 //Reservations
-export const postReservationLink = reservation;
+export const postReservationLink = postReservation;
 export const getReservationLink = reservation;
 export const putReservationLink = reservationById;
 export const deleteReservationLink = reservationById;
 
 function reservation(businessId: string) {
   return address+`/v1/reservations/${businessId}`;
+}
+
+function postReservation(businessId: string, employeeId: string){
+  const url = `${reservation(businessId)}?employeeId=${encodeURIComponent(employeeId)}`;
+  console.log("Generated URL:", url);
+  return url;
 }
 
 function reservationById(businessId: string, reservationId: string) {

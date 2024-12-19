@@ -5,7 +5,7 @@ import {
   DiscountDTO,
   GetDiscountsDTO,
   GetProductModifiersDTO,
-  GetProductsDTO,
+  GetProductsDTO, GetReservationsDTO,
   GetServiceChargeDTO,
   GetTaxesDTO, GetTipDTO,
   LoginDTO,
@@ -15,6 +15,7 @@ import {
   PostOrderDTO,
   PostProductDTO,
   PostProductModifierDTO,
+  PostReservationDTO,
   PostServiceChargeDTO,
   PostTaxDTO,
   ProductDTO,
@@ -22,7 +23,7 @@ import {
   PutDiscountDTO,
   PutOrderDTO,
   PutProductDTO,
-  PutProductModifierDTO,
+  PutProductModifierDTO, PutReservationDTO,
   PutServiceChargeDTO,
   PutTaxDTO,
   ServiceChargeDTO,
@@ -33,7 +34,7 @@ import {
   addParam,
   deleteDiscountLink,
   deleteProductLink,
-  deleteProductModifierLink,
+  deleteProductModifierLink, deleteReservationLink,
   deleteServiceChargeLink,
   deleteTaxLink,
   getBusinessLink,
@@ -44,23 +45,23 @@ import {
   getOrdersLink,
   getProductListLink,
   getProductModifierListLink,
+  getReservationLink,
   getServiceChargeLink,
-  getTaxLink,
-  getTipsLink,
+  getTaxLink, getTipsLink,
   getUserLink,
   increaseDiscGiftUsageLink,
   loginLink, postCardPaymentLink, postCashPaymentLink,
   postDiscountLink, postInitiateRefund,
   postOrderLink,
   postProductLink,
-  postProductModifierLink,
+  postProductModifierLink, postReservationLink,
   postServiceChargeLink,
   postTaxLink, postTipLink,
   putBusinessLink,
   putDiscountLink,
   putOrderLink,
   putProductLink,
-  putProductModifierLink,
+  putProductModifierLink, putReservationLink,
   putServiceChargeLink,
   putTaxLink
 } from "./Routes";
@@ -507,3 +508,63 @@ async function authAPI(url: string, method: string, body: string | null, auth: L
 
   return response;
 }
+
+// Reservations
+export async function getReservationsAPI(businessId: string, page: number, pageSize: number, auth: LoginResponseDTO): Promise<GetReservationsDTO> {
+  const response = await authAPI(
+      `${getReservationLink(businessId)}?pageNumber=${page}&pageSize=${pageSize}`,
+      "GET",
+      null,
+      auth
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${await response.text()}`);
+  }
+
+  return response.json();
+}
+
+export async function postReservationAPI(reservation: PostReservationDTO, auth: LoginResponseDTO): Promise<void> {
+  const response = await authAPI(
+      postReservationLink(reservation.businessId, auth.user.id),
+      "POST",
+      JSON.stringify(reservation),
+      auth
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${await response.text()}`);
+  }
+}
+
+export async function putReservationAPI(reservationId: string, reservation: PutReservationDTO, auth: LoginResponseDTO): Promise<void> {
+  const response = await authAPI(
+      putReservationLink(auth.user.businessId, reservationId),
+      "PUT",
+      JSON.stringify(reservation),
+      auth
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${await response.text()}`);
+  }
+}
+
+export async function deleteReservationAPI(reservationId: string, auth: LoginResponseDTO): Promise<void> {
+  const response = await authAPI(
+      `${deleteReservationLink(auth.user.businessId, reservationId)}`,
+      "DELETE",
+      null,
+      auth
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${await response.text()}`);
+  }
+}
+
+
+
+
+

@@ -14,4 +14,5 @@ public class OrderItemModifierDTO {
     private final String title;
     private final BigDecimal price;
     private final Currency currency;
+    private final UUID productModifierId;
 }

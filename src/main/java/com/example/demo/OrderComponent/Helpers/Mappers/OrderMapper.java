@@ -37,6 +37,7 @@ public class OrderMapper {
                 .map(modifier -> OrderItemModifierDTO.builder()
                         .id(modifier.getId())
                         .title(modifier.getTitle())
+                        .productModifierId(modifier.getProductModifierId())
                         .price(modifier.getPrice())
                         .currency(modifier.getCurrency())
                         .build())

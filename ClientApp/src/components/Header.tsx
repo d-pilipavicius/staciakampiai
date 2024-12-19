@@ -1,6 +1,6 @@
 function Header() {
-  const names=["Business", "Products", "Orders", "Tax", "Discount", "Service Charge", "Payment"];
-  const links=["/business", "/products", "/orders", "/tax", "/discounts", "/service-charges", "/payments"];
+  const names=["Business", "Products", "Orders", "Tax", "Discount", "Service Charge", "Payment", "Reservations"];
+  const links=["/business", "/products", "/orders", "/tax", "/discounts", "/service-charges", "/payments", "/reservations"];
 
   return <>
       <header className="header">
