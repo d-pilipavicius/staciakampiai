@@ -82,4 +82,12 @@ public class UserService {
     // TODO:Add checking if user id null
     userRepository.deleteById(userId);
   }
+
+  public void checkIfUserExists(UUID userId){
+      if(!userRepository.existsById(userId)){
+        throw new NotFoundException(
+                "The provided user id: " + userId + ", does not exist."
+        );
+      }
+  }
 }

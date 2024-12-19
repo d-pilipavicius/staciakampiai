@@ -10,6 +10,7 @@ import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.P
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class ProductsController {
 
     @PostMapping
     public ResponseEntity<Object> createProduct(
-            @Valid @RequestBody PostProductDTO postProductDTO) {
+            @NotNull @RequestBody @Valid PostProductDTO postProductDTO) {
         ProductDTO productDTO = productApplicationService.createProduct(postProductDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
@@ -49,7 +50,7 @@ public class ProductsController {
     @PutMapping("/{productId}")
     public ResponseEntity<Object> updateProduct(
             @PathVariable UUID productId,
-            @Valid @RequestBody PutProductDTO patchDiscountDTO) {
+            @NotNull @RequestBody @Valid PutProductDTO patchDiscountDTO) {
 
         ProductDTO updatedProduct = productApplicationService.updateProduct(patchDiscountDTO, productId);
 
@@ -66,7 +67,7 @@ public class ProductsController {
 
     @PostMapping("/modifiers")
     public ResponseEntity<Object> createProductModifier(
-            @Valid @RequestBody PostModifierDTO postModifierDTO) {
+            @NotNull @RequestBody @Valid PostModifierDTO postModifierDTO) {
 
         ProductModifierDTO createdModifier = productApplicationService.createModifier(postModifierDTO);
 
@@ -88,7 +89,7 @@ public class ProductsController {
     @PutMapping("/modifiers/{modifierId}")
     public ResponseEntity<Object> updateProductModifier(
             @PathVariable UUID modifierId,
-            @Valid @RequestBody PutModifierDTO putModifierDTO) {
+            @NotNull @RequestBody @Valid PutModifierDTO putModifierDTO) {
 
         ProductModifierDTO updatedModifier = productApplicationService.updateProductModifier(putModifierDTO,
                 modifierId);

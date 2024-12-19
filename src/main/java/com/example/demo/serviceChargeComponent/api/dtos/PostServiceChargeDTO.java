@@ -1,8 +1,8 @@
 package com.example.demo.serviceChargeComponent.api.dtos;
 
 import com.example.demo.CommonHelper.enums.Currency;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 
+import com.example.demo.CommonHelper.enums.PricingStrategy;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,7 @@ public class PostServiceChargeDTO {
     @NotNull
     private final BigDecimal serviceChargeValue;
 
-    private final Optional<Currency> currency;
+    private final Currency currency;
 
     @NotNull
     private final UUID businessId;
