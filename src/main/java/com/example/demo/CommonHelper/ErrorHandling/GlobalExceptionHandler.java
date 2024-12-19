@@ -88,6 +88,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestBody(HttpMessageNotReadableException ex) {
+        logger.error("MissingServletRequestParameterException occurred: {}", ex.getMessage(), ex);
         ErrorResponse response = ErrorResponse.builder()
                 .errorCode("Bad Request")
                 .errorMessage("Request body is missing or unreadable")

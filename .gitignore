@@ -37,4 +37,6 @@ src/main/resources/application-secrets.properties
 
 
 ### Logs ###
-/logs/
+logs/app-info.log
+logs/error.log
+logs/spring-boot-info.log
