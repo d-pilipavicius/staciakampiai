@@ -22,7 +22,6 @@ public class CreatePaymentDTO {
     private UUID businessId;
     @NotNull
     private UUID employeeId;
-    @NotNull
     private BigDecimal amount;
     @NotNull
     private Currency currency;
