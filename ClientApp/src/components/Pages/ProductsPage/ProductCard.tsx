@@ -120,14 +120,15 @@ function ProductCard({product, updatePage}: Props) {
   return <>
   <DialogBox setVisibility={isDelete} question={`Are you sure you want to delete "${product.title}" from the product list?`} onAccept={onDelete} onCancel={() => setDelete(false)}></DialogBox>
   <Popup setVisibility={isEditModifiers}>
-    <h3>Editing "{product.title}" modifiers</h3>
+    <h3 style={{color:"white"}} >Editing "{product.title}" modifiers</h3>
     <button type="button" onClick={onAddModifier} className="btn btn-primary">Add modifier</button>
     <button type="button" onClick={() =>setEditingModifiers(false)} className="btn btn-danger">Cancel</button>
     { product.compatibleModifiers.length > 0 && 
       <ScrollableList>
         {product.compatibleModifiers.map((item) => <ProductModifierCard key={item.id} prodModifier={item} updatePage={updatePage}/>)}
       </ScrollableList>
-    } 
+
+    }
   </Popup>
   <Popup setVisibility={isAddModifier}>
     <input value={title} onChange={(event) => {setTitle(event.target.value)}} type="text" className="form-control" placeholder="Set title"/>

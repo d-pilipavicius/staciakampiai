@@ -19,15 +19,6 @@ import java.util.UUID;
 public final class DiscountsValidator {
     private final DiscountRepository discountRepository;
 
-    public void checkIfAuthorized(UUID id) {
-        // PLACEHOLDER FOR AUTHORIZATION
-        boolean isAuthorized = true;
-        if (!isAuthorized) {
-            throw new UnauthorizedException(
-                    "You are not authorized to perform this action. Please contact your IT administrator.");
-        }
-    }
-
     public void checkDatesOverlap(Timestamp startDate, Timestamp endDate) {
         if (startDate.compareTo(endDate) > 0) {
             throw new UnprocessableException(

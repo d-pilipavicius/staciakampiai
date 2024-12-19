@@ -1,21 +1,115 @@
+.popupWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 60% !important;
+  justify-content: center;
+  align-items: center;
+  z-index: 1040;
+  display: inline-block;
+}
+
 .popupBackground {
   position: fixed;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  z-index: -1;
 }
 
 .popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background: white;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   width: 400px;
-  max-width: 90%;
+  height: 60%;
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 1050;
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  justify-self: center;
+  align-content: center;
+  align-items: center;
+  align-self: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.popup h1, h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 22px;
+  text-align: center;
+  color: white;
+}
+
+.popup input {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.popup button {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.popup button.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.popup button.btn-success:hover {
+  background-color: #218838;
+}
+
+.popup button.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.popup button.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.popupCloseButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.popupCloseButton:hover {
+  color: #ff0000;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

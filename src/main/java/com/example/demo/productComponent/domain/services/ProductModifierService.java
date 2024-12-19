@@ -6,7 +6,9 @@ import com.example.demo.productComponent.api.dtos.ModifierDTOs.GetModifiersDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PutModifierDTO;
 import com.example.demo.productComponent.api.dtos.ModifierDTOs.PostModifierDTO;
 import com.example.demo.productComponent.api.dtos.ProductAndModifierHelperDTOs.ProductModifierDTO;
+import com.example.demo.productComponent.domain.entities.Product;
 import com.example.demo.productComponent.domain.entities.ProductModifier;
+import com.example.demo.productComponent.helper.enums.StockOperation;
 import com.example.demo.productComponent.helper.mapper.ProductModifierMapper;
 import com.example.demo.productComponent.helper.validator.ProductModifierValidator;
 import com.example.demo.productComponent.repository.ProductCompatibleModifierRepository;
@@ -18,7 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
 @Service
@@ -27,6 +33,7 @@ public class ProductModifierService {
     private final ProductModifierRepository productModifierRepository;
     private final ProductCompatibleModifierRepository productCompatibleModifierRepository;
     private final ProductModifierValidator productModifierValidator;
+    private static final Logger logger = LoggerFactory.getLogger(ProductModifierService.class);
 
     @Transactional
     public ProductModifierDTO createModifier(PostModifierDTO postModifierDTO) {
@@ -35,9 +42,12 @@ public class ProductModifierService {
 
         // save the modifier
         ProductModifier savedModifier = productModifierRepository.save(modifier);
+        ProductModifierDTO savedModifierDTO = Mapper.mapToDTO(savedModifier, ProductModifierMapper.TO_DTO);
+
+        logger.info("Created product:", savedModifierDTO.toString());
 
         // map the saved modifier to a DTO and return it
-        return Mapper.mapToDTO(savedModifier, ProductModifierMapper.TO_DTO);
+        return savedModifierDTO;
     }
 
     // Fetches all modifiers that are linked to the product
@@ -91,9 +101,11 @@ public class ProductModifierService {
 
         // Save the updated product modifier
         ProductModifier updatedProductModifier = productModifierRepository.save(productModifier);
+        ProductModifierDTO updatedProductModifierDTO = Mapper.mapToDTO(updatedProductModifier, ProductModifierMapper.TO_DTO);
 
-        // Map the updated product modifier to DTO and return it
-        return Mapper.mapToDTO(updatedProductModifier, ProductModifierMapper.TO_DTO);
+        logger.info("Updated product modifier with ID: {}, Updated details: {}", updatedProductModifier.getId(), updatedProductModifierDTO.toString());
+
+        return updatedProductModifierDTO;
     }
 
     @Transactional
@@ -112,5 +124,40 @@ public class ProductModifierService {
         modifier.setQuantityInStock(putModifierDTO.getQuantityInStock());
         modifier.setPrice(putModifierDTO.getPrice().getAmount());
         modifier.setCurrency(putModifierDTO.getPrice().getCurrency());
+    }
+
+    @Transactional
+    public void updateModifierStock(UUID modifierId, int value, StockOperation operation) {
+        if ((operation == StockOperation.INCREMENT || operation == StockOperation.DECREMENT) && value <= 0) {
+            throw new IllegalArgumentException("Value must be positive for increment or decrement operations");
+        }
+
+        ProductModifier modifier = productModifierRepository.findById(modifierId)
+                .orElseThrow(() -> new NotFoundException("Modifier with id " + modifierId + " not found"));
+
+        switch (operation) {
+            case INCREMENT:
+                modifier.setQuantityInStock(modifier.getQuantityInStock() + value);
+                break;
+            case DECREMENT:
+                if (modifier.getQuantityInStock() < value) {
+                    throw new IllegalStateException("Not enough stock for modifier with id " + modifierId);
+                }
+                modifier.setQuantityInStock(modifier.getQuantityInStock() - value);
+                break;
+            case SET:
+                modifier.setQuantityInStock(value);
+                break;
+        }
+
+        productModifierRepository.save(modifier);
+    }
+
+
+    @Transactional
+    public void updateModifierListStock(Map<UUID, Integer> modifierStockChanges, StockOperation operation){
+        for (Map.Entry<UUID, Integer> entry : modifierStockChanges.entrySet()) {
+            updateModifierStock(entry.getKey(), entry.getValue(), operation);
+        }
     }
 }

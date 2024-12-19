@@ -83,12 +83,13 @@ export interface DiscountDTO {
   validFrom: string;
   validUntil: string;
   target: DiscountTarget;
-  entitledProductsIds: string[];
+  entitledProductIds: string[];
   businessId: string;
   usageCountLimit: number;
 }
 
-export interface PostDiscountDTO extends Omit<DiscountDTO, "id" | "usageCount"> {
+export interface PostDiscountDTO extends Omit<DiscountDTO, "id" | "usageCount" | "currency"> {
+  currency: Currency | null;
 }
 
 export interface GetDiscountsDTO extends PageinationDTO {
@@ -216,7 +217,7 @@ export interface MoneyDTO {
 }
 
 export enum OrderStatus {
-  NEW, IN_PROGRESS, CLOSED, CANCELED, RETURNED
+  NEW = "NEW", IN_PROGRESS = "IN_PROGRESS", CLOSED="CLOSED", CANCELED="CANCELED", RETURNED="RETURNED"
 }
 
 export enum Currency {
@@ -290,4 +291,47 @@ export interface PaymentResponseDTO {
 export interface CardPaymentResponseDTO{
   paymentId: string;
   checkoutUrl: string;
+}
+
+// Reservations
+export interface ReservationDTO {
+  id: string;
+  customer: CustomerDTO;
+  createdByEmployeeId: string;
+  createdAt: string;
+  reservationStartAt: string;
+  reservationEndAt: string;
+  businessId: string;
+  serviceChargeIds: string[];
+}
+
+export interface CustomerDTO {
+  firstName: string;
+  lastName: String;
+  phoneNumber: string;
+}
+
+export interface PostReservationDTO {
+  customer: CustomerDTO;
+  reservationStartAt: string;
+  reservationEndAt: string;
+  serviceChargeIds: string[];
+  businessId: string;
+}
+
+export interface PutReservationDTO {
+  reservationStartAt: string;
+  reservationEndAt: string;
+  customer: {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+  };
+}
+
+export interface GetReservationsDTO {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  items: ReservationDTO[];
 }

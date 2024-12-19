@@ -38,18 +38,20 @@ public class ReservationApplicationService {
 
         // Validate service charge ids
         serviceChargeApplicationService.validateServiceChargeIds(postReservationDTO.getServiceChargeIds());
-
         // Create reservation
         ReservationDTO reservationDto = reservationService.createReservation(postReservationDTO, employeeId);
 
         // Create notification dto
         ReservationNotificationDTO notificationDTO = NotificationFactory.createNotificationDTO(
                 notificationService.createNotificationText(reservationDto.getReservationStartAt()),
-                new Timestamp(System.currentTimeMillis())
+                new Timestamp(System.currentTimeMillis()),
+                reservationDto
         );
 
+
+
         // Send notification, (works if needed)
-        // notificationService.sendReservationCreatedNotification(reservationDto);
+        notificationService.sendReservationCreatedNotification(reservationDto);
 
         // Save notification
         notificationService.createNotification(notificationDTO);
@@ -67,18 +69,19 @@ public class ReservationApplicationService {
     }
 
     @Transactional
-    public ReservationDTO updateReservation(PutReservationDTO putReservationDTO, UUID reservationId) {
+    public ReservationDTO updateReservation(PutReservationDTO putReservationDTO, UUID reservationId, UUID businessId) {
         // Update reservation
-        ReservationDTO reservationDTO = reservationService.updateReservation(putReservationDTO, reservationId);
+        ReservationDTO reservationDTO = reservationService.updateReservation(putReservationDTO, reservationId, businessId);
 
         // Create notification dto
         ReservationNotificationDTO notificationDTO = NotificationFactory.createNotificationDTO(
                 notificationService.createNotificationText(reservationDTO.getReservationStartAt()),
-                new Timestamp(System.currentTimeMillis())
+                new Timestamp(System.currentTimeMillis()),
+                reservationDTO
         );
 
         // Send notification, (works if needed)
-        // notificationService.sendReservationCreatedNotification(reservationDTO);
+        notificationService.sendReservationCreatedNotification(reservationDTO);
 
         // Save notification
         notificationService.createNotification(notificationDTO);

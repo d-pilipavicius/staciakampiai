@@ -1,0 +1,49 @@
+
+2024-12-19 16:10:50 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-12-19 16:10:50 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 250 ms. Found 20 JPA repository interfaces.
+2024-12-19 16:10:51 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 7777 (http)
+2024-12-19 16:10:51 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2086 ms
+2024-12-19 16:10:51 INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2024-12-19 16:10:52 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-12-19 16:10:53 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-12-19 16:10:55 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-12-19 16:10:56 INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-12-19 16:10:57 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 7777 (http) with context path '/'
+2024-12-19 16:12:14 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-12-19 16:12:14 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-12-19 16:25:28 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-12-19 16:25:29 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 233 ms. Found 20 JPA repository interfaces.
+2024-12-19 16:25:29 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 7777 (http)
+2024-12-19 16:25:29 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1947 ms
+2024-12-19 16:25:30 INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2024-12-19 16:25:30 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-12-19 16:25:32 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-12-19 16:25:33 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-12-19 16:25:34 INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-12-19 16:25:35 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 7777 (http) with context path '/'
+2024-12-19 16:25:50 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-12-19 16:25:50 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-12-19 16:26:21 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-12-19 16:26:21 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 254 ms. Found 20 JPA repository interfaces.
+2024-12-19 16:26:22 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 7777 (http)
+2024-12-19 16:26:22 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1942 ms
+2024-12-19 16:26:22 INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2024-12-19 16:26:23 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-12-19 16:26:24 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-12-19 16:26:26 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-12-19 16:26:27 INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-12-19 16:26:27 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 7777 (http) with context path '/'
+2024-12-19 16:27:02 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-12-19 16:27:02 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-12-19 16:29:26 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-12-19 16:29:26 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 255 ms. Found 20 JPA repository interfaces.
+2024-12-19 16:29:27 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 7777 (http)
+2024-12-19 16:29:27 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2027 ms
+2024-12-19 16:29:27 INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2024-12-19 16:29:28 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-12-19 16:29:29 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-12-19 16:29:31 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-12-19 16:29:32 INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-12-19 16:29:33 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 7777 (http) with context path '/'
+2024-12-19 16:29:56 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-12-19 16:29:56 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms

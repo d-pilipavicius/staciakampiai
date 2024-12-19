@@ -4,6 +4,7 @@ import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundExce
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnprocessableException;
 import com.example.demo.productComponent.api.dtos.ProductCompatibleModifierDTO;
 import com.example.demo.productComponent.domain.entities.ProductCompatibleModifier;
+import com.example.demo.productComponent.helper.enums.StockOperation;
 import com.example.demo.productComponent.helper.factories.ProductFactory;
 import com.example.demo.productComponent.helper.mapper.ProductCompatibleModifierMapper;
 import com.example.demo.productComponent.helper.mapper.ProductMapper;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -51,9 +53,13 @@ public class ProductService {
             postProductDTO.getCompatibleModifierIds()
                     .forEach(modifierId -> addModifierToProduct(savedProduct.getId(), modifierId));
         }
+        ProductDTO savedProductDTO = Mapper.mapToDTO(savedProduct, ProductMapper.TO_DTO);
+
+        
+        logger.info("Created product: {}", savedProductDTO.toString());
 
         // Save the product and return the DTO
-        return Mapper.mapToDTO(savedProduct, ProductMapper.TO_DTO);
+        return savedProductDTO;
     }
 
     public GetProductsDTO getProductsByBusinessId(UUID businessId) {
@@ -98,9 +104,12 @@ public class ProductService {
 
         // Save the updated product
         Product updatedProduct = productRepository.save(product);
+        ProductDTO updatedProductDTO = Mapper.mapToDTO(updatedProduct, ProductMapper.TO_DTO);
+
+        logger.info("Updated product with ID: {}, Details: {}", updatedProduct.getId(), updatedProductDTO.toString());
 
         // Map the updated product to DTO and return it
-        return Mapper.mapToDTO(updatedProduct, ProductMapper.TO_DTO);
+        return updatedProductDTO;
     }
 
     @Transactional
@@ -184,18 +193,37 @@ public class ProductService {
     // If returns false, then the stock was not updated -> you should retry fetching
     // the product and updating the stock
     @Transactional
-    public boolean updateProductStock(UUID productId, int newStock) {
-        try {
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new NotFoundException(
-                            "Product with id " + productId + " not found"));
+    public void updateProductStock(UUID productId, int value, StockOperation operation) {
+        if ((operation == StockOperation.INCREMENT || operation == StockOperation.DECREMENT) && value <= 0) {
+            throw new IllegalArgumentException("Value must be positive for increment or decrement operations");
+        }
 
-            product.setQuantityInStock(newStock);
-            productRepository.save(product);
-            return true;
-        } catch (OptimisticLockException e) {
-            logger.error("Failed to update stock for product with id {}", productId);
-            return false;
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product with id " + productId + " not found"));
+
+        switch (operation) {
+            case INCREMENT:
+                product.setQuantityInStock(product.getQuantityInStock() + value);
+                break;
+            case DECREMENT:
+                if (product.getQuantityInStock() < value) {
+                    throw new IllegalStateException("Not enough stock for product with id " + productId);
+                }
+                product.setQuantityInStock(product.getQuantityInStock() - value);
+                break;
+            case SET:
+                product.setQuantityInStock(value);
+                break;
+        }
+
+        productRepository.save(product);
+    }
+
+
+    @Transactional
+    public void updateProductListStock(Map<UUID, Integer> productStockChanges, StockOperation operation){
+        for (Map.Entry<UUID, Integer> entry : productStockChanges.entrySet()) {
+            updateProductStock(entry.getKey(), entry.getValue(), operation);
         }
     }
 

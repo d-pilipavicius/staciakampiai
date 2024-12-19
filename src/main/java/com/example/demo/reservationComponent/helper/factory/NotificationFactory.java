@@ -20,8 +20,9 @@ public class NotificationFactory {
                 .build();
     }
 
-    public static ReservationNotificationDTO createNotificationDTO(String text, Timestamp sentAt) {
+    public static ReservationNotificationDTO createNotificationDTO(String text, Timestamp sentAt, ReservationDTO reservationDTO) {
         return ReservationNotificationDTO.builder()
+                .reservationId(reservationDTO.getId())
                 .text(text)
                 .sentAt(sentAt)
                 .build();

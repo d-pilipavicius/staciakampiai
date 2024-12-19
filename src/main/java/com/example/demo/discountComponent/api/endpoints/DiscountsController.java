@@ -20,7 +20,7 @@ public class DiscountsController {
     private DiscountApplicationService discountAppService;
 
     @PostMapping
-    public ResponseEntity<DiscountDTO> createDiscount (@NotNull @Valid @RequestBody PostDiscountDTO postDiscountDTO){
+    public ResponseEntity<DiscountDTO> createDiscount (@NotNull @RequestBody @Valid PostDiscountDTO postDiscountDTO){
         DiscountDTO createdDiscountDTO = discountAppService.createDiscount(postDiscountDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscountDTO);
     }
@@ -39,7 +39,7 @@ public class DiscountsController {
 
     @PutMapping("/{discountId}")
     public  ResponseEntity<DiscountDTO> updateDiscount(@PathVariable UUID discountId,
-                                                       @NotNull @Valid @RequestBody PutDiscountDTO putDiscountDTO){
+                                                       @NotNull @RequestBody @Valid PutDiscountDTO putDiscountDTO){
         DiscountDTO updatedDiscountDTO = discountAppService.updateDiscount(discountId, putDiscountDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedDiscountDTO);
     }

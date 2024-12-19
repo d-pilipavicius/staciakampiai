@@ -1,12 +1,13 @@
 package com.example.demo.serviceChargeComponent.api.dtos.ServiceChargeHelperDTOs;
 
 import com.example.demo.CommonHelper.enums.Currency;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 
+import com.example.demo.CommonHelper.enums.PricingStrategy;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor
 public class ServiceChargeDTO {
     @NotNull

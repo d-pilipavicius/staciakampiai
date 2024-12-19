@@ -2,6 +2,7 @@ package com.example.demo.reservationComponent.api.dtos.reservationNotificationDT
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.UUID;

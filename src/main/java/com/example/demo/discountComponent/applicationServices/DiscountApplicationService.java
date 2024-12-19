@@ -8,7 +8,6 @@ import com.example.demo.discountComponent.api.dtos.PostDiscountDTO;
 import com.example.demo.discountComponent.domain.services.DiscountService;
 import com.example.demo.productComponent.applicationServices.ProductApplicationService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;

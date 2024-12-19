@@ -2,6 +2,7 @@ package com.example.demo.BusinessComponent.ApplicationServices;
 
 import java.util.UUID;
 
+import com.example.demo.UserComponent.ApplicationServices.UserApplicationService;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.BusinessComponent.API.DTOs.BusinessDTO;
@@ -19,8 +20,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class BusinessApplicationService {
     private final BusinessService businessService;
+    private final UserApplicationService userApplicationService;
 
     public BusinessDTO createBusiness(@NotNull @Valid CreateBusinessDTO createBusinessDTO) {
+        userApplicationService.checkIfUserExists(createBusinessDTO.getOwnerId());
         return businessService.createBusiness(createBusinessDTO);
     }
 
@@ -33,6 +36,9 @@ public class BusinessApplicationService {
     }
 
     public BusinessDTO updateBusiness(@NotNull UUID businessId, @NotNull @Valid UpdateBusinessDTO updateBusinessDTO) {
+        if(updateBusinessDTO.getOwnerId() != null){
+            userApplicationService.checkIfUserExists(updateBusinessDTO.getOwnerId());
+        }
         return businessService.updateBusiness(businessId, updateBusinessDTO);
     }
 

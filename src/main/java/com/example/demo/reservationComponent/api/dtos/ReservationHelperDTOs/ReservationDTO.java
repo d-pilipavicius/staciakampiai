@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
+@ToString
 public class ReservationDTO {
     private final UUID id;
     private final CustomerDTO customer;

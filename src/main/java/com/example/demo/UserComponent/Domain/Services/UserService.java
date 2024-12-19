@@ -1,5 +1,6 @@
 package com.example.demo.UserComponent.Domain.Services;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.example.demo.BusinessComponent.Domain.Entities.Business;
@@ -20,6 +21,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @AllArgsConstructor
 // TODO: Add exception handling
@@ -32,11 +36,16 @@ public class UserService {
 
   private final PasswordEncoder passwordEncoder;
 
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
   public UserDTO createUser(@NotNull @Valid CreateUserDTO createUserDTO) {
     userValidator.checkIfUsernameExists(createUserDTO.getUsername());
     User user = userMapper.toUser(createUserDTO);
     User savedUser = userRepository.save(user);
-    return userMapper.toUserDTO(savedUser);
+    UserDTO savedUserDTO = userMapper.toUserDTO(savedUser);
+    logger.info("Created user with ID: {}, Details: {}", savedUserDTO.getId(), savedUserDTO.toString());
+
+    return savedUserDTO;
   }
 
   public UserDTO getUser(@NotNull UUID userId) {
@@ -52,6 +61,11 @@ public class UserService {
     return userMapper.toUserDTO(user);
   }
 
+  public List<UserDTO> getUsersByBusiness(UUID businessId) {
+    List<User> users = userRepository.findAllByBusiness(Business.builder().id(businessId).build());
+    return users.stream().map(userMapper::toUserDTO).toList();
+  }
+
   public UserDTO updateUser(@NotNull UUID userId, @NotNull @Valid UpdateUserDTO updateUserDTO) {
     User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(
             "The given user id was not found."
@@ -62,7 +76,11 @@ public class UserService {
     updatedUser.setRole(user.getRole());
     updatedUser.setBusiness(user.getBusiness());
     User savedUser = userRepository.save(updatedUser);
-    return userMapper.toUserDTO(savedUser);
+    UserDTO savedUserDTO = userMapper.toUserDTO(savedUser);
+
+    logger.info("Updated user with ID: {}, New details: {}", savedUserDTO.getId(), savedUserDTO.toString());
+
+    return savedUserDTO;
   }
 
   public UserDTO updateSensitiveInformation(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){
@@ -81,5 +99,13 @@ public class UserService {
   public void deleteUser(@NotNull UUID userId) {
     // TODO:Add checking if user id null
     userRepository.deleteById(userId);
+  }
+
+  public void checkIfUserExists(UUID userId){
+      if(!userRepository.existsById(userId)){
+        throw new NotFoundException(
+                "The provided user id: " + userId + ", does not exist."
+        );
+      }
   }
 }

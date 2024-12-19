@@ -12,6 +12,7 @@ import java.util.UUID;
 @Entity
 @Builder
 @NoArgsConstructor
+@ToString
 @AllArgsConstructor
 @Table(name = "order_item")
 public class OrderItem {
@@ -36,7 +37,7 @@ public class OrderItem {
     private int quantity;
 
     @NonNull
-    @Column(name = "unit_rice", nullable = false)
+    @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
 
     @NonNull
