@@ -11,10 +11,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @AllArgsConstructor
 public class UserApplicationService {
   private final UserService userService;
+  private static final Logger logger = LoggerFactory.getLogger(UserApplicationService.class);
 
   public UserDTO createUser(@NotNull @Valid CreateUserDTO createUserDTO) {
     return userService.createUser(createUserDTO);
@@ -36,6 +40,10 @@ public class UserApplicationService {
 
   public void deleteUser(@NotNull UUID userId) {
     userService.deleteUser(userId);
+  }
+
+  public void logUserLogin(String username) { 
+    logger.info("User [{}] successfully logged in.", username); 
   }
 
 }

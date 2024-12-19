@@ -83,7 +83,8 @@ public class UserController {
     String token = jwtUtils.generateToken(authentication);
 
     UserDTO userDTO = userApplicationService.getUserByUsername(authentication.getName());
-
+    userApplicationService.logUserLogin(authentication.getName());
+    
     return new ResponseEntity<>(LoginResponseDTO.builder().accessToken(token).user(userDTO).build(), HttpStatus.OK);
   }
 
