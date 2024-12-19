@@ -55,10 +55,15 @@ public class SecurityConfig {
                         .requestMatchers("/v1/reservations/**").hasAnyAuthority("BusinessOwner", "Employee")
                         .requestMatchers("/h2-console/**").permitAll() //used for h2 to be accessible
                         .requestMatchers(HttpMethod.POST, "/v1/user/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "v1/business/*").hasAnyAuthority("BusinessOwner", "Employee")
-                        .requestMatchers( "v1/user/**").hasAuthority("ITAdministrator")
+                        //allow everybody to see their business
+                        .requestMatchers(HttpMethod.GET, "v1/business/*").permitAll()
+                        //allow owner to edit his business
                         .requestMatchers(HttpMethod.PUT,"v1/business/*").hasAuthority("BusinessOwner")
+                        //allow Owner to edit/delete adn get one his business employees but ITadmin as well can do this
+                        .requestMatchers("v1/user/*/*").hasAnyAuthority("BusinessOwner", "ITAdministrator")
+                        .requestMatchers( "v1/user/**").hasAuthority("ITAdministrator")
                         .requestMatchers("v1/business/**").hasAuthority("ITAdministrator")
+                        //all get methods for other controllers should only be accessible to the owner and employee
                         .requestMatchers(HttpMethod.GET, "v1/**").hasAnyAuthority("BusinessOwner", "Employee")
                         //if need to add some DELETE method which needs to get accessed by Employee add below comment
                         .requestMatchers(HttpMethod.DELETE, "v1/**").hasAuthority("BusinessOwner")
