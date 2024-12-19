@@ -32,13 +32,13 @@ public class ServiceChargesController {
     private final ServiceChargeApplicationService serviceChargeApplicationService;
 
     @PostMapping
-    public ResponseEntity<ServiceChargeDTO> createServiceCharge(@NotNull @Valid @RequestBody PostServiceChargeDTO postServiceChargeDTO) {
+    public ResponseEntity<ServiceChargeDTO> createServiceCharge(@NotNull @RequestBody @Valid PostServiceChargeDTO postServiceChargeDTO) {
         ServiceChargeDTO serviceChargeDTO = serviceChargeApplicationService.createServiceCharge(postServiceChargeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(serviceChargeDTO);
     }
 
     @PutMapping("/{serviceChargeId}")
-    public ResponseEntity<ServiceChargeDTO> updateServiceCharge(@NotNull @PathVariable UUID serviceChargeId, @NotNull @Valid @RequestBody PutServiceChargeDTO putServiceChargeDTO) {
+    public ResponseEntity<ServiceChargeDTO> updateServiceCharge(@NotNull @PathVariable UUID serviceChargeId, @NotNull @RequestBody @Valid PutServiceChargeDTO putServiceChargeDTO) {
         ServiceChargeDTO updatedServiceCharge = serviceChargeApplicationService.updateServiceCharge(putServiceChargeDTO, serviceChargeId);
         return ResponseEntity.status(HttpStatus.OK).body(updatedServiceCharge);
     }

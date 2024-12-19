@@ -1,11 +1,11 @@
 package com.example.demo.OrderComponent.Helpers;
 
+import com.example.demo.CommonHelper.enums.PricingStrategy;
 import com.example.demo.OrderComponent.Domain.Entities.AppliedServiceCharge;
 import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItemModifier;
 import com.example.demo.OrderComponent.Repositories.IOrderItemModifierRepository;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 
 import java.math.BigDecimal;
 import java.util.List;

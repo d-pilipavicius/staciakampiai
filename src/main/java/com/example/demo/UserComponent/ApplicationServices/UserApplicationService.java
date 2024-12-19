@@ -38,4 +38,8 @@ public class UserApplicationService {
     userService.deleteUser(userId);
   }
 
+  public void checkIfUserExists(UUID userId){
+    userService.checkIfUserExists(userId);
+  }
+
 }

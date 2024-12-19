@@ -32,7 +32,7 @@ public class ServiceChargeMapper {
                 .businessId(postServiceChargeDTO.getBusinessId())
                 .serviceChargeValue(postServiceChargeDTO.getServiceChargeValue())
                 .valueType(postServiceChargeDTO.getValueType())
-                .currency(postServiceChargeDTO.getCurrency().orElse(null))
+                .currency(postServiceChargeDTO.getCurrency() == null ? null : postServiceChargeDTO.getCurrency())
                 .build();
     }
 

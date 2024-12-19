@@ -2,8 +2,8 @@ package com.example.demo.OrderComponent.Domain.Entities;
 
 //import com.example.demo.orderComponent.domain.entities.Order;
 import com.example.demo.CommonHelper.enums.Currency;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
 //import com.example.demo.reservationComponent.domain.entities.Reservation;
+import com.example.demo.CommonHelper.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

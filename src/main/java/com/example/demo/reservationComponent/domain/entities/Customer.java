@@ -23,9 +23,6 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "reservation_id", nullable = false)
-    private UUID reservationId;
-
     @Column(name = "first_name", nullable = false)
     private String firstName;
 

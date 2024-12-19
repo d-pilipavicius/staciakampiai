@@ -26,14 +26,14 @@ public class TaxesController {
     private final TaxApplicationService taxApplicationService;
 
     @PostMapping
-    public ResponseEntity<Object> createTax (@NotNull @Valid @RequestBody PostTaxDTO postTaxDTO){
+    public ResponseEntity<Object> createTax (@NotNull @RequestBody @Valid PostTaxDTO postTaxDTO){
         TaxDTO createdTax = taxApplicationService.createTax(postTaxDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTax);
     }
 
     @PutMapping("{taxId}")
-    public ResponseEntity<Object> putTax(@NotNull @PathVariable UUID taxId, @NotNull @Valid @RequestBody PutTaxDTO putTaxDTO) {
+    public ResponseEntity<Object> putTax(@NotNull @PathVariable UUID taxId, @NotNull @RequestBody @Valid PutTaxDTO putTaxDTO) {
         TaxDTO updatedTax = taxApplicationService.updateTax(putTaxDTO, taxId);
         return ResponseEntity.status(HttpStatus.OK).body(updatedTax);
     }
