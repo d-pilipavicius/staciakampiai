@@ -53,9 +53,13 @@ public class ProductService {
             postProductDTO.getCompatibleModifierIds()
                     .forEach(modifierId -> addModifierToProduct(savedProduct.getId(), modifierId));
         }
+        ProductDTO savedProductDTO = Mapper.mapToDTO(savedProduct, ProductMapper.TO_DTO);
+
+        
+        logger.info("Created product: {}", savedProductDTO.toString());
 
         // Save the product and return the DTO
-        return Mapper.mapToDTO(savedProduct, ProductMapper.TO_DTO);
+        return savedProductDTO;
     }
 
     public GetProductsDTO getProductsByBusinessId(UUID businessId) {
@@ -100,9 +104,12 @@ public class ProductService {
 
         // Save the updated product
         Product updatedProduct = productRepository.save(product);
+        ProductDTO updatedProductDTO = Mapper.mapToDTO(updatedProduct, ProductMapper.TO_DTO);
+
+        logger.info("Updated product with ID: {}, Details: {}", updatedProduct.getId(), updatedProductDTO.toString());
 
         // Map the updated product to DTO and return it
-        return Mapper.mapToDTO(updatedProduct, ProductMapper.TO_DTO);
+        return updatedProductDTO;
     }
 
     @Transactional
