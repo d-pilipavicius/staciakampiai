@@ -1,7 +1,7 @@
 package com.example.demo.serviceChargeComponent.api.dtos;
 
 import com.example.demo.CommonHelper.enums.Currency;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
+import com.example.demo.CommonHelper.enums.PricingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -6,6 +6,7 @@ import com.example.demo.reservationComponent.api.dtos.PutReservationDTO;
 import com.example.demo.reservationComponent.api.dtos.ReservationHelperDTOs.ReservationDTO;
 import com.example.demo.reservationComponent.applicationServices.ReservationApplicationService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class ReservationsController {
     @PostMapping
     public ResponseEntity<Object> createReservation(
             @RequestParam UUID employeeId,
-            @Valid @RequestBody PostReservationDTO postReservationDTO
+            @NotNull @RequestBody @Valid PostReservationDTO postReservationDTO
     ) {
         ReservationDTO reservationDTO = reservationApplicationService.createReservation(postReservationDTO, employeeId);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservationDTO);
@@ -44,9 +45,10 @@ public class ReservationsController {
     @PutMapping("/{reservationId}")
     public ResponseEntity<Object> updateReservation(
             @PathVariable UUID reservationId,
-            @Valid @RequestBody PutReservationDTO putReservationDTO
+            @PathVariable UUID businessId,
+            @NotNull @RequestBody @Valid PutReservationDTO putReservationDTO
     ){
-        ReservationDTO updatedReservation = reservationApplicationService.updateReservation(putReservationDTO, reservationId);
+        ReservationDTO updatedReservation = reservationApplicationService.updateReservation(putReservationDTO, reservationId, businessId);
         return ResponseEntity.ok(updatedReservation);
     }
 

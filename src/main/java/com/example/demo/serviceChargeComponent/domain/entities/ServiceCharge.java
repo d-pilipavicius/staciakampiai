@@ -1,7 +1,7 @@
 package com.example.demo.serviceChargeComponent.domain.entities;
 
 import com.example.demo.CommonHelper.enums.Currency;
-import com.example.demo.serviceChargeComponent.domain.entities.enums.PricingStrategy;
+import com.example.demo.CommonHelper.enums.PricingStrategy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -33,7 +33,7 @@ public class BusinessController {
   private final BusinessApplicationService businessApplicationService;
 
   @PostMapping
-  public ResponseEntity<BusinessDTO> createBusiness(@Valid @NotNull @RequestBody CreateBusinessDTO createBusinessDTO) {
+  public ResponseEntity<BusinessDTO> createBusiness(@NotNull @RequestBody @Valid CreateBusinessDTO createBusinessDTO) {
     BusinessDTO businessDTO = businessApplicationService.createBusiness(createBusinessDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(businessDTO);
   }
@@ -46,20 +46,20 @@ public class BusinessController {
   }
 
   @GetMapping("/{businessId}")
-  public ResponseEntity<BusinessDTO> getBusiness(@NotNull @PathVariable UUID businessId) {
+  public ResponseEntity<BusinessDTO> getBusiness(@PathVariable UUID businessId) {
     BusinessDTO businessDTO = businessApplicationService.getBusiness(businessId);
     return ResponseEntity.ok().body(businessDTO);
   }
 
   @PutMapping("/{businessId}")
-  public ResponseEntity<BusinessDTO> updateBusiness(@NotNull @PathVariable UUID businessId,
-      @NotNull @Valid @RequestBody UpdateBusinessDTO updateBusinessDTO) {
+  public ResponseEntity<BusinessDTO> updateBusiness( @PathVariable UUID businessId,
+                                                    @NotNull @RequestBody @Valid UpdateBusinessDTO updateBusinessDTO) {
     BusinessDTO businessDTO = businessApplicationService.updateBusiness(businessId, updateBusinessDTO);
     return ResponseEntity.status(HttpStatus.OK).body(businessDTO);
   }
 
   @DeleteMapping("/{businessId}")
-  public ResponseEntity<Void> deleteBusiness(@NotNull @PathVariable UUID businessId) {
+  public ResponseEntity<Void> deleteBusiness(@PathVariable UUID businessId) {
     try {
       businessApplicationService.deleteBusiness(businessId);
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
