@@ -5,6 +5,7 @@ import DialogBox from "../../DialogBox";
 import { MissingAuthError } from "../../../data/MissingAuthError";
 import { useNavigate } from "react-router";
 import { deleteDiscountAPI } from "../../../data/APICalls";
+import ScrollableList from "../../ScrollableList";
 
 interface Param {
   item: DiscountDTO;
@@ -68,7 +69,9 @@ function DiscountCard({item, updatePage}: Param) {
         <p>Already used: {item.usageCount}</p>
         <p>Valid from: {item.validFrom.slice(0,10)}</p>
         <p>Valid to: {item.validUntil.slice(0,10)}</p>
-        <p>For: { item.target==DiscountTarget.All ? DiscountTarget.All : <button>See products</button>}</p>
+        <p>For: { item.target==DiscountTarget.All ? DiscountTarget.All : <ScrollableList>
+            {item.entitledProductIds.map((item) => <p>Product id: {item}</p>)}
+          </ScrollableList>}</p>
       </div>     
       <div className="buttonSlot">
         <button type="button" onClick={() => setEdit(true)} className="btn btn-primary">Edit</button>
@@ -88,7 +91,9 @@ function DiscountCard({item, updatePage}: Param) {
           <label className="form-check-label" htmlFor="dateTo">Set valid until:</label>
           <input value={validTo} onChange={(event) => setTo(event.target.value)} type="date" id="dateTo"/>
         </div>
-        <p>For: { item.target==DiscountTarget.All ? DiscountTarget.All : <button>See products</button>}</p>
+        <p>For: { item.target==DiscountTarget.All ? DiscountTarget.All : <ScrollableList>
+            {item.entitledProductIds.map((item) => <p>Product id: {item}</p>)}
+          </ScrollableList>}</p>
         <button type="button" onClick={onEdit} className="btn btn-success">Set</button>
         <button type="button" onClick={() =>setEdit(false)} className="btn btn-danger">Cancel</button>
       </div>}

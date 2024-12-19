@@ -4,10 +4,6 @@ import { Currency, DiscountTarget, GetProductsDTO, LoginResponseDTO, PricingStra
 import { useNavigate } from "react-router";
 import { getBusinessProductsAPI, postDiscountAPI } from "../../../data/APICalls";
 import { MissingAuthError } from "../../../data/MissingAuthError";
-import ProductDisplay from "./ProductDisplay";
-import ScrollableList from "../../ScrollableList";
-import Pageination from "../../Pageination";
-import CardComponent from "../../CardComponent";
 
 interface Param {
   isVisible: boolean;
@@ -19,8 +15,6 @@ const pageSize = 20;
 
 function GiftcardCreate({isVisible, onCreate, onCancel}: Param) {
   const nav = useNavigate();
-  const [isProductsVisible, setProductsVisibility] = useState(false);
-  const [products, setProducts] = useState<GetProductsDTO | null>(null);
   const [page, setPage] = useState(1);
 
   const [code, setCode] = useState("");
@@ -29,7 +23,6 @@ function GiftcardCreate({isVisible, onCreate, onCancel}: Param) {
   const [validFrom, setValidFrom] = useState("");
   const [validUntil, setValidUntil] = useState("");
   const [target, setTarget] = useState(DiscountTarget.All);
-  const [entitledProducts, setEntitledProducts] = useState<string[]>([]);
 
   const loginString = localStorage.getItem("loginToken");
   if(!loginString) {
@@ -38,45 +31,23 @@ function GiftcardCreate({isVisible, onCreate, onCancel}: Param) {
   }
   const loginToken: LoginResponseDTO = JSON.parse(loginString);
 
-  useEffect(() => {
-    getProducts();
-  }, []);
-
-  const getProducts = async () => {
-    const loginString = localStorage.getItem("loginToken");
-    if(!loginString) {
-      nav("/");
-      return;
-    }
-    const loginToken: LoginResponseDTO = JSON.parse(loginString); 
-    try {
-      const productsdto = await getBusinessProductsAPI(page-1, pageSize, loginToken.user.businessId, loginToken);
-      setProducts(productsdto);
-    } catch(err) {
-      if(err instanceof MissingAuthError) {
-        nav("/");
-        return;
-      } else 
-        throw err;
-    }
-  }  
-
   const createDiscount = async () => {
     if(!amount || !validFrom || !validUntil)
       return;
     try {
-      await postDiscountAPI({
+      const a = {
         code: code,
         amount: Number(amount),
         valueType: valueType,
         currency: (valueType == PricingStrategy.FIXED_AMOUNT ? Currency.USD : null),
         validFrom: validFrom,
         validUntil: validUntil,
-        target: target,
-        entitledProductsIds: (target == DiscountTarget.All ? [] : Array.from(entitledProducts)),
+        target: DiscountTarget.All,
+        entitledProductIds: [],
         businessId: loginToken.user.businessId,
         usageCountLimit: 1
-      }, loginToken);
+      };
+      await postDiscountAPI(a, loginToken);
 
       onCreate();
       onPressCreate();
@@ -95,39 +66,9 @@ function GiftcardCreate({isVisible, onCreate, onCancel}: Param) {
     setValueType(PricingStrategy.FIXED_AMOUNT);
     setValidFrom(""); setValidUntil("");
     setTarget(DiscountTarget.All);
-    setEntitledProducts([]);
   } 
 
   return <>
-  <Popup setVisibility={isProductsVisible} priority={1}>
-    <ScrollableList>
-      <div className="items">
-        { products && products.items.length > 0
-        ? products.items.map((item) => <CardComponent color="#eeeeee" className="product">
-        <div className="productInside">
-          <div>
-            <p>Name: {item.title}</p>
-            <p>Price: {item.price.amount} {item.price.currency}</p>
-            <p>Left: {item.quantityInStock}</p>
-          </div>
-          <input
-      className="form-check-input"
-      type="checkbox"
-      id="checkAll"
-      checked={entitledProducts.includes(item.id)}
-      onChange={handleCheckboxChange}
-    />
-        </div>
-      </CardComponent>
-        )
-        : <p>No products found</p>}
-      </div>
-    </ScrollableList>
-    <div className="horizontal">
-      <button type="button" onClick={() => setProductsVisibility(false)} className="btn btn-primary">Close</button>
-      <Pageination selectedPage={page} totalPages={products?.totalPages ?? 0} setPage={(id) => setPage(id)}/>
-    </div>
-  </Popup>
   <Popup setVisibility={isVisible}>
     <h1>Add new giftcard</h1>
     <form>
@@ -151,11 +92,6 @@ function GiftcardCreate({isVisible, onCreate, onCancel}: Param) {
       <div className="dateForm">
         <label className="form-check-label" htmlFor="dateTo">Set valid until:</label>
         <input value={validUntil} onChange={(event) => setValidUntil(event.target.value)} type="date" id="dateTo"/>
-      </div>
-      <div className="form-check">
-        <label className="form-check-label" htmlFor="checkAll">Discount all products</label>
-        <input className="form-check-input" type="checkbox" id="checkAll" checked={target==DiscountTarget.All} onClick={() => setTarget(target == DiscountTarget.All ? DiscountTarget.Entitled : DiscountTarget.All)}/>
-        <button type="button" onClick={() => setProductsVisibility(true)} className="btn btn-primary" disabled={target==DiscountTarget.All}>Add Products</button>
       </div>
     </form>
     <button type="button" onClick={createDiscount} className="btn btn-success">Submit</button>

@@ -7,6 +7,7 @@ import { MissingAuthError } from "../../../data/MissingAuthError";
 import ProductDisplay from "./ProductDisplay";
 import ScrollableList from "../../ScrollableList";
 import Pageination from "../../Pageination";
+import CardComponent from "../../CardComponent";
 
 interface Param {
   isVisible: boolean;
@@ -73,7 +74,7 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
         validFrom: validFrom,
         validUntil: validUntil,
         target: target,
-        entitledProductsIds: (target == DiscountTarget.All ? [] : Array.from(entitledProducts)),
+        entitledProductIds: (target == DiscountTarget.All ? [] : Array.from(entitledProducts)),
         businessId: loginToken.user.businessId,
         usageCountLimit: Number(usageCountLimit)
       }, loginToken);
@@ -103,7 +104,16 @@ function DiscountCreate({isVisible, onCreate, onCancel}: Param) {
     <ScrollableList>
       <div className="items">
         { products && products.items.length > 0
-        ? products.items.map((item) => <ProductDisplay key={item.id} product={item} updateList={setEntitledProducs} list={entitledProducts}/>)
+        ? products.items.map((item) =>     <CardComponent color="#eeeeee" className="product">
+        <div className="productInside">
+          <div>
+            <p>Name: {item.title}</p>
+            <p>Price: {item.price.amount} {item.price.currency}</p>
+            <p>Left: {item.quantityInStock}</p>
+          </div>
+          <input className="form-check-input" type="checkbox" id="checkAll" checked={entitledProducts.has(item.id)} onClick={() => entitledProducts.has(item.id) ? entitledProducts.delete(item.id) : entitledProducts.add(item.id)}/>
+        </div>
+      </CardComponent>)
         : <p>No products found</p>}
       </div>
     </ScrollableList>

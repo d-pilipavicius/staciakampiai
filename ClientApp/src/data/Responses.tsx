@@ -83,7 +83,7 @@ export interface DiscountDTO {
   validFrom: string;
   validUntil: string;
   target: DiscountTarget;
-  entitledProductsIds: string[];
+  entitledProductIds: string[];
   businessId: string;
   usageCountLimit: number;
 }
