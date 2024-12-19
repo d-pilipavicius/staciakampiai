@@ -129,6 +129,12 @@ function orderById(businessId: string, orderId: string) {
 }
 
 //Payments
+export const postTipLink = (businessId: string) => address+`/v1/payments/${businessId}/tips`;
+export const getTipsLink = (businessId: string) => address+`/v1/payments/${businessId}/tips`;
+
+export const postCardPaymentLink = (businessId: string) => address+`/v1/payments/${businessId}/card`;
+export const postCashPaymentLink = (businessId: string) => address+`/v1/payments/${businessId}/cash`;
+export const postInitiateRefund = (businessId: string, paymentId: string) => address+`/v1/payments/${businessId}/${paymentId}/refund`;
 
 //General
 interface AddParamParam {

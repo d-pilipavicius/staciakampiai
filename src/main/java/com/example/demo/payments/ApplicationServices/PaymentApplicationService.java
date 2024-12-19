@@ -48,8 +48,7 @@ public class PaymentApplicationService {
         return paymentService.addTip(businessId, request);
     }
 
-    public Page<Tip> getOrderTips(UUID businessId, UUID orderId, int page, int pageSize) {
-        orderApplicationService.validateOrder(orderId);
-        return paymentService.getOrderTips(businessId, orderId, page, pageSize);
+    public GetTipsDTO getTips(int page, int pageSize) {
+        return paymentService.getTips(page, pageSize);
     }
 }

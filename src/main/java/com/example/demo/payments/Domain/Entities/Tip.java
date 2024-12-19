@@ -1,6 +1,6 @@
 package com.example.demo.payments.Domain.Entities;
 
-import com.example.demo.payments.Domain.Entities.Enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 

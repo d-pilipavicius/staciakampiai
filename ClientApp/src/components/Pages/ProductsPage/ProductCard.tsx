@@ -127,7 +127,8 @@ function ProductCard({product, updatePage}: Props) {
       <ScrollableList>
         {product.compatibleModifiers.map((item) => <ProductModifierCard key={item.id} prodModifier={item} updatePage={updatePage}/>)}
       </ScrollableList>
-    } 
+
+    }
   </Popup>
   <Popup setVisibility={isAddModifier}>
     <input value={title} onChange={(event) => {setTitle(event.target.value)}} type="text" className="form-control" placeholder="Set title"/>

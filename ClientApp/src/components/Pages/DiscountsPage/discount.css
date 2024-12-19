@@ -44,3 +44,8 @@ form .checkBoxes {
 .fullWidth {
   width: 90%!important;
 }
+
+.horizontal {
+  align-items: center;
+  display: flex;
+}

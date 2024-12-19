@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.example.demo.payments.Domain.Entities.Enums.Currency;
+import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.payments.Domain.Entities.Enums.PaymentMethod;
 import com.example.demo.payments.Domain.Entities.Enums.PaymentStatus;
 

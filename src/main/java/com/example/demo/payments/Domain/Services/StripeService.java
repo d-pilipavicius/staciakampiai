@@ -1,5 +1,6 @@
 package com.example.demo.payments.Domain.Services;
 
+import com.example.demo.CommonHelper.enums.Currency;
 import com.stripe.model.Refund;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.RefundCreateParams;
@@ -9,14 +10,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class StripeService {
 
-    public Session createStripeSession(long totalAmountInCents, String orderId) throws Exception {
+    public Session createStripeSession(Currency currency, long totalAmountInCents, String orderId) throws Exception {
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("https://your-success-url.com")
-                .setCancelUrl("https://your-cancel-url.com")
+                .setSuccessUrl("http://localhost:5173/payments")
+                .setCancelUrl("http://localhost:5173/payments")
                 .addLineItem(SessionCreateParams.LineItem.builder()
                         .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
-                                .setCurrency("usd")
+                                .setCurrency(currency.toString())
                                 .setUnitAmount(totalAmountInCents)
                                 .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                         .setName("Order Payment")

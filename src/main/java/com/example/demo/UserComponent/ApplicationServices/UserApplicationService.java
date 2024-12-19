@@ -30,8 +30,8 @@ public class UserApplicationService {
     return userService.updateUser(userId, updateUserDTO);
   }
 
-  public UserDTO updatePassword(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){
-    return userService.updatePassword(userId, putUserCredentialsDTO);
+  public UserDTO updateSensitiveInformation(@NotNull UUID userId, @NotNull @Valid PutUserCredentialsDTO putUserCredentialsDTO){
+    return userService.updateSensitiveInformation(userId, putUserCredentialsDTO);
   }
 
   public void deleteUser(@NotNull UUID userId) {

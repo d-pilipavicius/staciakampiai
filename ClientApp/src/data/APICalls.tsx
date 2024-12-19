@@ -1,15 +1,16 @@
 import { MissingAuthError } from "./MissingAuthError";
 import {
-  BusinessDTO,
+  AddTipDTO,
+  BusinessDTO, CardPaymentResponseDTO, CreatePaymentDTO,
   DiscountDTO,
   GetDiscountsDTO,
   GetProductModifiersDTO,
   GetProductsDTO, GetReservationsDTO,
   GetServiceChargeDTO,
-  GetTaxesDTO,
+  GetTaxesDTO, GetTipDTO,
   LoginDTO,
   LoginResponseDTO,
-  OrderDTO,
+  OrderDTO, PaymentResponseDTO,
   PostDiscountDTO,
   PostOrderDTO,
   PostProductDTO,
@@ -26,7 +27,7 @@ import {
   PutServiceChargeDTO,
   PutTaxDTO,
   ServiceChargeDTO,
-  TaxDTO,
+  TaxDTO, TipDTO,
   UserDTO
 } from "./Responses";
 import {
@@ -46,16 +47,16 @@ import {
   getProductModifierListLink,
   getReservationLink,
   getServiceChargeLink,
-  getTaxLink,
+  getTaxLink, getTipsLink,
   getUserLink,
   increaseDiscGiftUsageLink,
-  loginLink,
-  postDiscountLink,
+  loginLink, postCardPaymentLink, postCashPaymentLink,
+  postDiscountLink, postInitiateRefund,
   postOrderLink,
   postProductLink,
   postProductModifierLink, postReservationLink,
   postServiceChargeLink,
-  postTaxLink,
+  postTaxLink, postTipLink,
   putBusinessLink,
   putDiscountLink,
   putOrderLink,
@@ -195,11 +196,11 @@ export async function getDiscountsAPI(pageNumber: number, pageSize: number, busi
   return response.json();
 }
 
-export async function getGiftcardsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<DiscountDTO> {
+export async function getGiftcardsAPI(pageNumber: number, pageSize: number, businessId: string, auth: LoginResponseDTO): Promise<GetDiscountsDTO> {
   const pageination = {
     pageNumber: pageNumber,
     pageSize: pageSize };
-  const response = await authAPI(getGiftcardsLink+addParam({pageination, businessId}), "GET", null, auth);
+  const response = await authAPI(getGiftcardsLink(businessId)+addParam({pageination, businessId}), "GET", null, auth);
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
@@ -416,6 +417,63 @@ export async function putBusinessAPI(business: BusinessDTO, auth: LoginResponseD
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.text}`);
   }
+
+  return response.json();
+}
+//Payment
+export async function postTipAPI(dto: AddTipDTO, auth: LoginResponseDTO): Promise<TipDTO> {
+  const response = await authAPI(postTipLink(auth.user.businessId), "POST", JSON.stringify(dto), auth);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error ${response.status}: ${errorText}`);
+  }
+
+  return response.json();
+}
+
+export async function getTipsAPI(pageNumber: number, pageSize: number, auth: LoginResponseDTO): Promise<GetTipDTO> {
+  const pageination = {
+    pageNumber,
+    pageSize
+  };
+  const response = await authAPI(getTipsLink(auth.user.businessId) + addParam({pageination}), "GET", null, auth);
+  console.log(response);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function postCashPaymentAPI(payment: CreatePaymentDTO, auth: LoginResponseDTO): Promise<PaymentResponseDTO> {
+  const response = await authAPI(postCashPaymentLink(auth.user.businessId), "POST", JSON.stringify(payment), auth);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function postCardPaymentAPI(payment: CreatePaymentDTO, auth: LoginResponseDTO): Promise<CardPaymentResponseDTO> {
+  const response = await authAPI(postCardPaymentLink(auth.user.businessId), "POST", JSON.stringify(payment), auth);
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.text}`);
+  }
+
+  return response.json();
+}
+
+export async function postInitiateRefundAPI(paymentId: string, auth: LoginResponseDTO) {
+    const response = await authAPI(postInitiateRefund(auth.user.businessId, paymentId), "POST", null, auth);
+    console.log(response);
+
+    if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.text}`);
+    }
 
   return response.json();
 }
