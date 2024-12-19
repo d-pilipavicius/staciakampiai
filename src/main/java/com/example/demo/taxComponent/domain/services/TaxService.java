@@ -36,7 +36,7 @@ public class TaxService {
         Tax savedTax = taxRepository.save(tax);
         TaxDTO savedTaxDTO = taxMapper.toTaxDTO(savedTax);
 
-        logger.info("Created tax with ID: {}, Details: {}", savedTaxDTO.getId(), savedTaxDTO);
+        logger.info("Created tax with ID: {}, Details: {}", savedTaxDTO.getId(), savedTaxDTO.toString());
 
         return savedTaxDTO;
     }
@@ -64,7 +64,7 @@ public class TaxService {
         Tax updatedTax = taxRepository.save(tax);    
         TaxDTO updatedTaxDTO = taxMapper.toTaxDTO(updatedTax);
 
-        logger.info("Updated tax with ID: {}, Updated details: {}", updatedTaxDTO.getId(), updatedTaxDTO);
+        logger.info("Updated tax with ID: {}, Updated details: {}", updatedTaxDTO.getId(), updatedTaxDTO.toString());
 
         return updatedTaxDTO;
     }
