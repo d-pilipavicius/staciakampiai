@@ -13,6 +13,8 @@ function OrderPage() {
 
   const [items, setItems] = useState("");
   const [products, setProducts] = useState<ProductDTO[]>([]);
+  const [orderId, setOrderId] = useState("");
+  const [updateOrder, setUpdateOrder] = useState("");
 
   const loginString = localStorage.getItem("loginToken");
   if(!loginString) {
@@ -38,6 +40,21 @@ function OrderPage() {
     }
   };
 
+  const updateOrderAPI = async () => {
+    try {
+      const response = await authAPI(address+`/v1/orders/${loginToken.user.businessId}/${orderId}`, "PUT", updateOrder, loginToken);
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.text}`);
+      }
+    } catch (err) {
+      if(err instanceof MissingAuthError) {
+        nav("/");
+        return;
+      } else 
+        throw err;
+    }
+  };
 
   const order = async () => {
     const order = {
@@ -46,7 +63,6 @@ function OrderPage() {
       "items": items
     };
     try {
-      console.log(`{"employeeId": "${order.employeeId}", "businessId": "${order.businessId}", "items": ${items}}`);
       const response = await authAPI(address+`/v1/orders/${loginToken.user.businessId}`, "POST", `{"employeeId": "${order.employeeId}", "businessId": "${order.businessId}", "items": ${items}}`, loginToken);
       
       if (!response.ok) {
@@ -64,11 +80,20 @@ function OrderPage() {
 
   return <>
     <Header/>
+    <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
     <CardComponent className="businessInfo">
       <h1>Create order</h1>
-      <textarea value={items} onChange={(event) => {setItems(event.target.value)}} style={{width: "50%"}}/>
+      <textarea value={items} onChange={(event) => {setItems(event.target.value)}} style={{ width: "50%", height: "200px"}}/>
       <button type="button" onClick={order}>Create</button>
     </CardComponent>
+    <CardComponent className="businessInfo">
+      <h1>Edit order</h1>
+      <></>
+      <input value={orderId} onChange={(event) => {setOrderId(event.target.value)}} type="text" className="form-control" placeholder="Set order id"/>
+      <textarea value={updateOrder} onChange={(event) => {setUpdateOrder(event.target.value)}} style={{ width: "50%", height: "160px"}}/>
+      <button type="button" onClick={updateOrderAPI}>Update</button>
+    </CardComponent>
+    </div>
     <ScrollableList>
       {"["}<br/>{products.map((item, index) => <>{"{"}"productId": "{item.id}","quantity": {item.quantityInStock}{"}"}{index+1 == products.length ? <></> : <>,<br/></> }</>)}<br/>{"]"}
     </ScrollableList>
