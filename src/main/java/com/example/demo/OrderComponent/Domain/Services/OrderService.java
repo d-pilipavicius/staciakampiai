@@ -91,6 +91,8 @@ public class OrderService {
         List<OrderItem> updatedItems = orderItemService.modifyOrderItems(order, modifyOrderRequest);
         orderChargeService.updateServiceCharges(modifyOrderRequest.getServiceCharges(), order);
 
+        order.setStatus(modifyOrderRequest.getStatus());
+
         Order savedOrder = orderRepository.save(order);
         BigDecimal originalPrice = orderItemService.calculateOriginalPrice(updatedItems);
 

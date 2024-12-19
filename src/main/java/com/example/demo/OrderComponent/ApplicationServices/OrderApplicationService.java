@@ -1,9 +1,6 @@
 package com.example.demo.OrderComponent.ApplicationServices;
 
-import com.example.demo.OrderComponent.API.DTOs.AppliedServiceChargeDTO;
-import com.example.demo.OrderComponent.API.DTOs.OrderDTO;
-import com.example.demo.OrderComponent.API.DTOs.ModifyOrderDTO;
-import com.example.demo.OrderComponent.API.DTOs.OrderItemDTO;
+import com.example.demo.OrderComponent.API.DTOs.*;
 import com.example.demo.OrderComponent.Domain.Entities.Enums.OrderStatus;
 import com.example.demo.OrderComponent.Domain.Entities.Order;
 import com.example.demo.OrderComponent.Domain.Entities.OrderItem;
@@ -18,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -46,7 +44,7 @@ public class OrderApplicationService {
                 productApplicationService.decrementProductStock(item.getProductId(), item.getQuantity());
                 if (item.getSelectedModifierIds() != null) {
                     item.getSelectedModifierIds().forEach(modifierId -> {
-                        productApplicationService.decrementModifierStock(modifierId, 1);
+                        productApplicationService.decrementModifierStock(modifierId, item.getQuantity());
                     });
                 }
             });
@@ -76,6 +74,11 @@ public class OrderApplicationService {
 
         // adjust modified item and modifier stock
         OrderDTO oldOrder = orderService.getOrderById(orderId);
+
+        if(oldOrder.getStatus().equals(OrderStatus.CANCELED) || oldOrder.getStatus().equals(OrderStatus.CLOSED)) {
+            throw new IllegalArgumentException("Cannot modify a canceled or closed order");
+        }
+
         if (modifyOrderRequest.getItems() != null && !modifyOrderRequest.getStatus().equals(OrderStatus.CANCELED)) {
             modifyOrderRequest.getItems().forEach(item -> {
                 // Item is added
@@ -83,7 +86,7 @@ public class OrderApplicationService {
                     productApplicationService.decrementProductStock(item.getProductId(), item.getQuantity());
                     if (item.getSelectedModifierIds() != null) {
                         item.getSelectedModifierIds().forEach(modifierId -> {
-                            productApplicationService.decrementModifierStock(modifierId, 1);
+                            productApplicationService.decrementModifierStock(modifierId, item.getQuantity());
                         });
                     }
                 } else {
@@ -107,7 +110,7 @@ public class OrderApplicationService {
                                 oldModifiers.stream()
                                         .filter(modifierId -> newModifiers == null || !newModifiers.contains(modifierId))
                                         .forEach(modifierId -> {
-                                            productApplicationService.incrementModifierStock(modifierId, 1);
+                                            productApplicationService.incrementModifierStock(modifierId, oldQuantity);
                                         });
 
                                 // Decrement stock for added modifiers
@@ -115,7 +118,7 @@ public class OrderApplicationService {
                                     newModifiers.stream()
                                             .filter(modifierId -> !oldModifiers.contains(modifierId))
                                             .forEach(modifierId -> {
-                                                productApplicationService.decrementModifierStock(modifierId, 1);
+                                                productApplicationService.decrementModifierStock(modifierId, newQuantity);
                                             });
                                 }
                             }
@@ -140,10 +143,14 @@ public class OrderApplicationService {
         // adjust stock if the order was canceled
         if (modifyOrderRequest.getStatus() != null && modifyOrderRequest.getStatus().equals(OrderStatus.CANCELED)) {
             oldOrder.getItems().forEach(item -> {
-                productApplicationService.incrementProductStock(item.getProductId(), item.getQuantity());
-                if (item.getSelectedModifierIds() != null) {
-                    item.getSelectedModifierIds().forEach(modifierId -> {
-                        productApplicationService.incrementModifierStock(modifierId, 1);
+                if(item.getModifiers() != null){
+                    List<UUID> modifierIds = item.getModifiers().stream()
+                            .map(OrderItemModifierDTO::getId)
+                            .toList();
+
+                    productApplicationService.incrementProductStock(item.getProductId(), item.getQuantity());
+                    modifierIds.forEach(modifierId -> {
+                        productApplicationService.incrementModifierStock(modifierId, item.getQuantity());
                     });
                 }
             });
