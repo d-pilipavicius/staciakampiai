@@ -97,7 +97,7 @@ public class PaymentService {
         return true;
     }
 
-    public Tip addTip(UUID businessId,AddTipDTO request) {
+    public Tip addTip(UUID businessId, AddTipDTO request) {
         Tip tipPayment = Mappers.toTip(request);
         tipPayment.setBusinessId(businessId);
         ITipRepository.save(tipPayment);
