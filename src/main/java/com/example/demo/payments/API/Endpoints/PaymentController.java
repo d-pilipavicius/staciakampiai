@@ -29,14 +29,11 @@ public class PaymentController {
     }
 
     @GetMapping("/tips")
-    public ResponseEntity<Map<String, Object>> getOrderTips(
-            @PathVariable UUID businessId,
-            @RequestParam UUID orderId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int pageSize
+    public ResponseEntity<Object> getTips(
+            @RequestParam int pageNumber,
+            @RequestParam int pageSize
     ) {
-        Page<Tip> tipsPage = paymentApplicationService.getOrderTips(businessId, orderId, page, pageSize);
-        Map<String, Object> response = Mappers.mapPageToResponse(tipsPage);
+        GetTipsDTO response = paymentApplicationService.getTips(pageNumber, pageSize);
         return ResponseEntity.ok(response);
     }
 
