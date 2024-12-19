@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { GetReservationsDTO, PostReservationDTO, LoginResponseDTO } from "../../../data/Responses";
+import {GetReservationsDTO, PostReservationDTO, LoginResponseDTO, PutReservationDTO} from "../../../data/Responses";
 import Header from "../../Header";
-import { getReservationsAPI, postReservationAPI } from "../../../data/APICalls";
+import {deleteReservationAPI, getReservationsAPI, postReservationAPI, putReservationAPI} from "../../../data/APICalls";
 import Pageination from "../../Pageination";
 import ReservationCard from "./ReservationCard";
 import Popup from "../../Popup";
@@ -18,6 +18,7 @@ function ReservationsPage() {
     const [startAt, setStartAt] = useState("");
     const [endAt, setEndAt] = useState("");
     const [customer, setCustomer] = useState({ firstName: "", lastName: "", phoneNumber: "" });
+    const [editReservationId, setEditReservationId] = useState<string | null>(null);
 
     const [isVisible, setVisibility] = useState(false);
     const [reservations, setReservations] = useState<GetReservationsDTO | null>();
@@ -53,31 +54,70 @@ function ReservationsPage() {
         setTrigger(trigger + 1);
     };
 
-    const createReservation = async () => {
+    const openPopup = (reservation?: any) => {
+        if (reservation) {
+            // Edit mode: Populate fields with reservation data
+            setStartAt(new Date(reservation.reservationStartAt).toISOString().slice(0, 16));
+            setEndAt(new Date(reservation.reservationEndAt).toISOString().slice(0, 16));
+            setCustomer({
+                firstName: reservation.customer.firstName,
+                lastName: reservation.customer.lastName,
+                phoneNumber: reservation.customer.phoneNumber,
+            });
+            setEditReservationId(reservation.id);
+        } else {
+            // Create mode: Clear fields
+            setStartAt("");
+            setEndAt("");
+            setCustomer({ firstName: "", lastName: "", phoneNumber: "" });
+            setEditReservationId(null);
+        }
+        setVisibility(true);
+    };
+
+    const closePopup = () => {
+        setVisibility(false);
+    };
+
+    const handleSaveReservation = async () => {
         if (!startAt || !endAt || !customer.firstName || !customer.lastName || !customer.phoneNumber) {
             alert("All fields are required!");
             return;
         }
 
         try {
-            const newReservation: PostReservationDTO = {
-                businessId: loginToken.user.businessId,
-                reservationStartAt: new Date(startAt).toISOString(),
-                reservationEndAt: new Date(endAt).toISOString(),
-                customer: {
-                    firstName: customer.firstName,
-                    lastName: customer.lastName,
-                    phoneNumber: customer.phoneNumber,
-                },
-                serviceChargeIds: [],
-            };
+            if (editReservationId) {
+                // Update reservation
+                const updatedReservation: PutReservationDTO = {
+                    reservationStartAt: new Date(startAt).toISOString(),
+                    reservationEndAt: new Date(endAt).toISOString(),
+                    customer: {
+                        firstName: customer.firstName,
+                        lastName: customer.lastName,
+                        phoneNumber: customer.phoneNumber,
+                    },
+                };
 
-            await postReservationAPI(newReservation, loginToken);
-            setStartAt("");
-            setEndAt("");
-            setCustomer({ firstName: "", lastName: "", phoneNumber: "" });
+                await putReservationAPI(editReservationId, updatedReservation, loginToken);
+            } else {
+                // Create new reservation
+                const newReservation: PostReservationDTO = {
+                    businessId: loginToken.user.businessId,
+                    reservationStartAt: new Date(startAt).toISOString(),
+                    reservationEndAt: new Date(endAt).toISOString(),
+                    customer: {
+                        firstName: customer.firstName,
+                        lastName: customer.lastName,
+                        phoneNumber: customer.phoneNumber,
+                    },
+                    serviceChargeIds: [],
+                };
+
+                await postReservationAPI(newReservation, loginToken);
+            }
+
+            closePopup();
             getReservations();
-            setVisibility(false);
         } catch (err) {
             if (err instanceof MissingAuthError) {
                 nav("/");
@@ -88,12 +128,23 @@ function ReservationsPage() {
         }
     };
 
+    const handleDeleteReservation = async (reservationId: string) => {
+        if (window.confirm("Are you sure you want to delete this reservation?")) {
+            try {
+                await deleteReservationAPI(reservationId, loginToken);
+                getReservations();
+            } catch (err) {
+                // @ts-ignore
+                alert(`Error: ${err.message}`);
+            }
+        }
+    };
+
     return (
         <>
             <Header />
             <Popup setVisibility={isVisible}>
-
-                <h1>Create New Reservation</h1>
+                <h1>{editReservationId ? "Edit Reservation" : "Create New Reservation"}</h1>
                 <input value={startAt} onChange={(e) => setStartAt(e.target.value)} type="datetime-local" className="form-control" placeholder="Start Time" />
                 <input value={endAt} onChange={(e) => setEndAt(e.target.value)} type="datetime-local" className="form-control" placeholder="End Time" />
                 <input
@@ -117,20 +168,27 @@ function ReservationsPage() {
                     className="form-control"
                     placeholder="Phone Number"
                 />
-                <button type="button" onClick={createReservation} className="btn btn-success">
-                    Submit
+                <button type="button" onClick={handleSaveReservation} className="btn btn-success">
+                    Save
                 </button>
-                <button type="button" onClick={() => setVisibility(false)} className="btn btn-danger">
+                <button type="button" onClick={closePopup} className="btn btn-danger">
                     Cancel
                 </button>
             </Popup>
             <div className="reservationPage">
                 <h1>Reservations</h1>
-                <button type="button" onClick={() => setVisibility(true)} className="btn btn-primary">
+                <button type="button" onClick={() => openPopup()} className="btn btn-primary">
                     Add Reservation
                 </button>
                 {reservations && reservations.totalItems > 0 ? (
-                    reservations.items.map((item) => <ReservationCard key={item.id} reservation={item} updatePage={() => setTrigger(trigger + 1)} />)
+                    reservations.items.map((item) => (
+                        <ReservationCard
+                            key={item.id}
+                            reservation={item}
+                            onEdit={() => openPopup(item)}
+                            onDelete={() => handleDeleteReservation(item.id)}
+                        />
+                    ))
                 ) : (
                     <p>No reservations available</p>
                 )}
@@ -141,4 +199,3 @@ function ReservationsPage() {
 }
 
 export default ReservationsPage;
-

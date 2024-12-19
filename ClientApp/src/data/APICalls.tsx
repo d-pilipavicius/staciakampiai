@@ -22,7 +22,7 @@ import {
   PutDiscountDTO,
   PutOrderDTO,
   PutProductDTO,
-  PutProductModifierDTO,
+  PutProductModifierDTO, PutReservationDTO,
   PutServiceChargeDTO,
   PutTaxDTO,
   ServiceChargeDTO,
@@ -33,7 +33,7 @@ import {
   addParam,
   deleteDiscountLink,
   deleteProductLink,
-  deleteProductModifierLink,
+  deleteProductModifierLink, deleteReservationLink,
   deleteServiceChargeLink,
   deleteTaxLink,
   getBusinessLink,
@@ -60,7 +60,7 @@ import {
   putDiscountLink,
   putOrderLink,
   putProductLink,
-  putProductModifierLink,
+  putProductModifierLink, putReservationLink,
   putServiceChargeLink,
   putTaxLink
 } from "./Routes";
@@ -479,6 +479,34 @@ export async function postReservationAPI(reservation: PostReservationDTO, auth: 
     throw new Error(`Error ${response.status}: ${await response.text()}`);
   }
 }
+
+export async function putReservationAPI(reservationId: string, reservation: PutReservationDTO, auth: LoginResponseDTO): Promise<void> {
+  const response = await authAPI(
+      putReservationLink(auth.user.businessId, reservationId),
+      "PUT",
+      JSON.stringify(reservation),
+      auth
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${await response.text()}`);
+  }
+}
+
+export async function deleteReservationAPI(reservationId: string, auth: LoginResponseDTO): Promise<void> {
+  const response = await authAPI(
+      `${deleteReservationLink(auth.user.businessId, reservationId)}`,
+      "DELETE",
+      null,
+      auth
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${await response.text()}`);
+  }
+}
+
+
 
 
 

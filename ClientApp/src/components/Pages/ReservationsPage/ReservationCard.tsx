@@ -2,14 +2,27 @@ import React from "react";
 import { ReservationDTO } from "../../../data/Responses";
 import "./Reservations.css";
 
+interface ReservationCardProps {
+    reservation: ReservationDTO;
+    onEdit: () => void;
+    onDelete: () => void;
+}
 
-function ReservationCard({ reservation, updatePage }: { reservation: ReservationDTO; updatePage: () => void }) {
+function ReservationCard({ reservation, onEdit, onDelete }: ReservationCardProps) {
     return (
         <div className="reservationCard">
-            <h3>Reservation for {reservation.customer.firstName} {reservation.customer.lastName}</h3>
-            <p>Start: {new Date(reservation.reservationStartAt).toLocaleString()}</p>
-            <p>End: {new Date(reservation.reservationEndAt).toLocaleString()}</p>
-            <p>Phone: {reservation.customer.phoneNumber}</p>
+            <h3>
+                {reservation.customer.firstName} {reservation.customer.lastName}
+            </h3>
+            <p>
+                {new Date(reservation.reservationStartAt).toLocaleString()} - {new Date(reservation.reservationEndAt).toLocaleString()}
+            </p>
+            <button onClick={onEdit} className="btn btn-secondary">
+                Edit
+            </button>
+            <button onClick={onDelete} className="btn btn-danger">
+                Delete
+            </button>
         </div>
     );
 }
