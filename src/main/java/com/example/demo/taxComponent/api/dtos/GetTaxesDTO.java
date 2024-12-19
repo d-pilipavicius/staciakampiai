@@ -1,7 +1,5 @@
 package com.example.demo.taxComponent.api.dtos;
 
-import com.example.demo.taxComponent.api.dtos.TaxHelperDTOs.TaxDTO;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

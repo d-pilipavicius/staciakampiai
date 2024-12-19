@@ -1,10 +1,12 @@
 import Header from "../../Header";
+import "./tax.css"
 
-function TaxPage() {
+
+function PaymentPage() {
   return <>
     <Header/>
     <p>Hello, Tax!</p>
   </>
 }
 
-export default TaxPage;
+export default PaymentPage;

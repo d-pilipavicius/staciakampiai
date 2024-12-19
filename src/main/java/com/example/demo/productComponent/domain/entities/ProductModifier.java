@@ -35,7 +35,7 @@ public class ProductModifier {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @Column(nullable = false)
+    @Column(name = "quantity_in_stock", nullable = false)
     private int quantityInStock;
 
     @Version

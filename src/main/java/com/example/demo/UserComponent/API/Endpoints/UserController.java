@@ -45,25 +45,25 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
 
-  @GetMapping("/{userId}")
+  @GetMapping("/{businessId}/{userId}")
   public ResponseEntity<UserDTO> getUser(@PathVariable UUID userId) {
     UserDTO gottenUserDTO = userApplicationService.getUser(userId);
     return ResponseEntity.ok().body(gottenUserDTO);
   }
 
-  @PutMapping("/{userId}")
+  @PutMapping("/{businessId}/{userId}")
   public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @RequestBody UpdateUserDTO updateUserDTO) {
     UserDTO updatedUserDTO = userApplicationService.updateUser(userId, updateUserDTO);
     return ResponseEntity.ok().body(updatedUserDTO);
   }
 
-  @PutMapping("/{userId}/updateCredentials")
-  public ResponseEntity<UserDTO> updatePassword(@PathVariable UUID userId, @NotNull @Valid @RequestBody PutUserCredentialsDTO passwordDTO){
-    UserDTO updatedPasswordUserDTO = userApplicationService.updatePassword(userId, passwordDTO);
+  @PutMapping("/{businessId}/{userId}/updateCredentials")
+  public ResponseEntity<UserDTO> updateSensitiveInformation(@PathVariable UUID userId, @NotNull @Valid @RequestBody PutUserCredentialsDTO passwordDTO){
+    UserDTO updatedPasswordUserDTO = userApplicationService.updateSensitiveInformation(userId, passwordDTO);
     return ResponseEntity.status(HttpStatus.OK).body(updatedPasswordUserDTO);
   }
 
-  @DeleteMapping("/{userId}")
+  @DeleteMapping("/{businessId}/{userId}")
   public ResponseEntity<Void> deleteUser(@NotNull @PathVariable UUID userId) {
     userApplicationService.deleteUser(userId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -81,8 +81,11 @@ public class UserController {
     }
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String token = jwtUtils.generateToken(authentication);
+    System.out.println("Access Token: " + token);
 
     UserDTO userDTO = userApplicationService.getUserByUsername(authentication.getName());
+    System.out.println("Business ID: " + userDTO.getBusinessId());
+
 
     return new ResponseEntity<>(LoginResponseDTO.builder().accessToken(token).user(userDTO).build(), HttpStatus.OK);
   }

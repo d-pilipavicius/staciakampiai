@@ -1,12 +1,12 @@
 package com.example.demo.discountComponent.validator;
 
-import com.example.demo.discountComponent.domain.entities.Discount;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.NotFoundException;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnauthorizedException;
 import com.example.demo.CommonHelper.ErrorHandling.CustomExceptions.UnprocessableException;
 import com.example.demo.CommonHelper.enums.Currency;
 import com.example.demo.CommonHelper.enums.DiscountTarget;
 import com.example.demo.CommonHelper.enums.PricingStrategy;
+import com.example.demo.discountComponent.domain.entities.Discount;
 import com.example.demo.discountComponent.repository.DiscountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -38,7 +38,7 @@ public final class DiscountsValidator {
 
     public void checkPricingStrategy(Currency currency, PricingStrategy strat) {
         if ((currency == null && strat == PricingStrategy.FIXED_AMOUNT)
-                || (currency != null && strat == PricingStrategy.FIXED_AMOUNT)) {
+                || (currency != null && strat == PricingStrategy.PERCENTAGE)) {
             throw new UnprocessableException(
                     "No currency was provided for a fixedAmount discount, or currency was provided for a percentage discount.");
         }
