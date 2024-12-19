@@ -106,7 +106,9 @@ function reservation(businessId: string) {
 }
 
 function postReservation(businessId: string, employeeId: string){
-  return `${reservation(businessId)}?employeeId=${encodeURIComponent(employeeId)}`;
+  const url = `${reservation(businessId)}?employeeId=${encodeURIComponent(employeeId)}`;
+  console.log("Generated URL:", url);
+  return url;
 }
 
 function reservationById(businessId: string, reservationId: string) {
